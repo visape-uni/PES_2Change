@@ -29,6 +29,7 @@ configurations {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('com.google.firebase:firebase-server-sdk:[3.0.1,)')
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
