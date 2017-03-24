@@ -58,7 +58,7 @@ public class LogIn extends AppCompatActivity {
         Button newUserBtn = (Button)findViewById(R.id.newUserBtn);
         newUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Intent mainMenuIntent = new Intent (getApplicationContext(), zWorking.class);
+                Intent mainMenuIntent = new Intent (getApplicationContext(), NewUser.class);
                 startActivity(mainMenuIntent);
             }
         });
