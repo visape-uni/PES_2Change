@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -22,7 +21,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
@@ -79,9 +77,8 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
             @Override public void onClick(View v) {
                 EditText user = (EditText)findViewById(R.id.mailField);
                 EditText pass = (EditText)findViewById(R.id.passwordField);
-
-                String email = user.getText().toString();
-                String password = pass.getText().toString();
+                String email = user.getText().toString().trim();
+                String password = pass.getText().toString().trim();
                 if (email.isEmpty()) {
                     Context context = getApplicationContext();
                     Toast.makeText(context, "Fill in the Email field", Toast.LENGTH_LONG).show();
@@ -92,7 +89,7 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
                     Context context = getApplicationContext();
                     Toast.makeText(context, "Fill in the password field", Toast.LENGTH_LONG).show();
                 } else {
-                    signInEmail(email, password);
+                    logInEmail(email, password);
                 }
             }
         });
@@ -101,7 +98,7 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
         Button googleBtn = (Button)findViewById(R.id.googleBtn);
         googleBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                signInGoogle();
+                logInGoogle();
             }
         });
 
@@ -129,8 +126,7 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
         }
     }
 
-
-    private void signInEmail(String email, String password) {
+    private void logInEmail(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(LogIn.this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -144,7 +140,7 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
                 });
     }
 
-    private void signInGoogle() {
+    private void logInGoogle() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
