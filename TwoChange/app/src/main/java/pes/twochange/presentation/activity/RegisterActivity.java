@@ -1,4 +1,4 @@
-package pes.twochange;
+package pes.twochange.presentation.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,12 +9,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class NewUser extends AppCompatActivity {
+import pes.twochange.R;
+
+public class RegisterActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_user);
+        setContentView(R.layout.activity_register);
 
         //Sign Up button + Pressed button listener
         Button googleBtn = (Button)findViewById(R.id.signUpBtn);

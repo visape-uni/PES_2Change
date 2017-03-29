@@ -1,7 +1,9 @@
-package pes.twochange;
+package pes.twochange.presentation.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import pes.twochange.R;
 
 public class zWorking extends AppCompatActivity {
 
