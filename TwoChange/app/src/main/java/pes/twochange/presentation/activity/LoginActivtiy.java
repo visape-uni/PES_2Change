@@ -1,4 +1,4 @@
-package pes.twochange;
+package pes.twochange.presentation.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,9 +24,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
+import pes.twochange.R;
+import pes.twochange.domain.controller.UserController;
+import pes.twochange.domain.model.User;
 
-    private static final String TAG = "LogIn";
+public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+
+    private static final String TAG = "LoginActivtiy";
     private static final int RC_SIGN_IN = 9001;
 
     private FirebaseAuth mAuth;
@@ -34,10 +38,14 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
 
     private GoogleApiClient mGoogleApiClient;
 
+    private UserController userController;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_log_in);
+        setContentView(R.layout.activity_login);
+
+        userController = UserController.getInstance(this);
 
         //Configurar Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -80,16 +88,29 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
                 String email = user.getText().toString().trim();
                 String password = pass.getText().toString().trim();
                 if (email.isEmpty()) {
-                    Context context = getApplicationContext();
-                    Toast.makeText(context, "Fill in the Email field", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Fill in the Email field", Toast.LENGTH_LONG).show();
                 } else if (!email.contains("@")) {
-                    Context context = getApplicationContext();
-                    Toast.makeText(context, "Incorrect Email format", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Incorrect Email format", Toast.LENGTH_LONG).show();
                 } else if (password.isEmpty()) {
-                    Context context = getApplicationContext();
-                    Toast.makeText(context, "Fill in the password field", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Fill in the password field", Toast.LENGTH_LONG).show();
                 } else {
-                    logInEmail(email, password);
+                    //logInEmail(email, password);
+                    userController.login(
+                            email,
+                            password,
+                            new UserController.OnLogin() {
+                                @Override
+                                public void onLoginSuccess(User user) {
+                                    // Save user and session to the Shared Preferences Storage
+                                    Toast.makeText(LoginActivtiy.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onLoginFailure(String message) {
+                                    Log.v("ERROR", "Error al hacer login con Firebase: " + message);
+                                }
+                            }
+                    );
                 }
             }
         });
@@ -106,7 +127,7 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
         Button newUserBtn = (Button)findViewById(R.id.newUserBtn);
         newUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Intent mainMenuIntent = new Intent (getApplicationContext(), NewUser.class);
+                Intent mainMenuIntent = new Intent (getApplicationContext(), RegisterActivity.class);
                 startActivity(mainMenuIntent);
             }
         });
@@ -124,20 +145,6 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
-    }
-
-    private void logInEmail(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(LogIn.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Context context = getApplicationContext();
-                            Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
     }
 
     private void logInGoogle() {
@@ -189,6 +196,4 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_LONG).show();
     }
-
-
 }

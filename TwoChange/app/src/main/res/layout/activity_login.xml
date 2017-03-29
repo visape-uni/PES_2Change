@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/PrimaryBackgroundColor"
-    tools:context="pes.twochange.LogIn">
+    tools:context="pes.twochange.presentation.activity.LoginActivtiy">
 
     <Button
         android:id="@+id/googleBtn"
