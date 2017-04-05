@@ -21,7 +21,10 @@
         </activity>
         <activity android:name=".presentation.activity.zWorking" />
         <activity android:name=".presentation.activity.RegisterActivity" />
-
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
