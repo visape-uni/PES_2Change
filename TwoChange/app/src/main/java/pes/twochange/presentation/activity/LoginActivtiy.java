@@ -67,7 +67,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     //Logeado
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getDisplayName());
 
                     Intent mainMenuIntent = new Intent (getApplicationContext(), zWorking.class);
                     startActivity(mainMenuIntent);
@@ -145,6 +145,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 firebaseAuthWithGoogle(account);
             } else {
                 //Login failed
+                Log.e(TAG, "Google Sign-In failed");
             }
         }
     }
@@ -163,8 +164,10 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
 
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential:failed", task.getException());
-                            Context context = getApplicationContext();
-                            Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivtiy.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        } else {
+                            startActivity(new Intent(LoginActivtiy.this, zWorking.class));
+                            finish();
                         }
 
                         //Esconder pantalla de loading???
