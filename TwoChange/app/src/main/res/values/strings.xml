@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">2Change</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_chat">ChatActivity</string>
 </resources>
