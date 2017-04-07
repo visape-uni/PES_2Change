@@ -4,6 +4,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -18,6 +19,7 @@ import pes.twochange.domain.model.Message;
 
 public class ChatActivity extends AppCompatActivity {
 
+    private static final String TAG = "ChatActivtiy";
     private FirebaseListAdapter<Message> adapter;
     private String userSenderUid;
     private String userReciverUid;
@@ -37,7 +39,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick (View view) {
                 EditText messageInput = (EditText) findViewById(R.id.message_input);
-                FirebaseDatabase.getInstance().getReference().push().setValue(new Message(messageInput.getText().toString(),
+                FirebaseDatabase.getInstance().getReference().child("messages").push().setValue(new Message(messageInput.getText().toString(),
                         userSenderUid, userReciverUid));
                 messageInput.setText("");
             }
@@ -50,13 +52,14 @@ public class ChatActivity extends AppCompatActivity {
     private void displayChatMessage() {
 
         ListView messagesList = (ListView)findViewById(R.id.messages_list);
-        adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message, FirebaseDatabase.getInstance().getReference()) {
+        adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message, FirebaseDatabase.getInstance().getReference().child("messages")) {
             @Override
             protected void populateView(View v, Message model, int position) {
+                Log.d(TAG,"display messages");
                 TextView messageContent, messageSender, messageTime;
-                messageContent = (TextView) findViewById(R.id.message_content);
-                messageSender = (TextView) findViewById(R.id.message_sender);
-                messageTime = (TextView) findViewById(R.id.message_time);
+                messageContent = (TextView) v.findViewById(R.id.message_content);
+                messageSender = (TextView) v.findViewById(R.id.message_sender);
+                messageTime = (TextView) v.findViewById(R.id.message_time);
 
                 messageContent.setText(model.getMessageContent());
                 messageSender.setText(model.getMessageSender());
