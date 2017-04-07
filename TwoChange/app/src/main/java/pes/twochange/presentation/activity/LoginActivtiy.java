@@ -69,7 +69,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                     //Logeado
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getDisplayName());
 
-                    Intent mainMenuIntent = new Intent (getApplicationContext(), zWorking.class);
+                    Intent mainMenuIntent = new Intent (getApplicationContext(), MenuProvisionalActivity.class);
                     startActivity(mainMenuIntent);
                 } else {
                     //No logeado
@@ -93,6 +93,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 } else if (password.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Fill in the password field", Toast.LENGTH_LONG).show();
                 } else {
+                    //TODO: Iniciar sesion
                 }
             }
         });
@@ -166,7 +167,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                             Log.w(TAG, "signInWithCredential:failed", task.getException());
                             Toast.makeText(LoginActivtiy.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         } else {
-                            startActivity(new Intent(LoginActivtiy.this, zWorking.class));
+                            startActivity(new Intent(LoginActivtiy.this, MenuProvisionalActivity.class));
                             finish();
                         }
 
