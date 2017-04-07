@@ -23,12 +23,10 @@ import pes.twochange.services.Firebase;
 public class ChatActivity extends AppCompatActivity {
 
     private static final String TAG = "ChatActivitiy";
-    private FirebaseListAdapter<Message> adapter;
-    private Chat chat;
     private String userSenderUid;
     private String userReciverUid;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mFirebaseChatRef;
+    private DatabaseReference mFirebaseChatRefSender;
+    private DatabaseReference mFirebaseChatRefReciver;
     FloatingActionButton sendBtn;
 
     @Override
@@ -37,19 +35,20 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         //Coger chat pasado como extra en el intent
-        this.chat = (Chat)getIntent().getExtras().getSerializable("chat");
+        Chat chat = (Chat) getIntent().getExtras().getSerializable("chat");
         /*
         //crear chat
         chat = new Chat(userSenderUid, userReciverUid);*/
 
         userSenderUid = chat.getMessageSender();
-        userReciverUid = chat.getMessageSender();
+        userReciverUid = chat.getMessageReciver();
 
 
         //Firebase database
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
         //Referencia al chat
-        mFirebaseChatRef = mFirebaseDatabase.getReference().child("chats").child(userSenderUid).child(userReciverUid);
+        mFirebaseChatRefSender = mFirebaseDatabase.getReference().child("chats").child(userSenderUid).child(userReciverUid);
+        mFirebaseChatRefReciver = mFirebaseDatabase.getReference().child("chats").child(userReciverUid).child(userSenderUid);
 
 
         sendBtn = (FloatingActionButton)findViewById(R.id.sender_btn);
@@ -57,7 +56,11 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick (View view) {
                 EditText messageInput = (EditText) findViewById(R.id.message_input);
-                mFirebaseChatRef.push().setValue(new Message(messageInput.getText().toString()));
+                String content = messageInput.getText().toString();
+                if (!content.isEmpty()) {
+                    mFirebaseChatRefSender.push().setValue(new Message(content, userSenderUid, userReciverUid));
+                    mFirebaseChatRefReciver.push().setValue(new Message(content, userSenderUid, userReciverUid));
+                }
                 messageInput.setText("");
             }
         });
@@ -69,21 +72,20 @@ public class ChatActivity extends AppCompatActivity {
     private void displayChatMessage() {
 
         ListView messagesList = (ListView)findViewById(R.id.messages_list);
-        adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message, mFirebaseChatRef) {
+        FirebaseListAdapter<Message> adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message, mFirebaseChatRefSender) {
             @Override
             protected void populateView(View v, Message model, int position) {
-                Log.d(TAG,"display messages");
                 TextView messageContent, messageSender, messageTime;
                 messageContent = (TextView) v.findViewById(R.id.message_content);
                 messageSender = (TextView) v.findViewById(R.id.message_sender);
                 messageTime = (TextView) v.findViewById(R.id.message_time);
 
                 messageContent.setText(model.getMessageContent());
-                messageSender.setText("SENDER");
-                messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getMessageTime()));
-
+                messageSender.setText(model.getMessageSender());
+                messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm)", model.getMessageTime()));
             }
         };
+
         messagesList.setAdapter(adapter);
     }
 }

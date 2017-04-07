@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
@@ -17,28 +18,11 @@ import pes.twochange.domain.model.Chat;
 public class MenuProvisionalActivity extends AppCompatActivity {
 
     private static final String TAG = "MenuActivitiy";
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_provisional);
-
-        mAuth = FirebaseAuth.getInstance();
-
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-
-                } else {
-                    //No logeado
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                    finish();
-                }
-            }
-        };
 
         //Show chats button + Pressed button listener
         Button showChatsBtn = (Button)findViewById(R.id.showChatsBtn);
@@ -53,13 +37,19 @@ public class MenuProvisionalActivity extends AppCompatActivity {
         openChatBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
 
-                Intent chatIntent = new Intent (getApplicationContext(), ChatActivity.class);
                 FirebaseUser userSender = FirebaseAuth.getInstance().getCurrentUser();
-                String userReciverUid = "23fdgdfF";
-                Chat chat = new Chat(userSender.getUid(),userReciverUid);
-                chatIntent.putExtra("chat", chat);
-                startActivity(chatIntent);
-                Toast.makeText(getApplicationContext(), "VICTOR CONECTATE AQUI", Toast.LENGTH_LONG).show();
+                if (userSender != null) {
+                    Intent chatIntent = new Intent (getApplicationContext(), ChatActivity.class);
+                    String userReciverUid = "DEEgGOdjjmVkR29uEtvNi0W2zrv1";
+                    Chat chat = new Chat(userSender.getUid(),userReciverUid);
+                    //Chat chat = new Chat(userReciverUid, userSender.getUid());
+                    chatIntent.putExtra("chat", chat);
+                    startActivity(chatIntent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "You must LogIn first!", Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(MenuProvisionalActivity.this, LoginActivtiy.class));
+                    finish();
+                }
             }
         });
 
@@ -95,6 +85,7 @@ public class MenuProvisionalActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
                 Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
                 startActivity(new Intent(MenuProvisionalActivity.this, LoginActivtiy.class));
+                finish();
             }
         });
     }

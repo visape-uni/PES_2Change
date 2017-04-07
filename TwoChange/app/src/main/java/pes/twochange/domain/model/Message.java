@@ -8,11 +8,15 @@ import java.util.Date;
 
 public class Message {
 
+    private String messageSender;
+    private String messageReciver;
     private String messageContent;
     private long messageTime;
 
-    public Message (String messageContent) {
+    public Message (String messageContent, String messageSender, String messageReciver) {
         this.messageContent = messageContent;
+        this.messageReciver = messageReciver;
+        this.messageSender = messageSender;
 
         messageTime = new Date().getTime();
     }
@@ -34,5 +38,21 @@ public class Message {
 
     public void setMessageTime(long messageTime) {
         this.messageTime = messageTime;
+    }
+
+    public String getMessageSender() {
+        return messageSender;
+    }
+
+    public void setMessageSender(String messageSender) {
+        this.messageSender = messageSender;
+    }
+
+    public String getMessageReciver() {
+        return messageReciver;
+    }
+
+    public void setMessageReciver(String messageReciver) {
+        this.messageReciver = messageReciver;
     }
 }
