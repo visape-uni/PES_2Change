@@ -12,17 +12,23 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import pes.twochange.R;
+import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Message;
+import pes.twochange.services.Firebase;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private static final String TAG = "ChatActivtiy";
+    private static final String TAG = "ChatActivitiy";
     private FirebaseListAdapter<Message> adapter;
+    private Chat chat;
     private String userSenderUid;
     private String userReciverUid;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mFirebaseChatRef;
     FloatingActionButton sendBtn;
 
     @Override
@@ -33,14 +39,23 @@ public class ChatActivity extends AppCompatActivity {
         userSenderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         //FALTA OBTENER EL UID DEL USUARIO QUE RECIVE EL MENSAJE
         //userReciverUid = ;
+        userReciverUid = "3r32r2f";
+
+        //crear chat
+        chat = new Chat(userSenderUid, userReciverUid);
+
+        //Firebase database
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        //Referencia al chat
+        mFirebaseChatRef = mFirebaseDatabase.getReference().child("chats").child(userSenderUid).child(userReciverUid);
+
 
         sendBtn = (FloatingActionButton)findViewById(R.id.sender_btn);
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View view) {
                 EditText messageInput = (EditText) findViewById(R.id.message_input);
-                FirebaseDatabase.getInstance().getReference().child("messages").push().setValue(new Message(messageInput.getText().toString(),
-                        userSenderUid, userReciverUid));
+                mFirebaseChatRef.push().setValue(new Message(messageInput.getText().toString()));
                 messageInput.setText("");
             }
         });
@@ -52,7 +67,7 @@ public class ChatActivity extends AppCompatActivity {
     private void displayChatMessage() {
 
         ListView messagesList = (ListView)findViewById(R.id.messages_list);
-        adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message, FirebaseDatabase.getInstance().getReference().child("messages")) {
+        adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message, mFirebaseChatRef) {
             @Override
             protected void populateView(View v, Message model, int position) {
                 Log.d(TAG,"display messages");
@@ -62,7 +77,7 @@ public class ChatActivity extends AppCompatActivity {
                 messageTime = (TextView) v.findViewById(R.id.message_time);
 
                 messageContent.setText(model.getMessageContent());
-                messageSender.setText(model.getMessageSender());
+                messageSender.setText("SENDER");
                 messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getMessageTime()));
 
             }
