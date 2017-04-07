@@ -29,7 +29,7 @@ import pes.twochange.R;
 
 public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = "LoginActivtiy";
+    private static final String TAG = "LoginActivitiy";
     private static final int RC_SIGN_IN = 9001;
 
     private FirebaseAuth mAuth;
@@ -57,7 +57,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        //FIREBASE
+        //FIREBASE AUTH
         mAuth = FirebaseAuth.getInstance();
 
         //Mirar si ya esta logeado
@@ -74,6 +74,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 } else {
                     //No logeado
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+                    //Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 }
             }
         };
@@ -168,7 +169,6 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                             Toast.makeText(LoginActivtiy.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         } else {
                             startActivity(new Intent(LoginActivtiy.this, MenuProvisionalActivity.class));
-                            finish();
                         }
 
                         //Esconder pantalla de loading???
