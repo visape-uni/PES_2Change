@@ -29,7 +29,7 @@ import pes.twochange.R;
 
 public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = "LoginActivtiy";
+    private static final String TAG = "LoginActivitiy";
     private static final int RC_SIGN_IN = 9001;
 
     private FirebaseAuth mAuth;
@@ -50,14 +50,13 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        Log.d(TAG, getString(R.string.default_web_client_id));
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        //FIREBASE
+        //FIREBASE AUTH
         mAuth = FirebaseAuth.getInstance();
 
         //Mirar si ya esta logeado
@@ -71,9 +70,11 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
 
                     Intent mainMenuIntent = new Intent (getApplicationContext(), MenuProvisionalActivity.class);
                     startActivity(mainMenuIntent);
+                    finish();
                 } else {
                     //No logeado
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+                    //Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 }
             }
         };
@@ -93,7 +94,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 } else if (password.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Fill in the password field", Toast.LENGTH_LONG).show();
                 } else {
-                    //TODO: Iniciar sesion
+                    logIn(email,password);
                 }
             }
         });
@@ -128,6 +129,20 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    private void logIn(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivtiy.this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "signInWithEmail:success");
+                } else {
+                    Log.w(TAG, "signInWithEmail:failed", task.getException());
+                    Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void logInGoogle() {

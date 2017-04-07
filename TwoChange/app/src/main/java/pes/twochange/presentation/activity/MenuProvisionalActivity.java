@@ -1,12 +1,13 @@
 package pes.twochange.presentation.activity;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -15,10 +16,29 @@ import pes.twochange.domain.model.Chat;
 
 public class MenuProvisionalActivity extends AppCompatActivity {
 
+    private static final String TAG = "MenuActivitiy";
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_provisional);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+
+                } else {
+                    //No logeado
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    finish();
+                }
+            }
+        };
 
         //Show chats button + Pressed button listener
         Button showChatsBtn = (Button)findViewById(R.id.showChatsBtn);
@@ -64,6 +84,17 @@ public class MenuProvisionalActivity extends AppCompatActivity {
         searchUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "GUILLE CONECTATE AQUI", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        Button logOutBtn = (Button) findViewById(R.id.logOutBtn);
+        logOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
+                FirebaseAuth.getInstance().signOut();
+                Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
+                startActivity(new Intent(MenuProvisionalActivity.this, LoginActivtiy.class));
             }
         });
     }
