@@ -1,17 +1,18 @@
 package pes.twochange.domain.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Visape on 07/04/2017.
  */
 
-public class Chat {
+public class Chat implements Serializable{
     private ArrayList<Message> messages;
     private String messageSender;
     private String messageReciver;
 
-    public Chat(String messageContent, String messageReciver) {
+    public Chat(String messageSender, String messageReciver) {
         this.messageReciver = messageReciver;
         this.messageSender = messageSender;
         this.messages = new ArrayList<>();

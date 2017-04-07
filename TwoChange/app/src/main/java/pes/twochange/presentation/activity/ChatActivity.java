@@ -36,13 +36,15 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        userSenderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        //FALTA OBTENER EL UID DEL USUARIO QUE RECIVE EL MENSAJE
-        //userReciverUid = ;
-        userReciverUid = "3r32r2f";
-
+        //Coger chat pasado como extra en el intent
+        this.chat = (Chat)getIntent().getExtras().getSerializable("chat");
+        /*
         //crear chat
-        chat = new Chat(userSenderUid, userReciverUid);
+        chat = new Chat(userSenderUid, userReciverUid);*/
+
+        userSenderUid = chat.getMessageSender();
+        userReciverUid = chat.getMessageSender();
+
 
         //Firebase database
         mFirebaseDatabase = FirebaseDatabase.getInstance();
