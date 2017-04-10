@@ -57,6 +57,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick (View view) {
                 EditText messageInput = (EditText) findViewById(R.id.message_input);
                 String content = messageInput.getText().toString();
+                content.trim();
                 if (!content.isEmpty()) {
                     mFirebaseChatRefSender.push().setValue(new Message(content, userSenderUid, userReciverUid));
                     mFirebaseChatRefReciver.push().setValue(new Message(content, userSenderUid, userReciverUid));
