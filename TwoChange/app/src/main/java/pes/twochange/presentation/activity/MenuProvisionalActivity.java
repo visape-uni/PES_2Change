@@ -41,6 +41,7 @@ public class MenuProvisionalActivity extends AppCompatActivity {
                 if (userSender != null) {
                     Intent chatIntent = new Intent (getApplicationContext(), ChatActivity.class);
                     String userReciverUid = "DEEgGOdjjmVkR29uEtvNi0W2zrv1";
+                    if (userSender.getUid().equals("DEEgGOdjjmVkR29uEtvNi0W2zrv1")) userReciverUid = "PtkvVdIGqdVzx5KJ35t2OJ1wXKm2";
                     Chat chat = new Chat(userSender.getUid(),userReciverUid);
                     //Chat chat = new Chat(userReciverUid, userSender.getUid());
                     chatIntent.putExtra("chat", chat);

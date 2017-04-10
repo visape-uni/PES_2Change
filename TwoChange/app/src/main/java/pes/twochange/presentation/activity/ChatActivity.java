@@ -5,15 +5,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
@@ -42,6 +48,8 @@ public class ChatActivity extends AppCompatActivity {
 
         userSenderUid = chat.getMessageSender();
         userReciverUid = chat.getMessageReciver();
+        Log.d(TAG, userReciverUid);
+        Log.d(TAG, userSenderUid);
 
 
         //Firebase database
@@ -76,10 +84,22 @@ public class ChatActivity extends AppCompatActivity {
         FirebaseListAdapter<Message> adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message, mFirebaseChatRefSender) {
             @Override
             protected void populateView(View v, Message model, int position) {
+                FirebaseMessaging a = FirebaseMessaging.getInstance();
+                a.send(new RemoteMessage.Builder("Chat Message").build());
+
                 TextView messageContent, messageSender, messageTime;
                 messageContent = (TextView) v.findViewById(R.id.message_content);
                 messageSender = (TextView) v.findViewById(R.id.message_sender);
                 messageTime = (TextView) v.findViewById(R.id.message_time);
+
+                if (model.getMessageSender().equals(userSenderUid)) {
+                    LinearLayout layoutMessageContent = (LinearLayout) v.findViewById(R.id.layout_message_content);
+                    layoutMessageContent.setBackgroundResource(R.drawable.ic_send_message);
+
+                    RelativeLayout.LayoutParams rl = (RelativeLayout.LayoutParams) layoutMessageContent.getLayoutParams();
+                    rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    //layoutMessageContent.setBackground(getDrawable(R.drawable.ic_send_message));
+                }
 
                 messageContent.setText(model.getMessageContent());
                 messageSender.setText(model.getMessageSender());

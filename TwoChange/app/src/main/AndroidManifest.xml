@@ -27,6 +27,17 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".presentation.activity.ChatActivity"></activity>
         <activity android:name=".presentation.activity.MenuProvisionalActivity"></activity>
+
+        <service android:name=".services.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <service android:name=".services.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
