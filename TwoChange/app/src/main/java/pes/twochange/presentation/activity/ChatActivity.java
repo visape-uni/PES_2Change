@@ -24,7 +24,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Message;
+import pes.twochange.domain.model.Notification;
 import pes.twochange.services.Firebase;
+import pes.twochange.services.MyFirebaseMessagingService;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -51,6 +53,9 @@ public class ChatActivity extends AppCompatActivity {
         Log.d(TAG, userReciverUid);
         Log.d(TAG, userSenderUid);
 
+        FirebaseMessaging.getInstance()
+                .subscribeToTopic(userReciverUid);
+
 
         //Firebase database
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -69,6 +74,10 @@ public class ChatActivity extends AppCompatActivity {
                 if (!content.isEmpty()) {
                     mFirebaseChatRefSender.push().setValue(new Message(content, userSenderUid, userReciverUid));
                     mFirebaseChatRefReciver.push().setValue(new Message(content, userSenderUid, userReciverUid));
+
+                    Notification n = new Notification();
+                    n.sendNotification(userSenderUid);
+
                 }
                 messageInput.setText("");
             }
@@ -84,21 +93,22 @@ public class ChatActivity extends AppCompatActivity {
         FirebaseListAdapter<Message> adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message, mFirebaseChatRefSender) {
             @Override
             protected void populateView(View v, Message model, int position) {
-                FirebaseMessaging a = FirebaseMessaging.getInstance();
-                a.send(new RemoteMessage.Builder("Chat Message").build());
 
                 TextView messageContent, messageSender, messageTime;
                 messageContent = (TextView) v.findViewById(R.id.message_content);
                 messageSender = (TextView) v.findViewById(R.id.message_sender);
                 messageTime = (TextView) v.findViewById(R.id.message_time);
 
+                LinearLayout layoutMessageContent = (LinearLayout) v.findViewById(R.id.layout_message_content);
+                RelativeLayout.LayoutParams rl = (RelativeLayout.LayoutParams) layoutMessageContent.getLayoutParams();
                 if (model.getMessageSender().equals(userSenderUid)) {
-                    LinearLayout layoutMessageContent = (LinearLayout) v.findViewById(R.id.layout_message_content);
                     layoutMessageContent.setBackgroundResource(R.drawable.ic_send_message);
-
-                    RelativeLayout.LayoutParams rl = (RelativeLayout.LayoutParams) layoutMessageContent.getLayoutParams();
+                    rl.addRule(RelativeLayout.ALIGN_PARENT_LEFT,0);
                     rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    //layoutMessageContent.setBackground(getDrawable(R.drawable.ic_send_message));
+                } else {
+                    layoutMessageContent.setBackgroundResource(R.drawable.ic_recive_message);
+                    rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,0);
+                    rl.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                 }
 
                 messageContent.setText(model.getMessageContent());
