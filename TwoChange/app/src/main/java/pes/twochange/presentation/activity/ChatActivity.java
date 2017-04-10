@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -14,19 +13,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Message;
-import pes.twochange.domain.model.Notification;
-import pes.twochange.services.Firebase;
-import pes.twochange.services.MyFirebaseMessagingService;
+import pes.twochange.services.NotificationSender;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -53,6 +47,7 @@ public class ChatActivity extends AppCompatActivity {
         Log.d(TAG, userReciverUid);
         Log.d(TAG, userSenderUid);
 
+        //Suscribirse al topic para recibir notificaciones de chat
         FirebaseMessaging.getInstance()
                 .subscribeToTopic(userReciverUid);
 
@@ -70,16 +65,16 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick (View view) {
                 EditText messageInput = (EditText) findViewById(R.id.message_input);
                 String content = messageInput.getText().toString();
-                content.trim();
+                content = content.trim();
                 if (!content.isEmpty()) {
                     mFirebaseChatRefSender.push().setValue(new Message(content, userSenderUid, userReciverUid));
                     mFirebaseChatRefReciver.push().setValue(new Message(content, userSenderUid, userReciverUid));
 
-                    Notification n = new Notification();
+                    NotificationSender n = new NotificationSender();
                     n.sendNotification(userSenderUid);
 
+                    messageInput.setText("");
                 }
-                messageInput.setText("");
             }
         });
 
