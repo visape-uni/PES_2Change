@@ -1,6 +1,5 @@
 package pes.twochange.presentation.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,21 +28,58 @@ import pes.twochange.R;
 
 public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
+    //Attributes
     private static final String TAG = "LoginActivitiy";
     private static final int RC_SIGN_IN = 9001;
-
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
     private GoogleApiClient mGoogleApiClient;
 
+    //Constructor
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-//        Firebase.getInstance().get("users").list();
-//        Firebase.getInstance().get("users").byId("1");
-//        Firebase.getInstance().get("users").by("email", "felix@domain.com");
+        //Login button + Pressed button listener
+        Button loginBtn = (Button) findViewById(R.id.logInBtn);
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                EditText user = (EditText)findViewById(R.id.mailField);
+                EditText pass = (EditText)findViewById(R.id.passwordField);
+                String email = user.getText().toString().trim();
+                String password = pass.getText().toString().trim();
+                if (email.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Fill in the Email field", Toast.LENGTH_LONG).show();
+                } else if (!email.contains("@")) {
+                    Toast.makeText(getApplicationContext(), "Incorrect Email format", Toast.LENGTH_LONG).show();
+                } else if (password.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Fill in the password field", Toast.LENGTH_LONG).show();
+                } else {
+                    logIn(email,password);
+                }
+            }
+        });
+
+        //Google button + Pressed button listener
+        Button googleBtn = (Button)findViewById(R.id.googleBtn);
+        googleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                logInGoogle();
+            }
+        });
+
+        //New user button + Pressed button listener
+        Button newUserBtn = (Button)findViewById(R.id.newUserBtn);
+        newUserBtn.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                Intent mainMenuIntent = new Intent (getApplicationContext(), NewUserActivity.class);
+                startActivity(mainMenuIntent);
+            }
+        });
+
+        //Firebase.getInstance().get("users").list();
+        //Firebase.getInstance().get("users").byId("1");
+        //Firebase.getInstance().get("users").by("email", "felix@domain.com");
 
         //Configurar Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -78,43 +114,6 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 }
             }
         };
-
-        //Login button + Pressed button listener
-        Button loginBtn = (Button) findViewById(R.id.logInBtn);
-        loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                EditText user = (EditText)findViewById(R.id.mailField);
-                EditText pass = (EditText)findViewById(R.id.passwordField);
-                String email = user.getText().toString().trim();
-                String password = pass.getText().toString().trim();
-                if (email.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Fill in the Email field", Toast.LENGTH_LONG).show();
-                } else if (!email.contains("@")) {
-                    Toast.makeText(getApplicationContext(), "Incorrect Email format", Toast.LENGTH_LONG).show();
-                } else if (password.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Fill in the password field", Toast.LENGTH_LONG).show();
-                } else {
-                    logIn(email,password);
-                }
-            }
-        });
-
-        //Google button + Pressed button listener
-        Button googleBtn = (Button)findViewById(R.id.googleBtn);
-        googleBtn.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                logInGoogle();
-            }
-        });
-
-        //New user button + Pressed button listener
-        Button newUserBtn = (Button)findViewById(R.id.newUserBtn);
-        newUserBtn.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                Intent mainMenuIntent = new Intent (getApplicationContext(), RegisterActivity.class);
-                startActivity(mainMenuIntent);
-            }
-        });
     }
 
     @Override
