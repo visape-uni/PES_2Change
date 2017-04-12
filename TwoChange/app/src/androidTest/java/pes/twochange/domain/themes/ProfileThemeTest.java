@@ -1,14 +1,15 @@
 package pes.twochange.domain.themes;
 
-import android.util.Log;
-
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import pes.twochange.domain.Utils;
+import pes.twochange.domain.callback.ProfileResponse;
+import pes.twochange.domain.model.ModelAdapter;
 import pes.twochange.domain.model.Profile;
+import pes.twochange.services.Firebase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,29 +19,60 @@ public class ProfileThemeTest {
     private static final String LOG_TAG = "PROFILE_THEME_TEST_LOG";
     private CountDownLatch lock = new CountDownLatch(1);
     private Profile receivedProfile;
+    private Profile testingProfile;
+    private String testingId;
+
+    private String lw() {
+        return Utils.generateRandomWord(10);
+    }
+
+    private String sw() {
+        return Utils.generateRandomWord(5);
+    }
+
+    private void insertTestingProfile() {
+        testingId = Firebase.getInstance().insert(
+                "profile",
+                new ModelAdapter<Profile>() {
+                    @Override
+                    public Class classType() {
+                        return Profile.class;
+                    }
+
+                    @Override
+                    public Profile object() {
+                        return testingProfile;
+                    }
+                }
+        );
+        testingProfile.setId(testingId);
+    }
+
+    private void deleteTestingProfile() {
+        Firebase.getInstance().delete("profile", testingId);
+    }
 
     @Test
     public void getCompleteProfile() throws InterruptedException {
 
         receivedProfile = null;
 
-        String profileUId = "uid_here";
-
-        Profile expectedProfile = new Profile(
-                profileUId,
-                "Fèlix",
-                "Arribas",
-                "image_id_here",
-                new Profile.PhoneNumber(34, "605111655"),
+        testingProfile = new Profile(
+                lw(),
+                sw(),
+                sw(),
+                new Profile.PhoneNumber(34, lw()),
                 new Profile.Address(
-                        "Tulipa 11",
-                        "08193",
-                        "Bellaterra",
-                        "Barcelona",
-                        "España"
-                )
+                        sw(),
+                        sw(),
+                        sw(),
+                        sw(),
+                        sw())
         );
-        expectedProfile.setId("0");
+
+        insertTestingProfile();
+
+        String profileUId = testingProfile.getUid();
 
         new ProfileTheme().get(
                 profileUId,
@@ -59,7 +91,9 @@ public class ProfileThemeTest {
         lock.await(5, TimeUnit.SECONDS);
 
         assertNotNull("Timeout (5s) or no profile with UID = " + profileUId, receivedProfile);
-        assertEquals("Those profiles should be equal", expectedProfile.toString(), receivedProfile.toString());
+        assertEquals("Those profiles should be equal", testingProfile.toString(), receivedProfile.toString());
+
+        deleteTestingProfile();
     }
 
     @Test
@@ -67,10 +101,11 @@ public class ProfileThemeTest {
 
         receivedProfile = null;
 
-        String profileUId = "uid_there";
+        testingProfile = new Profile(lw(), sw(), null, null, null);
 
-        Profile expectedProfile = new Profile(profileUId, "Incomplete", null, null, null, null);
-        expectedProfile.setId("1");
+        insertTestingProfile();
+
+        String profileUId = testingProfile.getUid();
 
         new ProfileTheme().get(
                 profileUId,
@@ -89,8 +124,9 @@ public class ProfileThemeTest {
         lock.await(5, TimeUnit.SECONDS);
 
         assertNotNull("Timeout (5s) or no profile with UID = " + profileUId, receivedProfile);
-        Log.v(LOG_TAG, receivedProfile.getId() + "");
-        assertEquals("Those profiles should be equal", expectedProfile.toString(), receivedProfile.toString());
+        assertEquals("Those profiles should be equal", testingProfile.toString(), receivedProfile.toString());
+
+        deleteTestingProfile();
     }
 
     @Test
@@ -98,7 +134,7 @@ public class ProfileThemeTest {
 
         receivedProfile = null;
 
-        String profileUId = "there_is_no_profile_with_this_uid";
+        String profileUId = lw();
         final String[] message = new String[1];
 
         new ProfileTheme().get(
@@ -121,17 +157,13 @@ public class ProfileThemeTest {
 
         assertNotNull("Timeout (5s) or existing profile with UID = " + profileUId, receivedProfile);
         assertEquals("There is no profile with this UID", message[0], "No profile with uid = " + profileUId);
-
-
-
     }
-
 
     @Test
     public void updateNewProfile() throws InterruptedException {
 
         receivedProfile = null;
-        final String randomUID = Utils.generateRandomWord(10);
+        final String randomUID = lw();
 
         new ProfileTheme().get(
                 randomUID,
@@ -143,8 +175,11 @@ public class ProfileThemeTest {
 
                     @Override
                     public void failure(String s) {
+
                         // Tiene que fallar para asegurarnos que el perfil no existe
-                        final Profile newProfile = new Profile(randomUID, null, null, null, null, null);
+                        // Creamos el nuevo perfil
+                        final Profile newProfile = new Profile(randomUID, null, null, null, null);
+
                         new ProfileTheme(newProfile).updateProfile(
                                 new ProfileResponse() {
                                     @Override
@@ -181,15 +216,28 @@ public class ProfileThemeTest {
         assertNotNull("Timeout (5s) or new  profile was not created", receivedProfile);
         assertEquals("New profile have been inserted", randomUID, receivedProfile.getUid());
 
+        testingId = receivedProfile.getId();
+        deleteTestingProfile();
     }
 
     @Test
-    public void udpateExistingProfile() throws InterruptedException {
+    public void updateExistingProfile() throws InterruptedException {
 
         receivedProfile = null;
-        final String uid = "update_my_name_and_zipCode";
-        final String name = Utils.generateRandomWord(10);
-        final String zipCode = Utils.generateRandomWord(5);
+
+        testingProfile = new Profile(
+                lw(),
+                sw(),
+                null,
+                null,
+                new Profile.Address(sw(), null, null, null, null)
+        );
+
+        insertTestingProfile();
+
+        final String uid = testingProfile.getUid();
+        final String name = sw();
+        final String zipCode = sw();
 
         new ProfileTheme().get(
                 uid,
@@ -236,11 +284,53 @@ public class ProfileThemeTest {
         );
 
         lock.await(5, TimeUnit.SECONDS);
-        assertNotNull("Timeout (5s) or new  profile was not updated", receivedProfile);
+        assertNotNull("Timeout (5s) or new profile was not updated", receivedProfile);
         assertEquals("Name updated", name, receivedProfile.getName());
         assertEquals("Zip Code updated", zipCode, receivedProfile.getAddress().getZipCode());
 
+        deleteTestingProfile();
     }
 
+/*
+    @Test
+    public void updateImage() throws InterruptedException {
+        final byte[][] receivedBitmap = {null};
+        Bitmap image = Bitmap.createBitmap(100, 100, Bitmap.Config.RGB_565);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] arrayBitmap = baos.toByteArray();
+
+        new ProfileTheme().updateImage("image_test_id", image, new ImageResponse() {
+            @Override
+            public void success(Bitmap bitmap) {
+                new ProfileTheme().getImage(
+                        "image_test_id",
+                        new ImageResponse() {
+                            @Override
+                            public void success(Bitmap bitmap) {
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                receivedBitmap[0] = baos.toByteArray();
+                            }
+
+                            @Override
+                            public void failure(String s) {
+                            }
+                        }
+
+                );
+            }
+
+            @Override
+            public void failure(String s) {
+
+            }
+        });
+
+        lock.await(10, TimeUnit.SECONDS);
+        assertNotNull("Timeout (10s) or cannot upload the new image", receivedBitmap[0]);
+        assertEquals("Same image", arrayBitmap, receivedBitmap[0]);
+    }
+*/
 
 }

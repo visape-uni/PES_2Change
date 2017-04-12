@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 
+import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.ModelAdapter;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.services.DatabaseResponse;
@@ -20,6 +21,61 @@ public class ProfileTheme implements ModelAdapter<Profile> {
     public ProfileTheme() {
     }
 
+    /*
+    public void updateImage(final String id, final Bitmap image, final ImageResponse imageResponse) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReferenceFromUrl("gs://change-64bd0.appspot.com/");
+        final StorageReference reference = storageReference.child("profile/" + id + ".jpg");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = reference.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                imageResponse.failure(e.getMessage());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                imageResponse.success(image);
+            }
+        });
+    }
+
+    public void getImage(String id, final ImageResponse imageResponse) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReferenceFromUrl("gs://change-64bd0.appspot.com/");
+        final StorageReference reference = storageReference.child("profile/" + id + ".jpg");
+
+        reference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+            @Override
+            public void onSuccess(StorageMetadata storageMetadata) {
+                long size = storageMetadata.getSizeBytes();
+                reference.getBytes(size).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        imageResponse.success(image);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        imageResponse.failure(e.getMessage());
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                imageResponse.failure(e.getMessage());
+            }
+        });
+    }
+    */
+
+
     public void updateProfile(final ProfileResponse profileResponse) {
 
         Firebase.getInstance().get(
@@ -33,7 +89,8 @@ public class ProfileTheme implements ModelAdapter<Profile> {
 
                     @Override
                     public void empty() {
-                        insert();
+                        String id = insert();
+                        profile.setId(id);
                         profileResponse.success(profile);
                     }
 
@@ -45,8 +102,8 @@ public class ProfileTheme implements ModelAdapter<Profile> {
         ).by("uid", profile.getUid());
     }
 
-    private void insert() {
-        Firebase.getInstance().insert("profile", this);
+    private String insert() {
+        return Firebase.getInstance().insert("profile", this);
     }
 
     private void update() {

@@ -5,18 +5,16 @@ public class Profile extends Model {
     private String uid;
     private String name;
     private String surname;
-    private String image;
     private PhoneNumber phoneNumber;
     private Address address;
 
     public Profile() {
     }
 
-    public Profile(String uid, String name, String surname, String image, PhoneNumber phoneNumber, Address address) {
+    public Profile(String uid, String name, String surname, PhoneNumber phoneNumber, Address address) {
         this.uid = uid;
         this.name = name;
         this.surname = surname;
-        this.image = image;
         this.phoneNumber = phoneNumber;
         this.address = address;
     }
@@ -43,14 +41,6 @@ public class Profile extends Model {
 
     public void setSurname(String surname) {
         this.surname = surname;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public PhoneNumber getPhoneNumber() {
@@ -166,7 +156,7 @@ public class Profile extends Model {
 
         @Override
         public String toString() {
-            return "(+" + suffix + ")" + number;
+            return "(+" + suffix + ") " + number;
         }
     }
 
@@ -179,10 +169,13 @@ public class Profile extends Model {
                 ", uid='" + uid + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", image='" + image + '\'' +
                 ", phoneNumber='" + phoneNumberString + '\'' +
                 ", address='" + addressString + '\'' +
                 '}';
+    }
+
+    public String getFullName() {
+        return name + " " + surname;
     }
 }
 
