@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -23,10 +22,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-
 import pes.twochange.R;
 
-public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     //Attributes
     private static final String TAG = "LoginActivitiy";
@@ -39,6 +37,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mAuth = FirebaseAuth.getInstance();
 
         //Login button + Pressed button listener
         Button loginBtn = (Button) findViewById(R.id.logInBtn);
@@ -88,9 +87,6 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        //FIREBASE AUTH
-        mAuth = FirebaseAuth.getInstance();
-
         //Mirar si ya esta logeado
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -99,9 +95,9 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 if (user != null) {
                     //Logeado
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getDisplayName());
-
-                    Intent mainMenuIntent = new Intent (getApplicationContext(), MenuProvisionalActivity.class);
-                    startActivity(mainMenuIntent);
+                    Intent newMainMenu = new Intent (getApplicationContext(), MainMenuActivity.class);
+                    newMainMenu.putExtra("currentUserUID", mAuth.getCurrentUser().getUid());
+                    startActivity(newMainMenu);
                     finish();
                 } else {
                     //No logeado
@@ -127,7 +123,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
     }
 
     private void logIn(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivtiy.this, new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
@@ -147,13 +143,13 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
 
     public void onActivityResult (int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 //Logeado
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
+                //TODO: Crear Profile quan el login es amb google
             } else {
                 //Login failed
                 Log.e(TAG, "Google Sign-In failed");
@@ -163,29 +159,23 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
 
     private void firebaseAuthWithGoogle (GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-
-        //Mostrar pantalla de loading???
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential:failed", task.getException());
-                            Toast.makeText(LoginActivtiy.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         } else {
-                            startActivity(new Intent(LoginActivtiy.this, MenuProvisionalActivity.class));
+                            Intent newMainMenu = new Intent (getApplicationContext(), MainMenuActivity.class);
+                            newMainMenu.putExtra("currentUserUID", mAuth.getCurrentUser().getUid());
+                            startActivity(newMainMenu);
                             finish();
                         }
-
-                        //Esconder pantalla de loading???
-
                     }
                 });
-
     }
 
     public void onConnectionFailed (@NonNull ConnectionResult connectionResult) {

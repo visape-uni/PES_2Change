@@ -1,9 +1,7 @@
 package pes.twochange.domain.themes;
 
 import android.util.Log;
-
 import com.google.firebase.database.DataSnapshot;
-
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.ModelAdapter;
 import pes.twochange.domain.model.Profile;

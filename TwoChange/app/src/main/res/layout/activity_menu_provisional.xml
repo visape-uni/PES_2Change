@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="pes.twochange.presentation.activity.MenuProvisionalActivity">
+    tools:context="pes.twochange.presentation.activity.MainMenuActivity">
 
     <Button
         android:id="@+id/viewProfileBtn"
@@ -12,12 +12,12 @@
         android:layout_height="52dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="25dp"
         android:text="View Profile"
         app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addPostBtn" />
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/searchUserBtn" />
 
     <Button
         android:id="@+id/searchUserBtn"
@@ -25,12 +25,12 @@
         android:layout_height="52dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="25dp"
         android:text="Search User"
         app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewProfileBtn" />
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/logOutBtn" />
 
     <Button
         android:id="@+id/addPostBtn"
@@ -38,12 +38,12 @@
         android:layout_height="52dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="25dp"
         android:text="Add Post"
         app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/openChatBtn" />
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/viewProfileBtn" />
 
     <Button
         android:id="@+id/openChatBtn"
@@ -51,33 +51,60 @@
         android:layout_height="52dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="25dp"
         android:text="Open Chat"
         app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/showChatsBtn" />
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/addPostBtn" />
 
     <Button
         android:id="@+id/showChatsBtn"
         android:layout_width="351dp"
         android:layout_height="52dp"
-        android:layout_marginTop="25dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:text="Show Active Chats"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"
-        tools:layout_editor_absoluteY="16dp" />
+        app:layout_constraintHorizontal_bias="0.529"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/openChatBtn" />
 
     <Button
         android:id="@+id/logOutBtn"
         android:layout_width="351dp"
         android:layout_height="52dp"
         android:text="LogOut"
-        android:layout_marginTop="25dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchUserBtn"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.515"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="345dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="CURRENT USER:"
+        app:layout_constraintBottom_toTopOf="@+id/uidLbl"
+        app:layout_constraintHorizontal_bias="0.521"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/uidLbl"
+        android:layout_width="345dp"
+        android:layout_height="57dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/showChatsBtn"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
 </android.support.constraint.ConstraintLayout>

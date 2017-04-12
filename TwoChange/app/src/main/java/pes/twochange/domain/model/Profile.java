@@ -174,7 +174,7 @@ public class Profile extends Model {
                 '}';
     }
 
-    public String getFullName() {
+    public String obtenirFullName() {
         return name + " " + surname;
     }
 }

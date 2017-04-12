@@ -7,23 +7,27 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import pes.twochange.R;
 
-public class MenuProvisionalActivity extends AppCompatActivity {
+public class MainMenuActivity extends AppCompatActivity {
 
     private static final String TAG = "MenuActivitiy";
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    String currentUser = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_provisional);
+
+        currentUser = getIntent().getStringExtra("currentUserUID");
+        TextView uidLbl = (TextView)findViewById(R.id.uidLbl);
+        uidLbl.setText(currentUser);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -31,9 +35,7 @@ public class MenuProvisionalActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-
-                } else {
+                if (user == null) {
                     //No logeado
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                     finish();
@@ -88,7 +90,7 @@ public class MenuProvisionalActivity extends AppCompatActivity {
                 Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
                 FirebaseAuth.getInstance().signOut();
                 Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
-                startActivity(new Intent(MenuProvisionalActivity.this, LoginActivtiy.class));
+                startActivity(new Intent(MainMenuActivity.this, LoginActivity.class));
             }
         });
     }

@@ -14,12 +14,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import pes.twochange.R;
+import pes.twochange.domain.model.Profile;
 
 public class NewProfileActivity extends AppCompatActivity {
     //Attributes
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private static final String TAG = "NewProfileActivity";
 
     //Constructor
@@ -28,63 +31,84 @@ public class NewProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_profile);
 
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {}
-        };
-
         //Next Step button + Pressed button listener
         Button nextBtn = (Button)findViewById(R.id.FinishBtn);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Intent thisIntent = getIntent();
-                String mail = thisIntent.getStringExtra("mail");
-                String pass = thisIntent.getStringExtra("password");
                 EditText nameText = (EditText)findViewById(R.id.nameField);
                 EditText surnameText = (EditText)findViewById(R.id.surnameField);
-                EditText phoneText = (EditText)findViewById(R.id.phoneField);
-                EditText addressText = (EditText)findViewById(R.id.addressField);
-                EditText cityText = (EditText)findViewById(R.id.cityField);
-                String name = nameText.getText().toString().trim();
-                String surname = surnameText.getText().toString().trim();
-                String phone = phoneText.getText().toString().trim();
-                String addressStr = addressText.getText().toString().trim();
-                String city = cityText.getText().toString().trim();
+                final String name = nameText.getText().toString().trim();
+                final String surname = surnameText.getText().toString().trim();
+                //Nomes obligatori posar el nom per tenir la mateixa info que amb el login de Google
                 if (name.isEmpty() || nameText.getText() == null) {
                     Context context = getApplicationContext();
                     Toast.makeText(context, "Fill in the Name field", Toast.LENGTH_LONG).show();
                 } else if (surname.isEmpty() || surnameText.getText() == null) {
                     Context context = getApplicationContext();
                     Toast.makeText(context, "Fill in the Surname field", Toast.LENGTH_LONG).show();
-                } else if (phone.isEmpty() || phoneText.getText() == null) {
-                    Context context = getApplicationContext();
-                    Toast.makeText(context, "Fill in the Phone field", Toast.LENGTH_LONG).show();
-                } else if (addressStr.isEmpty() || addressText.getText() == null) {
-                    Context context = getApplicationContext();
-                    Toast.makeText(context, "Fill in the Address field", Toast.LENGTH_LONG).show();
-                }else if (city.isEmpty() || cityText.getText() == null) {
-                    Context context = getApplicationContext();
-                    Toast.makeText(context, "Fill in the City field", Toast.LENGTH_LONG).show();
                 } else {
+                    EditText phoneText = (EditText)findViewById(R.id.phoneField);
+                    EditText addressText = (EditText)findViewById(R.id.addressField);
+                    EditText cityText = (EditText)findViewById(R.id.cityField);
+                    EditText zipText = (EditText)findViewById(R.id.zipField);
+                    EditText stateText = (EditText)findViewById(R.id.stateField);
+                    EditText countryText = (EditText)findViewById(R.id.countryField);
+                    Intent thisIntent = getIntent();
+                    final String mail = thisIntent.getStringExtra("mail");
+                    final String pass = thisIntent.getStringExtra("password");
+                    final String phone = phoneText.getText().toString().trim();
+                    final String addressStr = addressText.getText().toString().trim();
+                    final String city = cityText.getText().toString().trim();
+                    final String zip = zipText.getText().toString().trim();
+                    final String state = stateText.getText().toString().trim();
+                    final String country = countryText.getText().toString().trim();
                     //Add this new user & profile to Firebase
-                    //TODO: Afegir el profile
+                    mAuth = FirebaseAuth.getInstance();
                     mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(NewProfileActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
                             if (task.isSuccessful()) {
+                                logIn(mail, pass);
+                                //Creem la instancia de Profile a partir dels strings
+                                String uid = mAuth.getCurrentUser().getUid();
+                                Profile.Address ad = new Profile.Address(addressStr, zip, city, state, country);
+                                //TODO: Sufix
+                                Profile.PhoneNumber ph = new Profile.PhoneNumber(34, phone);
+                                Profile prof = new Profile(uid, name, surname, ph, ad);
+                                //Obtenim la referencia a firebase per poder escriure a la nostra BD
+                                DatabaseReference myDatabase;
+                                myDatabase = FirebaseDatabase.getInstance().getReference();
+                                //Afegim el nou profile a la BD (PK -> uid)
+                                myDatabase.child("profile").child(uid).setValue(prof);
+                                //Tanquem aquesta activity i anem al Main Menu
                                 Context context = getApplicationContext();
                                 Toast.makeText(context, "User successfully created", Toast.LENGTH_LONG).show();
-                                Intent newMainMenu = new Intent(context, MenuProvisionalActivity.class);
-                                startActivity(newMainMenu);
+                                Intent mainMenu = new Intent(getApplicationContext(), MainMenuActivity.class);
+                                mainMenu.putExtra("currentUserUID", uid);
+                                startActivity(mainMenu);
                                 finish();
                             } else if (!task.isComplete()) {
-                                Toast.makeText(NewProfileActivity.this, "Error",
-                                        Toast.LENGTH_LONG).show();
+                                Toast.makeText(NewProfileActivity.this, "Error creating user",
+                                Toast.LENGTH_LONG).show();
                             }
                         }
                     });
+                }
+
+            }
+        });
+    }
+
+    private void logIn(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(NewProfileActivity.this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "signInWithEmail:success");
+                } else {
+                    Log.w(TAG, "signInWithEmail:failed", task.getException());
+                    Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
