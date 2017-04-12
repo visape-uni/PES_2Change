@@ -41,9 +41,9 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-//        Firebase.getInstance().get("users").list();
-//        Firebase.getInstance().get("users").byId("1");
-//        Firebase.getInstance().get("users").by("email", "felix@domain.com");
+        startActivity(new Intent(this, ProfileActivity.class));
+        finish();
+
 
         //Configurar Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -113,6 +113,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 startActivity(mainMenuIntent);
             }
         });
+
     }
 
     @Override
