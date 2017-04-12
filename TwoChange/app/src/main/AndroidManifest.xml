@@ -20,12 +20,14 @@
             </intent-filter>
         </activity>
         <activity android:name=".presentation.activity.zWorking" />
-        <activity android:name=".presentation.activity.RegisterActivity" />
+        <activity android:name=".presentation.activity.NewUserActivity" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".presentation.activity.ProfileActivity"></activity>
+        <activity android:name=".presentation.activity.ProfileActivity" />
+        <activity android:name=".presentation.activity.MenuProvisionalActivity" />
+        <activity android:name=".presentation.activity.NewProfileActivity" />
     </application>
 
 </manifest>

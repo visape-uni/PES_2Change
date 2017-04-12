@@ -18,63 +18,7 @@ public class ProfileTheme implements ModelAdapter<Profile> {
         this.profile = profile;
     }
 
-    public ProfileTheme() {
-    }
-
-    /*
-    public void updateImage(final String id, final Bitmap image, final ImageResponse imageResponse) {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReferenceFromUrl("gs://change-64bd0.appspot.com/");
-        final StorageReference reference = storageReference.child("profile/" + id + ".jpg");
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
-        UploadTask uploadTask = reference.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                imageResponse.failure(e.getMessage());
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                imageResponse.success(image);
-            }
-        });
-    }
-
-    public void getImage(String id, final ImageResponse imageResponse) {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReferenceFromUrl("gs://change-64bd0.appspot.com/");
-        final StorageReference reference = storageReference.child("profile/" + id + ".jpg");
-
-        reference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
-            @Override
-            public void onSuccess(StorageMetadata storageMetadata) {
-                long size = storageMetadata.getSizeBytes();
-                reference.getBytes(size).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        imageResponse.success(image);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        imageResponse.failure(e.getMessage());
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                imageResponse.failure(e.getMessage());
-            }
-        });
-    }
-    */
-
+    public ProfileTheme() {}
 
     public void updateProfile(final ProfileResponse profileResponse) {
 
@@ -148,4 +92,58 @@ public class ProfileTheme implements ModelAdapter<Profile> {
         profile.setId(null);
         return result;
     }
+
+    /*
+    public void updateImage(final String id, final Bitmap image, final ImageResponse imageResponse) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReferenceFromUrl("gs://change-64bd0.appspot.com/");
+        final StorageReference reference = storageReference.child("profile/" + id + ".jpg");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = reference.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                imageResponse.failure(e.getMessage());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                imageResponse.success(image);
+            }
+        });
+    }
+
+    public void getImage(String id, final ImageResponse imageResponse) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReferenceFromUrl("gs://change-64bd0.appspot.com/");
+        final StorageReference reference = storageReference.child("profile/" + id + ".jpg");
+
+        reference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+            @Override
+            public void onSuccess(StorageMetadata storageMetadata) {
+                long size = storageMetadata.getSizeBytes();
+                reference.getBytes(size).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        imageResponse.success(image);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        imageResponse.failure(e.getMessage());
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                imageResponse.failure(e.getMessage());
+            }
+        });
+    }
+    */
 }

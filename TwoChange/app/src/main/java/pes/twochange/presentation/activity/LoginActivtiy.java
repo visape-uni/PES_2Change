@@ -1,6 +1,5 @@
 package pes.twochange.presentation.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,54 +28,17 @@ import pes.twochange.R;
 
 public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = "LoginActivtiy";
+    //Attributes
+    private static final String TAG = "LoginActivitiy";
     private static final int RC_SIGN_IN = 9001;
-
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
     private GoogleApiClient mGoogleApiClient;
 
+    //Constructor
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        startActivity(new Intent(this, ProfileActivity.class));
-        finish();
-
-
-        //Configurar Google Sign In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        Log.d(TAG, getString(R.string.default_web_client_id));
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
-        //FIREBASE
-        mAuth = FirebaseAuth.getInstance();
-
-        //Mirar si ya esta logeado
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    //Logeado
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-
-                    Intent mainMenuIntent = new Intent (getApplicationContext(), zWorking.class);
-                    startActivity(mainMenuIntent);
-                } else {
-                    //No logeado
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-            }
-        };
 
         //Login button + Pressed button listener
         Button loginBtn = (Button) findViewById(R.id.logInBtn);
@@ -93,6 +55,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 } else if (password.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Fill in the password field", Toast.LENGTH_LONG).show();
                 } else {
+                    logIn(email,password);
                 }
             }
         });
@@ -109,11 +72,44 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
         Button newUserBtn = (Button)findViewById(R.id.newUserBtn);
         newUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Intent mainMenuIntent = new Intent (getApplicationContext(), RegisterActivity.class);
+                Intent mainMenuIntent = new Intent (getApplicationContext(), NewUserActivity.class);
                 startActivity(mainMenuIntent);
             }
         });
 
+        //Configurar Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        //FIREBASE AUTH
+        mAuth = FirebaseAuth.getInstance();
+
+        //Mirar si ya esta logeado
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    //Logeado
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getDisplayName());
+
+                    Intent mainMenuIntent = new Intent (getApplicationContext(), MenuProvisionalActivity.class);
+                    startActivity(mainMenuIntent);
+                    finish();
+                } else {
+                    //No logeado
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    //Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                }
+            }
+        };
     }
 
     @Override
@@ -128,6 +124,20 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    private void logIn(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivtiy.this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "signInWithEmail:success");
+                } else {
+                    Log.w(TAG, "signInWithEmail:failed", task.getException());
+                    Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void logInGoogle() {
@@ -146,6 +156,7 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
                 firebaseAuthWithGoogle(account);
             } else {
                 //Login failed
+                Log.e(TAG, "Google Sign-In failed");
             }
         }
     }
@@ -164,8 +175,10 @@ public class LoginActivtiy extends AppCompatActivity implements GoogleApiClient.
 
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential:failed", task.getException());
-                            Context context = getApplicationContext();
-                            Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivtiy.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        } else {
+                            startActivity(new Intent(LoginActivtiy.this, MenuProvisionalActivity.class));
+                            finish();
                         }
 
                         //Esconder pantalla de loading???
