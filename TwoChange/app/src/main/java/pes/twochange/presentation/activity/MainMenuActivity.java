@@ -79,7 +79,8 @@ public class MainMenuActivity extends AppCompatActivity {
         Button searchUserBtn = (Button)findViewById(R.id.searchUserBtn);
         searchUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "GUILLE CONECTATE AQUI", Toast.LENGTH_LONG).show();
+                Intent searchProfile = new Intent(getApplicationContext(), SearchProfileActivity.class);
+                startActivity(searchProfile);
             }
         });
 
