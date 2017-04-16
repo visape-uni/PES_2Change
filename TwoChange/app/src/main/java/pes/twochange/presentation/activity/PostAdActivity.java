@@ -1,5 +1,6 @@
 package pes.twochange.presentation.activity;
 
+import android.Manifest;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,29 +9,38 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
+
 import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Image;
 
 public class PostAdActivity extends AppCompatActivity implements ImagePickDialog.ImagePickListener {
 
     private static final String LOG_TAG = "PostAdActivity";
 
-    private static final String CAMERA_SAVE_LOCATION =
-            Environment.getExternalStorageDirectory().getAbsolutePath() + "/2change/images";
+    private static final File CAMERA_SAVE_LOCATION =
+            new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/2change/images");
 
     // Do not change these. They are 0, 1, 2 and 3 for convenience.
     private static final int IMAGE_PICK_CODE_1 = 0;
     private static final int IMAGE_PICK_CODE_2 = 1;
     private static final int IMAGE_PICK_CODE_3 = 2;
     private static final int IMAGE_PICK_CODE_4 = 3;
+
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 400;
 
     private EditText titleTxt, descriptionTxt, yearTxt, priceTxt;
     private Spinner stateSpn;
@@ -44,6 +54,15 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         setContentView(R.layout.activity_post_ad);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if (!CAMERA_SAVE_LOCATION.exists()) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_EXTERNAL_STORAGE);
+            if (!CAMERA_SAVE_LOCATION.mkdirs()) {
+                Log.e(LOG_TAG, "Unable to create directory: " + CAMERA_SAVE_LOCATION.toString());
+            }
+        }
 
         ad = new Ad();
 
@@ -69,13 +88,23 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 case IMAGE_PICK_CODE_2:
                 case IMAGE_PICK_CODE_3:
                 case IMAGE_PICK_CODE_4:
-                    Uri selectedImage = intent.getData();
-                    ad.setImageAt(requestCode, selectedImage);
+                    Image selectedImage = ad.getImageAt(requestCode);
+                    if (selectedImage == null) {
+                        selectedImage = new Image(this, intent.getData());
+                        ad.setImageAt(requestCode, selectedImage);
+                    }
+
+                    try {
+                        ContentUris.parseId(selectedImage.getUri());
+                    } catch (NumberFormatException e) { //  /path/to/image.jpg
+                        //selectedImage.setUri(Uri.parse(selectedImage.getUri().toString()));
+                        selectedImage.setUri(Uri.parse(CAMERA_SAVE_LOCATION.toString() + "/20170415_175859-1148825809.jpg"));
+                    }
 
                     Bitmap thumbnail =
                         MediaStore.Images.Thumbnails.getThumbnail
                             (
-                                getContentResolver(), ContentUris.parseId(selectedImage),
+                                getContentResolver(), ContentUris.parseId(selectedImage.getUri()),
                                 MediaStore.Images.Thumbnails.MICRO_KIND, null
                             );
 
@@ -91,6 +120,14 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                         button.setImageBitmap(thumbnail);
                         button.setColorFilter(Color.argb(0, 0, 0, 0));
                     }
+                    break;
+            }
+        } else if (resultCode == RESULT_CANCELED) {
+            switch (requestCode) {
+                case IMAGE_PICK_CODE_1:
+                case IMAGE_PICK_CODE_2:
+                case IMAGE_PICK_CODE_3:
+                case IMAGE_PICK_CODE_4:
                     break;
             }
         }
@@ -118,7 +155,20 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 break;
             case CAMERA:
-                pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                try {
+                    File photo = File.createTempFile(Image.generateName(), ".jpg", CAMERA_SAVE_LOCATION);
+                    Uri photoURI = FileProvider.getUriForFile(this,
+                            "com.twochange.fileprovider",
+                            photo);
+
+                    ad.setImageAt(imageButtonTag, new Image(this, photoURI));
+
+                    pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    pickImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
         int code = -1;
         switch (imageButtonTag) {

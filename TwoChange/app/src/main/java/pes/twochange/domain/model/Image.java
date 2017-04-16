@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by kredes on 15/04/2017.
@@ -24,7 +26,7 @@ public class Image {
          --------------
      */
     public Image(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         id = null;
         uri = null;
     }
@@ -36,13 +38,13 @@ public class Image {
 
     public Image(Context context, Uri uri) {
         this(context);
-        this.uri = uri;
+        setUri(uri);
     }
 
     public Image(Context context, String id, Uri uri) {
         this(context);
         this.id = id;
-        this.uri = uri;
+        setUri(uri);
     }
 
 
@@ -65,6 +67,17 @@ public class Image {
 
     public void setUri(Uri uri) {
         this.uri = uri;
+        /*
+        try {
+            ContentUris.parseId(uri);
+            this.uri = uri;
+        } catch (NumberFormatException e) { //  /path/to/image.jpg
+            String uriStr = uri.toString().split("fileprovider")[1];
+            this.uri = Uri.parse(
+                    Environment.getExternalStorageDirectory().getAbsolutePath() + uriStr
+            );
+        }
+        */
     }
 
 
@@ -80,5 +93,10 @@ public class Image {
             // Get it from Firebase
         }
         return null;
+    }
+
+    public static String generateName() {
+        String date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+        return date;
     }
 }

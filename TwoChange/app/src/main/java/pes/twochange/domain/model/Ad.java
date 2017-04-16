@@ -1,7 +1,5 @@
 package pes.twochange.domain.model;
 
-import android.net.Uri;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +47,7 @@ public class Ad extends Model {
     private int rating;
     private String status;
 
-    private List<Uri> imageUris;
-    private List<String> imageIds;
+    private List<Image> images;
 
     private List<String> wants;
 
@@ -61,14 +58,12 @@ public class Ad extends Model {
          --------------
      */
     public Ad() {
-        rating = 100;
-        imageUris = new ArrayList<>(MAX_IMAGES);
+        rating = 0;
+        images = new ArrayList<>(MAX_IMAGES);
         wants = new ArrayList<>();
-        imageIds = new ArrayList<>(MAX_IMAGES);
 
         for (int i = 0; i < MAX_IMAGES; ++i) {
-            imageIds.add(i, null);
-            imageUris.add(i, null);
+            images.add(i, null);
         }
     }
 
@@ -105,12 +100,20 @@ public class Ad extends Model {
         this.description = description;
     }
 
-    public List<Uri> getImageUris() {
-        return imageUris;
+    public List<Image> getImages() {
+        return images;
     }
-    public void setImageAt(int index, Uri image) {
+    public void setImageAt(int index, Image image) {
         if (index < 0 || index > MAX_IMAGES - 1) throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-        imageUris.add(index, image);
+        images.set(index, image);
+    }
+    public void removeImageAt(int index) {
+        if (index < 0 || index > MAX_IMAGES - 1) throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
+        images.set(index, null);
+    }
+    public Image getImageAt(int index) {
+        if (index < 0 || index > MAX_IMAGES - 1) throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
+        return images.get(index);
     }
 
     public BigDecimal getPrice() { return price; };
