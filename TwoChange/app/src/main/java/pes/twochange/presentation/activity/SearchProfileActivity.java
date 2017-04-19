@@ -40,19 +40,8 @@ public class SearchProfileActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1, profilesArray);
         profilesView.setAdapter(profilesAdapter);
         //
-        /*DatabaseReference myDatabase;
-        myDatabase = FirebaseDatabase.getInstance().getReference();
-        myDatabase.child("change-64bd0/profile/XTaOaXFHRCgqWTsoTWgJ0BGsGj32").child("name").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String prof = dataSnapshot.getValue(String.class);
-                profilesArray.add(prof);
-                profilesAdapter.notifyDataSetChanged();
-                Log.d("HOLAAAAAA", prof);
-            }
+        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference mFirebaseChatRefSender = mFirebaseDatabase.getReference().child("profiles");
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });*/
     }
 }

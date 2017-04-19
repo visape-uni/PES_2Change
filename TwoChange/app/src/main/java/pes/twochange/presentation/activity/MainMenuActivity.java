@@ -25,7 +25,7 @@ public class MainMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_provisional);
 
-        currentUser = getIntent().getStringExtra("currentUserUID");
+        currentUser = getIntent().getStringExtra("currentUserName");
         TextView uidLbl = (TextView)findViewById(R.id.uidLbl);
         uidLbl.setText(currentUser);
 
