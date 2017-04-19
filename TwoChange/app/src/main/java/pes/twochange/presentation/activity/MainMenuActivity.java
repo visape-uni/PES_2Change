@@ -48,6 +48,13 @@ public class MainMenuActivity extends AppCompatActivity {
         showChatsBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "ADRI CONECTATE AQUI", Toast.LENGTH_LONG).show();
+                Intent showChats = new Intent(getApplicationContext(), RecyclerChatActivity.class);
+                startActivity(showChats);
+                /*RecyclerChatFragment fragment = new RecyclerChatFragment();
+                android.support.v4.app.FragmentTransaction fragmentTransaction =
+                        getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, fragment);
+                fragmentTransaction.commit();*/
             }
         });
 

@@ -28,7 +28,8 @@
         <activity android:name=".presentation.activity.ProfileActivity" />
         <activity android:name=".presentation.activity.MainMenuActivity" />
         <activity android:name=".presentation.activity.NewProfileActivity" />
-        <activity android:name=".presentation.activity.SearchProfileActivity"></activity>
+        <activity android:name=".presentation.activity.SearchProfileActivity"/>
+        <activity android:name=".presentation.activity.RecyclerChatActivity"></activity>
     </application>
 
 </manifest>
