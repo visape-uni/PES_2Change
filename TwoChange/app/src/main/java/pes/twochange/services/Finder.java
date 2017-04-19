@@ -6,6 +6,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.NoSuchElementException;
+
 public class Finder {
 
     private DatabaseReference ref;
@@ -37,9 +39,9 @@ public class Finder {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            if (ds.getKey().equals(id)) {
-                                responseResult(ds);
+                        for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                            if (childSnapshot.getKey().equals(id)) {
+                                responseResult(childSnapshot);
                                 return;
                             }
                         }
@@ -55,12 +57,16 @@ public class Finder {
     }
 
     public void by(String key, String value) {
-        Query queryReference = ref.orderByChild(key).startAt(value).limitToFirst(1);
-        queryReference.addValueEventListener(
+        Query queryReference = ref.orderByChild(key).equalTo(value);
+        queryReference.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        responseResult(dataSnapshot);
+                        try {
+                            responseResult(dataSnapshot.getChildren().iterator().next());
+                        } catch (NoSuchElementException exception) {
+                            responseResult(null);
+                        }
                     }
 
                     @Override

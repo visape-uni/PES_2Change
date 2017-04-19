@@ -16,8 +16,8 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import pes.twochange.R;
-import pes.twochange.presentation.activity.LoginActivtiy;
-import pes.twochange.presentation.activity.MenuProvisionalActivity;
+import pes.twochange.presentation.activity.LoginActivity;
+import pes.twochange.presentation.activity.MainMenuActivity;
 
 /**
  * Created by Victor on 10/04/2017.
@@ -33,7 +33,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void showNotification() {
-        Intent i = new Intent(this, MenuProvisionalActivity.class);
+        Intent i = new Intent(this, MainMenuActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);

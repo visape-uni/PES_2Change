@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/PrimaryBackgroundColor">
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="pes.twochange.presentation.activity.NewProfileActivity">
+
+        <TextView
+            android:id="@+id/nameLbl"
+            android:layout_width="339dp"
+            android:layout_height="21dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Name: *"
+            android:textSize="18sp"
+            app:layout_constraintHorizontal_bias="0.538"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/nameField"
+            android:layout_width="339dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintHorizontal_bias="0.518"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameLbl"
+            tools:layout_editor_absoluteY="43dp" />
+
+        <TextView
+            android:id="@+id/surnameLbl"
+            android:layout_width="339dp"
+            android:layout_height="21dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="Surname: *"
+            android:textSize="18sp"
+            app:layout_constraintHorizontal_bias="0.538"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="45dp"
+            app:layout_constraintTop_toBottomOf="@+id/nameField" />
+
+        <EditText
+            android:id="@+id/surnameField"
+            android:layout_width="339dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintHorizontal_bias="0.517"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/surnameLbl" />
+
+        <TextView
+            android:id="@+id/phoneLbl"
+            android:layout_width="339dp"
+            android:layout_height="21dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="Phone Number:"
+            android:textSize="18sp"
+            app:layout_constraintHorizontal_bias="0.538"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="45dp"
+            app:layout_constraintTop_toBottomOf="@+id/surnameField" />
+
+        <EditText
+            android:id="@+id/phoneField"
+            android:layout_width="339dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:ems="10"
+            android:inputType="phone"
+            android:text=""
+            app:layout_constraintHorizontal_bias="0.517"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/phoneLbl" />
+
+        <TextView
+            android:id="@+id/addressLbl"
+            android:layout_width="339dp"
+            android:layout_height="21dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="Address:"
+            android:textSize="18sp"
+            app:layout_constraintHorizontal_bias="0.538"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="45dp"
+            app:layout_constraintTop_toBottomOf="@+id/phoneField" />
+
+        <EditText
+            android:id="@+id/addressField"
+            android:layout_width="339dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintHorizontal_bias="0.517"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/addressLbl" />
+
+        <TextView
+            android:id="@+id/zipLbl"
+            android:layout_width="339dp"
+            android:layout_height="21dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="Zip Code:"
+            android:textSize="18sp"
+            app:layout_constraintHorizontal_bias="0.538"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="45dp"
+            app:layout_constraintTop_toBottomOf="@+id/addressField" />
+
+        <EditText
+            android:id="@+id/zipField"
+            android:layout_width="339dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintHorizontal_bias="0.517"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/zipLbl" />
+
+        <TextView
+            android:id="@+id/cityLbl"
+            android:layout_width="339dp"
+            android:layout_height="21dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="City:"
+            android:textSize="18sp"
+            app:layout_constraintHorizontal_bias="0.538"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="45dp"
+            app:layout_constraintTop_toBottomOf="@+id/zipField" />
+
+        <EditText
+            android:id="@+id/cityField"
+            android:layout_width="339dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintHorizontal_bias="0.517"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/cityLbl" />
+
+        <TextView
+            android:id="@+id/stateLbl"
+            android:layout_width="339dp"
+            android:layout_height="21dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="State/Province:"
+            android:textSize="18sp"
+            app:layout_constraintHorizontal_bias="0.538"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="45dp"
+            app:layout_constraintTop_toBottomOf="@+id/cityField" />
+
+        <EditText
+            android:id="@+id/stateField"
+            android:layout_width="339dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintHorizontal_bias="0.517"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/stateLbl" />
+
+        <TextView
+            android:id="@+id/countryLbl"
+            android:layout_width="339dp"
+            android:layout_height="21dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="Country:"
+            android:textSize="18sp"
+            app:layout_constraintHorizontal_bias="0.538"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="45dp"
+            app:layout_constraintTop_toBottomOf="@+id/stateField" />
+
+        <EditText
+            android:id="@+id/countryField"
+            android:layout_width="339dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            app:layout_constraintHorizontal_bias="0.517"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/countryLbl" />
+
+        <Button
+            android:id="@+id/FinishBtn"
+            android:layout_width="339dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/orangeroundedbutton"
+            android:text="Finish"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.517"
+            android:layout_marginTop="45dp"
+            app:layout_constraintTop_toBottomOf="@+id/countryField" />
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

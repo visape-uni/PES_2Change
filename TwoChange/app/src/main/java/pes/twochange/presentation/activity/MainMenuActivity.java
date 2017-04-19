@@ -7,28 +7,60 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
 
-public class MenuProvisionalActivity extends AppCompatActivity {
+public class MainMenuActivity extends AppCompatActivity {
 
     private static final String TAG = "MenuActivitiy";
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    String currentUser = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_provisional);
 
+        currentUser = getIntent().getStringExtra("currentUserUID");
+        TextView uidLbl = (TextView)findViewById(R.id.uidLbl);
+        uidLbl.setText(currentUser);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user == null) {
+                    //No logeado
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    finish();
+                }
+            }
+        };
+
+
         //Show chats button + Pressed button listener
         Button showChatsBtn = (Button)findViewById(R.id.showChatsBtn);
         showChatsBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "ADRI CONECTATE AQUI", Toast.LENGTH_LONG).show();
+                Intent showChats = new Intent(getApplicationContext(), RecyclerChatActivity.class);
+                startActivity(showChats);
+                /*RecyclerChatFragment fragment = new RecyclerChatFragment();
+                android.support.v4.app.FragmentTransaction fragmentTransaction =
+                        getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, fragment);
+                fragmentTransaction.commit();*/
             }
         });
 
@@ -48,7 +80,7 @@ public class MenuProvisionalActivity extends AppCompatActivity {
                     startActivity(chatIntent);
                 } else {
                     Toast.makeText(getApplicationContext(), "You must LogIn first!", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(MenuProvisionalActivity.this, LoginActivtiy.class));
+                    startActivity(new Intent(MainMenuActivity.this, LoginActivity.class));
                     finish();
                 }
             }
@@ -74,7 +106,8 @@ public class MenuProvisionalActivity extends AppCompatActivity {
         Button searchUserBtn = (Button)findViewById(R.id.searchUserBtn);
         searchUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "GUILLE CONECTATE AQUI", Toast.LENGTH_LONG).show();
+                Intent searchProfile = new Intent(getApplicationContext(), SearchProfileActivity.class);
+                startActivity(searchProfile);
             }
         });
 
@@ -85,8 +118,11 @@ public class MenuProvisionalActivity extends AppCompatActivity {
                 Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
                 FirebaseAuth.getInstance().signOut();
                 Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
-                startActivity(new Intent(MenuProvisionalActivity.this, LoginActivtiy.class));
+
+                startActivity(new Intent(MainMenuActivity.this, LoginActivity.class));
                 finish();
+
+
             }
         });
     }

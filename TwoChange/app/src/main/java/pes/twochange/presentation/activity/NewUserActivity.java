@@ -3,61 +3,33 @@ package pes.twochange.presentation.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import pes.twochange.R;
 
-public class RegisterActivity extends AppCompatActivity {
-
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private static final String TAG = "RegisterActivity";
-
-
+public class NewUserActivity extends AppCompatActivity {
+    //Constructor
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_new_user);
 
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-            }
-        };
-
-
-        //Sign Up button + Pressed button listener
-        Button signUpBtn = (Button)findViewById(R.id.signUpBtn);
-        signUpBtn.setOnClickListener(new View.OnClickListener() {
+        //Next Step button + Pressed button listener
+        Button nextBtn = (Button)findViewById(R.id.nextBtn);
+        nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                EditText nameText = (EditText)findViewById(R.id.nameField);
                 EditText mailText = (EditText)findViewById(R.id.mailField);
                 EditText passText = (EditText)findViewById(R.id.passField);
                 EditText repePassText = (EditText)findViewById(R.id.repeatPassField);
-                String name = nameText.getText().toString().trim();
                 String mail = mailText.getText().toString().trim();
                 String pass = passText.getText().toString().trim();
-                if (name.isEmpty() || nameText.getText() == null) {
-                    Context context = getApplicationContext();
-                    Toast.makeText(context, "Fill in the name field", Toast.LENGTH_LONG).show();
-                } else if (mail.isEmpty() || mailText.getText() == null) {
+                if (mail.isEmpty() || mailText.getText() == null) {
                     Context context = getApplicationContext();
                     Toast.makeText(context, "Fill in the Email field", Toast.LENGTH_LONG).show();
                 } else if (!mail.contains("@")) {
@@ -71,28 +43,13 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(context, "Fill in the repeated password field", Toast.LENGTH_LONG).show();
                 } else if (!(repePassText.getText().toString().equals(passText.getText().toString()))) {
                     Context context = getApplicationContext();
-                    Toast.makeText(context, "Fill in the repeated password field", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Both passwords must be equal", Toast.LENGTH_LONG).show();
                 } else {
-
-                    mAuth.createUserWithEmailAndPassword(mail, pass)
-                            .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(RegisterActivity.this,"User created",
-                                                Toast.LENGTH_LONG).show();
-                                        Intent mainMenuIntent = new Intent(getApplicationContext(), zWorking.class);
-                                        startActivity(mainMenuIntent);
-                                        finish();
-                                    }
-                                    else if (!task.isComplete()){
-                                        Toast.makeText(RegisterActivity.this,"Error",
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
-
+                    Intent newProfile = new Intent(getApplicationContext(), NewProfileActivity.class);
+                    newProfile.putExtra("mail", mail);
+                    newProfile.putExtra("password", pass);
+                    startActivity(newProfile);
+                    finish();
                 }
             }
         });
