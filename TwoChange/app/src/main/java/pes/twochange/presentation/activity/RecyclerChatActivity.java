@@ -47,10 +47,17 @@ public class RecyclerChatActivity extends Activity {
 
         //nombres de prueba
         users.add("Félix");
+        users.add("Princesa Chicle");
         users.add("Guille");
-        users.add("Víctor");
-        users.add("Andrés");
         users.add("Adri");
+        users.add("Lars Ulrich (cuando tenía pelo)");
+        users.add("Víctor");
+        users.add("Donald Trump");
+        users.add("Andrés");
+        users.add("Lisa Simpson");
+        users.add("Aa Mama");
+        users.add("Adri, otra vez");
+        users.add("Sujeto de prueba Huevo Huevo 7");
 
 
         mAdapter = new RecyclerChatAdapter(this, users);
