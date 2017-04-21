@@ -2,7 +2,7 @@ package pes.twochange.domain.model;
 
 public class Profile extends Model {
 
-    private String userName;
+    private String username;
     private String uid;
     private String name;
     private String surname;
@@ -12,8 +12,8 @@ public class Profile extends Model {
     public Profile() {
     }
 
-    public Profile(String userName, String uid, String name, String surname, PhoneNumber phoneNumber, Address address) {
-        this.userName = userName;
+    public Profile(String username, String uid, String name, String surname, PhoneNumber phoneNumber, Address address) {
+        this.username = username;
         this.uid = uid;
         this.name = name;
         this.surname = surname;
@@ -21,12 +21,12 @@ public class Profile extends Model {
         this.address = address;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getUid() {
@@ -175,7 +175,7 @@ public class Profile extends Model {
         String phoneNumberString = (phoneNumber == null) ? "null" : phoneNumber.toString();
         String addressString = (address == null) ? "null" : address.toString();
         return "Profile{" +
-                "username='" + getUserName() + '\'' +
+                "username='" + username + '\'' +
                 "id='" + getId() + '\'' +
                 ", uid='" + uid + '\'' +
                 ", name='" + name + '\'' +

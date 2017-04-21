@@ -41,6 +41,11 @@ public class Firebase {
         return id;
     }
 
+    public void insert(String name, String key, ModelAdapter model) {
+        DatabaseReference ref = db.getReference(name);
+        ref.child(key).setValue(model.object());
+    }
+
     public void delete(String name, String id) {
         DatabaseReference ref = db.getReference(name);
         ref.child(id).removeValue();

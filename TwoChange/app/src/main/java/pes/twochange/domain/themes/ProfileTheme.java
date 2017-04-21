@@ -31,8 +31,7 @@ public class ProfileTheme implements ModelAdapter<Profile> {
 
                     @Override
                     public void empty() {
-                        String id = insert();
-                        profile.setId(id);
+                        insert();
                         profileResponse.success(profile);
                     }
 
@@ -41,15 +40,15 @@ public class ProfileTheme implements ModelAdapter<Profile> {
                         profileResponse.failure("Something went wrong :(");
                     }
                 }
-        ).by("uid", profile.getUid());
+        ).byId(profile.getUsername());
     }
 
-    private String insert() {
-        return Firebase.getInstance().insert("profile", this);
+    private void insert() {
+        Firebase.getInstance().insert("profile", profile.getSurname(), this);
     }
 
     private void update() {
-        Firebase.getInstance().update("profile", profile.getId(), this);
+        Firebase.getInstance().update("profile", profile.getUsername(), this);
     }
 
 

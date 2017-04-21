@@ -77,6 +77,27 @@ public class Finder {
         );
     }
 
+    public void with(String key, String value) { // anaMestre
+        char lastChar = value.charAt(value.length() - 1); // e
+        char newLastChar = (char) (lastChar + 1); // f
+        String lastValue = value.substring(0, value.length() - 2); // anaMestr
+        lastValue = lastValue + newLastChar; // anaMestrf
+        Query queryReference = ref.orderByChild(key).startAt(value).endAt(lastValue);
+        queryReference.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        responseResult(dataSnapshot);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        callback.failure(databaseError.getMessage());
+                    }
+                }
+        );
+    }
+
     private void responseResult(DataSnapshot dataSnapshot) {
         if (dataSnapshot == null) callback.empty();
         else callback.success(dataSnapshot);

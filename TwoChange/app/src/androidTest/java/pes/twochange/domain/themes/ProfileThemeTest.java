@@ -59,6 +59,7 @@ public class ProfileThemeTest {
 
         testingProfile = new Profile(
                 lw(),
+                lw(),
                 sw(),
                 sw(),
                 new Profile.PhoneNumber(34, lw()),
@@ -101,7 +102,7 @@ public class ProfileThemeTest {
 
         receivedProfile = null;
 
-        testingProfile = new Profile(lw(), sw(), null, null, null);
+        testingProfile = new Profile(lw(), lw(), sw(), null, null, null);
 
         insertTestingProfile();
 
@@ -178,7 +179,7 @@ public class ProfileThemeTest {
 
                         // Tiene que fallar para asegurarnos que el perfil no existe
                         // Creamos el nuevo perfil
-                        final Profile newProfile = new Profile(randomUID, null, null, null, null);
+                        final Profile newProfile = new Profile(lw(), randomUID, null, null, null, null);
 
                         new ProfileTheme(newProfile).updateProfile(
                                 new ProfileResponse() {
@@ -226,6 +227,7 @@ public class ProfileThemeTest {
         receivedProfile = null;
 
         testingProfile = new Profile(
+                lw(),
                 lw(),
                 sw(),
                 null,
