@@ -101,13 +101,14 @@ public class NewProfileActivity extends AppCompatActivity {
                                         //Obtenim la referencia a firebase per poder escriure a la nostra BD
 
                                         // Fèlix:
-                                        //updateProfile(prof);
+                                        updateProfile(prof);
                                         // end Fèlix
-
+/*
                                         DatabaseReference myDatabase;
                                         myDatabase = FirebaseDatabase.getInstance().getReference();
                                         //Afegim el nou profile a la BD (PK -> uid)
                                         myDatabase.child("profile").child(userName).setValue(prof);
+*/
                                         //Tanquem aquesta activity i anem al Main Menu
                                         Context context = getApplicationContext();
                                         Toast.makeText(context, "User successfully created", Toast.LENGTH_LONG).show();

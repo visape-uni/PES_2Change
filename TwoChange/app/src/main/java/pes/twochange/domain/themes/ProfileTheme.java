@@ -44,7 +44,7 @@ public class ProfileTheme implements ModelAdapter<Profile> {
     }
 
     private void insert() {
-        Firebase.getInstance().insert("profile", profile.getSurname(), this);
+        Firebase.getInstance().insert("profile", profile.getUsername(), this);
     }
 
     private void update() {
@@ -52,7 +52,7 @@ public class ProfileTheme implements ModelAdapter<Profile> {
     }
 
 
-    public void get(final String uid, final ProfileResponse profileResponse) {
+    public void get(final String username, final ProfileResponse profileResponse) {
         Firebase.getInstance().get(
                 "profile",
                 new DatabaseResponse() {
@@ -60,13 +60,12 @@ public class ProfileTheme implements ModelAdapter<Profile> {
                     public void success(DataSnapshot dataSnapshot) {
                         Log.v("ProfileTheme", dataSnapshot.getValue().toString());
                         Profile profile = dataSnapshot.getValue(Profile.class);
-                        profile.setId(dataSnapshot.getKey());
                         profileResponse.success(profile);
                     }
 
                     @Override
                     public void empty() {
-                        profileResponse.failure("No profile with uid = " + uid);
+                        profileResponse.failure("No profile with username = " + username);
                     }
 
                     @Override
@@ -74,8 +73,7 @@ public class ProfileTheme implements ModelAdapter<Profile> {
                         profileResponse.failure("Something went wrong :(");
                     }
                 }
-        ).by("uid", uid);
-
+        ).byId(username);
     }
 
     @Override
@@ -85,9 +83,7 @@ public class ProfileTheme implements ModelAdapter<Profile> {
 
     @Override
     public Profile object() {
-        Profile result = profile;
-        profile.setId(null);
-        return result;
+        return profile;
     }
 
     /*

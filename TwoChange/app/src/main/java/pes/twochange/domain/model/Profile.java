@@ -1,6 +1,6 @@
 package pes.twochange.domain.model;
 
-public class Profile extends Model {
+public class Profile {
 
     private String username;
     private String uid;
@@ -176,7 +176,6 @@ public class Profile extends Model {
         String addressString = (address == null) ? "null" : address.toString();
         return "Profile{" +
                 "username='" + username + '\'' +
-                "id='" + getId() + '\'' +
                 ", uid='" + uid + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +

@@ -20,7 +20,6 @@ public class ProfileThemeTest {
     private CountDownLatch lock = new CountDownLatch(1);
     private Profile receivedProfile;
     private Profile testingProfile;
-    private String testingId;
 
     private String lw() {
         return Utils.generateRandomWord(10);
@@ -31,8 +30,9 @@ public class ProfileThemeTest {
     }
 
     private void insertTestingProfile() {
-        testingId = Firebase.getInstance().insert(
+        Firebase.getInstance().insert(
                 "profile",
+                testingProfile.getUsername(),
                 new ModelAdapter<Profile>() {
                     @Override
                     public Class classType() {
@@ -45,11 +45,10 @@ public class ProfileThemeTest {
                     }
                 }
         );
-        testingProfile.setId(testingId);
     }
 
     private void deleteTestingProfile() {
-        Firebase.getInstance().delete("profile", testingId);
+        Firebase.getInstance().delete("profile", testingProfile.getUsername());
     }
 
     @Test
@@ -217,7 +216,6 @@ public class ProfileThemeTest {
         assertNotNull("Timeout (5s) or new  profile was not created", receivedProfile);
         assertEquals("New profile have been inserted", randomUID, receivedProfile.getUid());
 
-        testingId = receivedProfile.getId();
         deleteTestingProfile();
     }
 
