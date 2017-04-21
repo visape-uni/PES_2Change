@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -89,37 +90,32 @@ public class NewProfileActivity extends AppCompatActivity {
                                 mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(NewProfileActivity.this, new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
-                                    Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-                                    if (task.isSuccessful()) {
-                                        logIn(mail, pass);
-                                        //Creem la instancia de Profile a partir dels strings
-                                        String uid = mAuth.getCurrentUser().getUid();
-                                        Profile.Address ad = new Profile.Address(addressStr, zip, city, state, country);
-                                        //TODO: Sufix
-                                        Profile.PhoneNumber ph = new Profile.PhoneNumber(34, phone);
-                                        Profile prof = new Profile(userName, uid, name, surname, ph, ad);
-                                        //Obtenim la referencia a firebase per poder escriure a la nostra BD
-
-                                        // Fèlix:
-                                        updateProfile(prof);
-                                        // end Fèlix
-/*
-                                        DatabaseReference myDatabase;
-                                        myDatabase = FirebaseDatabase.getInstance().getReference();
-                                        //Afegim el nou profile a la BD (PK -> uid)
-                                        myDatabase.child("profile").child(userName).setValue(prof);
-*/
-                                        //Tanquem aquesta activity i anem al Main Menu
-                                        Context context = getApplicationContext();
-                                        Toast.makeText(context, "User successfully created", Toast.LENGTH_LONG).show();
-                                        Intent mainMenu = new Intent(getApplicationContext(), MainMenuActivity.class);
-                                        mainMenu.putExtra("currentUserName", userName);
-                                        startActivity(mainMenu);
-                                        finish();
-                                    } else if (!task.isComplete()) {
-                                        Toast.makeText(NewProfileActivity.this, "Error creating user",
-                                                Toast.LENGTH_LONG).show();
-                                    }
+                                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                                        if (task.isSuccessful()) {
+                                            logIn(mail, pass);
+                                            //Creem la instancia de Profile a partir dels strings
+                                            String uid = mAuth.getCurrentUser().getUid();
+                                            Profile.Address ad = new Profile.Address(addressStr, zip, city, state, country);
+                                            //Creacio del profile i pujarlo a Firebase
+                                            Profile.PhoneNumber ph = new Profile.PhoneNumber(34, phone);
+                                            Profile prof = new Profile(userName, uid, name, surname, ph, ad);
+                                            updateProfile(prof);
+                                            //Tanquem aquesta activity i anem al Main Menu
+                                            Context context = getApplicationContext();
+                                            Toast.makeText(context, "User successfully created", Toast.LENGTH_LONG).show();
+                                            Intent mainMenu = new Intent(getApplicationContext(), MainMenuActivity.class);
+                                            UserProfileChangeRequest updateProf = new UserProfileChangeRequest.Builder().setDisplayName(userName).build();
+                                            mAuth.getCurrentUser().updateProfile(updateProf).
+                                                    addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {}
+                                                    });
+                                            startActivity(mainMenu);
+                                            finish();
+                                        } else if (!task.isComplete()) {
+                                            Toast.makeText(NewProfileActivity.this, "Error creating user",
+                                                    Toast.LENGTH_LONG).show();
+                                        }
                                     }
                                 });
                             }
@@ -132,27 +128,24 @@ public class NewProfileActivity extends AppCompatActivity {
         });
     }
 
-
-    // Fèlix:
+    //Crida a la creacio de profile
     private void updateProfile(final Profile prof) {
         Firebase.getInstance().insert(
-                "profile",
-                new ModelAdapter<Profile>() {
-                    @Override
-                    public Class classType() {
-                        return Profile.class;
-                    }
-
-                    @Override
-                    public Profile object() {
-                        return prof;
-                    }
+            "profile",
+            prof.getUsername(),
+            new ModelAdapter<Profile>() {
+                @Override
+                public Class classType() {
+                    return Profile.class;
                 }
+
+                @Override
+                public Profile object() {
+                    return prof;
+                }
+            }
         );
-
-
     }
-    // end Fèlix
 
     private void logIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(NewProfileActivity.this, new OnCompleteListener<AuthResult>() {
