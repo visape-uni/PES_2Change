@@ -72,10 +72,10 @@ public class ProfileThemeTest {
 
         insertTestingProfile();
 
-        String profileUId = testingProfile.getUid();
+        String username = testingProfile.getUsername();
 
         new ProfileTheme().get(
-                profileUId,
+                username,
                 new ProfileResponse() {
                     @Override
                     public void success(Profile profile) {
@@ -90,7 +90,7 @@ public class ProfileThemeTest {
 
         lock.await(5, TimeUnit.SECONDS);
 
-        assertNotNull("Timeout (5s) or no profile with UID = " + profileUId, receivedProfile);
+        assertNotNull("Timeout (5s) or no profile with username = " + username, receivedProfile);
         assertEquals("Those profiles should be equal", testingProfile.toString(), receivedProfile.toString());
 
         deleteTestingProfile();
@@ -105,10 +105,10 @@ public class ProfileThemeTest {
 
         insertTestingProfile();
 
-        String profileUId = testingProfile.getUid();
+        String username = testingProfile.getUsername();
 
         new ProfileTheme().get(
-                profileUId,
+                username,
                 new ProfileResponse() {
                     @Override
                     public void success(Profile profile) {
@@ -123,7 +123,7 @@ public class ProfileThemeTest {
 
         lock.await(5, TimeUnit.SECONDS);
 
-        assertNotNull("Timeout (5s) or no profile with UID = " + profileUId, receivedProfile);
+        assertNotNull("Timeout (5s) or no profile with username = " + username, receivedProfile);
         assertEquals("Those profiles should be equal", testingProfile.toString(), receivedProfile.toString());
 
         deleteTestingProfile();
@@ -134,11 +134,11 @@ public class ProfileThemeTest {
 
         receivedProfile = null;
 
-        String profileUId = lw();
+        String username = lw();
         final String[] message = new String[1];
 
         new ProfileTheme().get(
-                profileUId,
+                username,
                 new ProfileResponse() {
                     @Override
                     public void success(Profile profile) {
@@ -155,18 +155,18 @@ public class ProfileThemeTest {
 
         lock.await(5, TimeUnit.SECONDS);
 
-        assertNotNull("Timeout (5s) or existing profile with UID = " + profileUId, receivedProfile);
-        assertEquals("There is no profile with this UID", message[0], "No profile with uid = " + profileUId);
+        assertNotNull("Timeout (5s) or existing profile with username = " + username, receivedProfile);
+        assertEquals("There is no profile with this UID", message[0], "No profile with username = " + username);
     }
 
     @Test
     public void updateNewProfile() throws InterruptedException {
 
         receivedProfile = null;
-        final String randomUID = lw();
+        final String randomUsername = lw();
 
         new ProfileTheme().get(
-                randomUID,
+                randomUsername,
                 new ProfileResponse() {
                     @Override
                     public void success(Profile profile) {
@@ -178,14 +178,14 @@ public class ProfileThemeTest {
 
                         // Tiene que fallar para asegurarnos que el perfil no existe
                         // Creamos el nuevo perfil
-                        final Profile newProfile = new Profile(lw(), randomUID, null, null, null, null);
+                        final Profile newProfile = new Profile(randomUsername, null, null, null, null, null);
 
                         new ProfileTheme(newProfile).updateProfile(
                                 new ProfileResponse() {
                                     @Override
                                     public void success(Profile profile) {
                                         new ProfileTheme().get(
-                                                newProfile.getUid(),
+                                                newProfile.getUsername(),
                                                 new ProfileResponse() {
                                                     @Override
                                                     public void success(Profile profile) {
@@ -214,8 +214,9 @@ public class ProfileThemeTest {
 
         lock.await(5, TimeUnit.SECONDS);
         assertNotNull("Timeout (5s) or new  profile was not created", receivedProfile);
-        assertEquals("New profile have been inserted", randomUID, receivedProfile.getUid());
+        assertEquals("New profile have been inserted", randomUsername, receivedProfile.getUsername());
 
+        testingProfile = receivedProfile;
         deleteTestingProfile();
     }
 
@@ -235,12 +236,12 @@ public class ProfileThemeTest {
 
         insertTestingProfile();
 
-        final String uid = testingProfile.getUid();
+        final String username = testingProfile.getUsername();
         final String name = sw();
         final String zipCode = sw();
 
         new ProfileTheme().get(
-                uid,
+                username,
                 new ProfileResponse() {
                     @Override
                     public void success(Profile profile) {
@@ -253,7 +254,7 @@ public class ProfileThemeTest {
                                     @Override
                                     public void success(Profile profile) {
                                         new ProfileTheme().get(
-                                                uid,
+                                                username,
                                                 new ProfileResponse() {
                                                     @Override
                                                     public void success(Profile profile) {
