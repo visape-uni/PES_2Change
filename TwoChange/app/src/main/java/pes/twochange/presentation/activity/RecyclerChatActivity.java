@@ -8,9 +8,16 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +34,7 @@ public class RecyclerChatActivity extends Activity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<String> users;
+    private DatabaseReference mFirebaseChats;
 
 
     public RecyclerChatActivity() {
@@ -45,8 +53,10 @@ public class RecyclerChatActivity extends Activity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
+        String user = getIntent().getStringExtra("currentUserUID");
+
         //nombres de prueba
-        users.add("Félix");
+        /*users.add("Félix");
         users.add("Princesa Chicle");
         users.add("Guille");
         users.add("Adri");
@@ -57,10 +67,10 @@ public class RecyclerChatActivity extends Activity {
         users.add("Lisa Simpson");
         users.add("Aa Mama");
         users.add("Adri, otra vez");
-        users.add("Sujeto de prueba Huevo Huevo 7");
+        users.add("Sujeto de prueba Huevo Huevo 7");*/
 
 
-        mAdapter = new RecyclerChatAdapter(this, users);
+        mAdapter = new RecyclerChatAdapter(this, users, user);
         mRecyclerView.setAdapter(mAdapter);
 
     }

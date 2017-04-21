@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingBottom="10dp"
+    android:descendantFocusability="blocksDescendants"
     android:weightSum="1">
 
 
@@ -13,16 +13,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:layout_marginBottom="27dp"
-        android:layout_alignBottom="@+id/profChat"
+        android:layout_marginTop="30dp"
+        android:layout_alignRight="@+id/profChat"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/profChat" />
+        android:textColor="#000"
+        android:layout_toEndOf="@+id/profChat"
+        android:paddingLeft="25dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2.5px"
+        android:background="#C0C0C0"
+        android:layout_alignParentTop="true"
+        android:id="@+id/view" />
 
     <ImageView
         android:id="@+id/profChat"
         android:layout_width="75dp"
         android:layout_height="75dp"
         app:srcCompat="@mipmap/prof_default"
+        android:cropToPadding="true"
+        android:layout_below="@+id/view"
         android:layout_alignParentStart="true" />
 
 
