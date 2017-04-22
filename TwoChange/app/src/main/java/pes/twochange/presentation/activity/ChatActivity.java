@@ -89,8 +89,7 @@ public class ChatActivity extends AppCompatActivity {
 
         userSenderUid = chat.getMessageSender();
         userReciverUid = chat.getMessageReciver();
-        Log.d(TAG, userReciverUid);
-        Log.d(TAG, userSenderUid);
+        getSupportActionBar().setTitle(userReciverUid);
 
         //Suscribirse al topic para recibir notificaciones de chat
         FirebaseMessaging.getInstance()
