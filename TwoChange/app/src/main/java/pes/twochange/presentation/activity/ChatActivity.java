@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -35,11 +36,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.IOException;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
@@ -67,6 +75,10 @@ public class ChatActivity extends AppCompatActivity {
 
     private RelativeLayout mRlView;
     private MenuItem photoItem;
+
+    FirebaseStorage storage;
+    private StorageReference chatImagesSenderRef;
+    private StorageReference chatImagesReciverRef;
 
     private String mPath;
 
@@ -104,6 +116,17 @@ public class ChatActivity extends AppCompatActivity {
         displayChatMessage();
 
         mFirebaseChatRefReciver = mFirebaseDatabase.getReference().child("chats").child(userReciverUid).child(userSenderUid);
+
+        //Instancia a FirebaseStorage
+        storage = FirebaseStorage.getInstance();
+
+        //Referencia FirebaseStorage
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://change-64bd0.appspot.com/");
+        //Referencia a imagenes de chat
+        chatImagesSenderRef = storageRef.child("chat").child(userSenderUid).child(userReciverUid).child("images");
+        chatImagesReciverRef = storageRef.child("chat").child(userReciverUid).child(userSenderUid).child("images");
+
+
 
         sendBtn = (FloatingActionButton)findViewById(R.id.sender_btn);
         sendBtn.setOnClickListener(new View.OnClickListener() {
@@ -238,7 +261,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PHOTO_CODE:
                     MediaScannerConnection.scanFile(this, new String[]{mPath}, null, new MediaScannerConnection.OnScanCompletedListener() {
@@ -252,8 +275,30 @@ public class ChatActivity extends AppCompatActivity {
                     //hacer algo con la imagen(bitmap)
                     break;
                 case SELECT_PICTURE:
-                    Uri path = data.getData();
+                    Log.d(TAG,"Select Picture");
+                    final Uri uri = data.getData();
                     //hacer algo con la uri de la imagen
+                    StorageReference filePath = chatImagesSenderRef. child(uri.getLastPathSegment());
+                    filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(ChatActivity.this, "Photo sent successfully", Toast.LENGTH_SHORT).show();
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                            String message = "2ChangeImageMessage:";
+                            message = message + downloadUrl.toString();
+                            mFirebaseChatRefSender.push().setValue(new Message(message, userSenderUid, userReciverUid));
+                            mFirebaseChatRefReciver.push().setValue(new Message(message, userSenderUid, userReciverUid));
+                            NotificationSender n = new NotificationSender();
+                            n.sendNotification(userSenderUid);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(ChatActivity.this, "Photo sent interrupted", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                     break;
             }
         }
@@ -310,19 +355,68 @@ public class ChatActivity extends AppCompatActivity {
                 messageSender = (TextView) v.findViewById(R.id.message_sender);
                 messageTime = (TextView) v.findViewById(R.id.message_time);
 
+                ImageView imageView = (ImageView) findViewById(R.id.image_view);
+
                 LinearLayout layoutMessageContent = (LinearLayout) v.findViewById(R.id.layout_message_content);
                 RelativeLayout.LayoutParams rl = (RelativeLayout.LayoutParams) layoutMessageContent.getLayoutParams();
+
                 if (model.getMessageSender().equals(userSenderUid)) {
                     layoutMessageContent.setBackgroundResource(R.drawable.ic_send_message);
-                    rl.addRule(RelativeLayout.ALIGN_PARENT_LEFT,0);
+                    rl.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
                     rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 } else {
                     layoutMessageContent.setBackgroundResource(R.drawable.ic_recive_message);
-                    rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,0);
+                    rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
                     rl.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                 }
 
-                messageContent.setText(model.getMessageContent());
+                if (model.getMessageContent().startsWith("2ChangeImageMessage:")) {
+                    String aux = model.getMessageContent();
+                    //Quitar el prefijo del string para obtener la URL correcta
+                    aux = aux.substring(20);
+                    StorageReference httpsReference = storage.getReferenceFromUrl(aux);
+
+                    try {
+                        File localFile = File.createTempFile("images", "jpg");
+
+
+                        httpsReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+
+                                Bitmap bitmapAux = BitmapFactory.decodeFile(localFile.getPath());
+
+                                Log.d(TAG, localFile.getPath());
+
+                                int width = bitmapAux.getWidth();
+                                int height = bitmapAux.getHeight();
+                                int newWidth = 600;
+                                int newHeight = 1000;
+
+                                float scaleWidth = ((float) newWidth) / width;
+                                float scaleHeight = ((float) newHeight) / height;
+
+                                Matrix matrix = new Matrix();
+                                matrix.postScale(scaleWidth, scaleHeight);
+
+                                Bitmap bitmap = Bitmap.createBitmap(bitmapAux,0,0,width, height, matrix, true);
+                                imageView.setImageBitmap(bitmap);
+                                imageView.setVisibility(View.VISIBLE);
+                                imageView.setScaleType(ImageView.ScaleType.CENTER);
+                            }
+                        });
+
+                        messageContent.setVisibility(View.INVISIBLE);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+
+                    messageContent.setText(model.getMessageContent());
+                }
+
                 messageSender.setText(model.getMessageSender());
                 messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm)", model.getMessageTime()));
             }

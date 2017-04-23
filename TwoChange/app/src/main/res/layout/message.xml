@@ -26,6 +26,11 @@
             android:layout_height="wrap_content"
             android:background="@drawable/ic_recive_message"
             android:layout_marginTop="25dp">
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"/>
             <TextView
                 android:id="@+id/message_content"
                 android:layout_width="wrap_content"
