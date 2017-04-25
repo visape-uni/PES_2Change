@@ -1,5 +1,6 @@
 package pes.twochange.presentation.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,11 +9,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import pes.twochange.R;
-import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.callback.ProfileResponse;
+import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 
@@ -20,6 +20,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private ImageView imageView;
     private TextView fullNameTextView;
+    private TextView usernameTextView;
     private TextView phoneTextView;
     private TextView addressTextView;
     private Button editProfileButton;
@@ -29,23 +30,24 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private String username;
     private Profile profile;
 
+    private Boolean selfProfile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Si no hi ha usuari significa que no hi ha perfil i redirigeix a crear el perfil
-        SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
-        username = sharedPreferences.getString("username", null);
-        if (username == null) {
-            // quan entra per Google no te username
-            // crea perfil
-            finish();
-            return;
+        username = getIntent().getExtras().getString("username");
+        selfProfile = username == null;
+
+        if (selfProfile) {
+            SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+            username = sharedPreferences.getString("username", null);
         }
 
         imageView = (ImageView) findViewById(R.id.profile_image_view);
         fullNameTextView = (TextView) findViewById(R.id.full_name_text_view);
+        usernameTextView = (TextView) findViewById(R.id.username_text_view);
         phoneTextView = (TextView) findViewById(R.id.phone_text_view);
         addressTextView = (TextView) findViewById(R.id.address_text_view);
         editProfileButton = (Button) findViewById(R.id.edit_profile_button);
@@ -63,7 +65,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                     @Override
                     public void failure(String s) {
-                        // TODO mostrar un mensaje de error, seguramente por conexión a internet
+                        // TODO Control d'errors
                     }
                 }
         );
@@ -72,23 +74,31 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void setUpProfile() {
         // TODO imagen de perfil & image view
-
-        // TODO username
         fullNameTextView.setText(profile.obtenirFullName().toUpperCase());
+        usernameTextView.setText(username);
         phoneTextView.setText(profile.getPhoneNumber().toString());
         addressTextView.setText(profile.getAddress().toString());
-
-        // TODO depenent de com arriba a aquesta pantalla sap si esta mostrant el perfil d'un altre usuari o el seu perfil
-        // en este caso vamos a suponer que es el mismo perfil que el usuario
-        editProfileButton.setVisibility(View.VISIBLE);
-        editProfileButton.setOnClickListener(this);
-
+        if (selfProfile) {
+            editProfileButton.setVisibility(View.VISIBLE);
+            editProfileButton.setOnClickListener(this);
+        } else {
+            chatButton.setVisibility(View.VISIBLE);
+            chatButton.setOnClickListener(this);
+        }
         loadingProgressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void onClick(View v) {
-        // TODO start editing :D
-        Toast.makeText(this, "EDIT PROFILE :D", Toast.LENGTH_SHORT).show();
+        switch (v.getId()) {
+            case R.id.edit_profile_button:
+                Intent intent = new Intent(this, EditProfileActivity.class);
+                intent.putExtra("editing", true);
+                startActivity(intent);
+                break;
+            case R.id.chat_button:
+                // TODO chat
+                break;
+        }
     }
 }

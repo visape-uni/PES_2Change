@@ -36,6 +36,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private static final int RC_SIGN_IN = 9001;
     private FirebaseAuth firebaseAuth;
     private GoogleApiClient googleApiClient;
+    private String email;
+    private String password;
     // endregion
 
     // region Activity workflow
@@ -111,23 +113,23 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     @Override
     public void onConnectionFailed (@NonNull ConnectionResult connectionResult) {
-        // TODO: Control d'errors
+        // TODO Control d'errors
     }
 
 
     private void login() {
         EditText emailField = (EditText) findViewById(R.id.mailField);
         EditText passwordField = (EditText) findViewById(R.id.passwordField);
-        String email = emailField.getText().toString().trim();
-        String password = passwordField.getText().toString().trim();
+        email = emailField.getText().toString().trim();
+        password = passwordField.getText().toString().trim();
         if (email.isEmpty()) {
-            // TODO: Control d'errors
+            // TODO Control d'errors
             //toast("Fill in the Email field");
         } else if (!email.contains("@")) {
-            // TODO: Control d'errors
+            // TODO Control d'errors
             //toast("Incorrect Email format");
         } else if (password.isEmpty()) {
-            // TODO: Control d'errors
+            // TODO Control d'errors
             //toast("Fill in the password field");
         } else {
             firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
@@ -136,7 +138,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     if (task.isSuccessful()) {
                         doLogin(firebaseAuth.getCurrentUser().getUid());
                     } else {
-                        // TODO: Control d'errors
+                        // TODO Control d'errors
                     }
                 }
             });
@@ -158,7 +160,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-                // TODO: Control d'errors
+                // TODO Control d'errors
             }
         }
     }
@@ -173,7 +175,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                             String uid = firebaseAuth.getCurrentUser().getUid();
                             doLogin(uid);
                         } else {
-                            // TODO: Control d'errors
+                            // TODO Control d'errors
                         }
                     }
                 });
@@ -181,14 +183,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
 
-    private void doLogin(String uid) {
-        SharedPreferences.Editor editor = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE).edit();
-        editor.putString("uid", uid).apply();
+    private void doLogin(final String uid) {
         new ProfileTheme().find(
                 uid,
                 new ProfileResponse() {
                     @Override
                     public void success(Profile profile) {
+                        SharedPreferences.Editor editor = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE).edit();
+                        editor.putString("username", profile.getUsername());
+                        editor.putString("uid", uid);
+                        editor.apply();
                         startActivity(new Intent(getApplicationContext(), MainMenuActivity.class));
                         finish();
                     }
@@ -196,9 +200,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     @Override
                     public void failure(String s) {
                         if (s.equals("Cannot find any profile")) {
-                            // TODO: Crea perfil
+                            Intent intent = new Intent(getApplicationContext(), EditProfileActivity.class);
+                            intent.putExtra("editing", false);
+                            intent.putExtra("email", email);
+                            intent.putExtra("password", password);
+                            startActivity(intent);
                         } else {
-                            // TODO: Control d'errors
+                            // TODO Control d'errors
                         }
                     }
                 }

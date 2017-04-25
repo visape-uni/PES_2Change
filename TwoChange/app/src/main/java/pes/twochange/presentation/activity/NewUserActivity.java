@@ -45,7 +45,7 @@ public class NewUserActivity extends AppCompatActivity {
                     Context context = getApplicationContext();
                     Toast.makeText(context, "Both passwords must be equal", Toast.LENGTH_LONG).show();
                 } else {
-                    Intent newProfile = new Intent(getApplicationContext(), NewProfileActivity.class);
+                    Intent newProfile = new Intent(getApplicationContext(), EditProfileActivity.class);
                     newProfile.putExtra("mail", mail);
                     newProfile.putExtra("password", pass);
                     startActivity(newProfile);
