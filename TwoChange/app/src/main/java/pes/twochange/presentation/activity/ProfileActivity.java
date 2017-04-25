@@ -1,5 +1,6 @@
 package pes.twochange.presentation.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,6 +14,7 @@ import pes.twochange.R;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.themes.ProfileTheme;
+import pes.twochange.presentation.Config;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -24,7 +26,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private Button chatButton;
     private ProgressBar loadingProgressBar;
 
-    private String uid;
+    private String username;
     private Profile profile;
 
     @Override
@@ -32,8 +34,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // TODO reb l'UID del perfil d'alguna manera
-        uid = "gclmkmaxal";
+        // Si no hi ha usuari significa que no hi ha perfil i redirigeix a crear el perfil
+        SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+        username = sharedPreferences.getString("username", null);
+        if (username == null) {
+            // quan entra per Google no te username
+            // crea perfil
+            finish();
+            return;
+        }
 
         imageView = (ImageView) findViewById(R.id.profile_image_view);
         fullNameTextView = (TextView) findViewById(R.id.full_name_text_view);
@@ -44,7 +53,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progress_bar);
 
         new ProfileTheme().get(
-                uid,
+                username,
                 new ProfileResponse() {
                     @Override
                     public void success(Profile p) {
@@ -64,6 +73,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void setUpProfile() {
         // TODO imagen de perfil & image view
 
+        // TODO username
         fullNameTextView.setText(profile.obtenirFullName().toUpperCase());
         phoneTextView.setText(profile.getPhoneNumber().toString());
         addressTextView.setText(profile.getAddress().toString());

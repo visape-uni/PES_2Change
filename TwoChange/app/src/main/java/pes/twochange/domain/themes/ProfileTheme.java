@@ -1,7 +1,7 @@
 package pes.twochange.domain.themes;
 
-import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
+
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.ModelAdapter;
 import pes.twochange.domain.model.Profile;
@@ -51,6 +51,28 @@ public class ProfileTheme implements ModelAdapter<Profile> {
         Firebase.getInstance().update("profile", profile.getUsername(), this);
     }
 
+    public void find(final String uid, final ProfileResponse profileResponse) {
+        Firebase.getInstance().get(
+                "profile",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        Profile profile = dataSnapshot.getValue(Profile.class);
+                        profileResponse.success(profile);
+                    }
+
+                    @Override
+                    public void empty() {
+                        profileResponse.failure("Cannot find any profile");
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        profileResponse.failure("Something went wrong :(");
+                    }
+                }
+        ).with("uid", uid);
+    }
 
     public void get(final String username, final ProfileResponse profileResponse) {
         Firebase.getInstance().get(
@@ -58,7 +80,6 @@ public class ProfileTheme implements ModelAdapter<Profile> {
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
-                        Log.v("ProfileTheme", dataSnapshot.getValue().toString());
                         Profile profile = dataSnapshot.getValue(Profile.class);
                         profileResponse.success(profile);
                     }

@@ -1,6 +1,7 @@
 package pes.twochange.presentation.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,21 +14,33 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import pes.twochange.R;
+import pes.twochange.presentation.Config;
 
 public class MainMenuActivity extends AppCompatActivity {
 
     private static final String TAG = "MenuActivitiy";
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    String currentUser = "";
+    private String currentUserID = "";
+    private String currentUsername = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_provisional);
 
-        currentUser = getIntent().getStringExtra("currentUserName");
+        // region getting uid from shared preferences
+        SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+        currentUserID = sharedPreferences.getString("uid", "NO-UID");
+        currentUsername = sharedPreferences.getString("username", "NO-U");
+        // endregion
+
         TextView uidLbl = (TextView)findViewById(R.id.uidLbl);
-        uidLbl.setText(currentUser);
+        if (currentUsername == null) {
+            uidLbl.setText(currentUserID);
+        } else {
+            uidLbl.setText(currentUsername);
+        }
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -71,7 +84,7 @@ public class MainMenuActivity extends AppCompatActivity {
         Button viewProfileBtn = (Button)findViewById(R.id.viewProfileBtn);
         viewProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "FELIX CONECTATE AQUI", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
             }
         });
 
