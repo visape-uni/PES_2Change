@@ -1,14 +1,15 @@
 package pes.twochange.presentation.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -22,40 +23,33 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
 import pes.twochange.R;
+import pes.twochange.domain.callback.ProfileResponse;
+import pes.twochange.domain.model.Profile;
+import pes.twochange.domain.themes.ProfileTheme;
+import pes.twochange.presentation.Config;
 
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, FirebaseAuth.AuthStateListener {
 
-    //Attributes
-    private static final String TAG = "LoginActivitiy";
+    // region Attributes
     private static final int RC_SIGN_IN = 9001;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private GoogleApiClient mGoogleApiClient;
+    private FirebaseAuth firebaseAuth;
+    private GoogleApiClient googleApiClient;
+    // endregion
 
-    //Constructor
+    // region Activity workflow
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mAuth = FirebaseAuth.getInstance();
+
+        firebaseAuth = FirebaseAuth.getInstance();
 
         //Login button + Pressed button listener
-        Button loginBtn = (Button) findViewById(R.id.logInBtn);
-        loginBtn.setOnClickListener(new View.OnClickListener() {
+        Button loginButton = (Button) findViewById(R.id.logInBtn);
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                EditText user = (EditText)findViewById(R.id.mailField);
-                EditText pass = (EditText)findViewById(R.id.passwordField);
-                String email = user.getText().toString().trim();
-                String password = pass.getText().toString().trim();
-                if (email.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Fill in the Email field", Toast.LENGTH_LONG).show();
-                } else if (!email.contains("@")) {
-                    Toast.makeText(getApplicationContext(), "Incorrect Email format", Toast.LENGTH_LONG).show();
-                } else if (password.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Fill in the password field", Toast.LENGTH_LONG).show();
-                } else {
-                    logIn(email,password);
-                }
+                login();
             }
         });
 
@@ -63,7 +57,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         Button googleBtn = (Button)findViewById(R.id.googleBtn);
         googleBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                logInGoogle();
+                loginWithGoogle();
             }
         });
 
@@ -71,8 +65,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         Button newUserBtn = (Button)findViewById(R.id.newUserBtn);
         newUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Intent mainMenuIntent = new Intent (getApplicationContext(), NewUserActivity.class);
-                startActivity(mainMenuIntent);
+                startActivity(new Intent (getApplicationContext(), NewUserActivity.class));
             }
         });
 
@@ -82,62 +75,78 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 .requestEmail()
                 .build();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-        //Mirar si ya esta logeado
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    //Logeado
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getDisplayName());
-                    Intent newMainMenu = new Intent (getApplicationContext(), MainMenuActivity.class);
-                    newMainMenu.putExtra("currentUserUID", mAuth.getCurrentUser().getUid());
-                    startActivity(newMainMenu);
-                    finish();
-                } else {
-                    //No logeado
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                    //Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                }
-            }
-        };
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+        firebaseAuth.addAuthStateListener(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
+        if (firebaseAuth != null) {
+            firebaseAuth.removeAuthStateListener(this);
+        }
+    }
+    // endregion
+
+
+
+    // Check if it is already logged in
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+            doLogin(uid);
         }
     }
 
-    private void logIn(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "signInWithEmail:success");
-                } else {
-                    Log.w(TAG, "signInWithEmail:failed", task.getException());
-                    Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+    @Override
+    public void onConnectionFailed (@NonNull ConnectionResult connectionResult) {
+        // TODO: Control d'errors
     }
 
-    private void logInGoogle() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+
+    private void login() {
+        EditText emailField = (EditText) findViewById(R.id.mailField);
+        EditText passwordField = (EditText) findViewById(R.id.passwordField);
+        String email = emailField.getText().toString().trim();
+        String password = passwordField.getText().toString().trim();
+        if (email.isEmpty()) {
+            // TODO: Control d'errors
+            //toast("Fill in the Email field");
+        } else if (!email.contains("@")) {
+            // TODO: Control d'errors
+            //toast("Incorrect Email format");
+        } else if (password.isEmpty()) {
+            // TODO: Control d'errors
+            //toast("Fill in the password field");
+        } else {
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        doLogin(firebaseAuth.getCurrentUser().getUid());
+                    } else {
+                        // TODO: Control d'errors
+                    }
+                }
+            });
+        }
+    }
+
+
+
+    private void loginWithGoogle() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
@@ -146,40 +155,57 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
-                //Logeado
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
-                //TODO: Crear Profile quan el login es amb google
             } else {
-                //Login failed
-                Log.e(TAG, "Google Sign-In failed");
+                // TODO: Control d'errors
             }
         }
     }
 
-    private void firebaseAuthWithGoogle (GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential:failed", task.getException());
-                            Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        if (task.isSuccessful()) {
+                            String uid = firebaseAuth.getCurrentUser().getUid();
+                            doLogin(uid);
                         } else {
-                            Intent newMainMenu = new Intent (getApplicationContext(), MainMenuActivity.class);
-                            newMainMenu.putExtra("currentUserUID", mAuth.getCurrentUser().getUid());
-                            startActivity(newMainMenu);
-                            finish();
+                            // TODO: Control d'errors
                         }
                     }
                 });
     }
 
-    public void onConnectionFailed (@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_LONG).show();
+
+
+    private void doLogin(String uid) {
+        SharedPreferences.Editor editor = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE).edit();
+        editor.putString("uid", uid).apply();
+        new ProfileTheme().find(
+                uid,
+                new ProfileResponse() {
+                    @Override
+                    public void success(Profile profile) {
+                        startActivity(new Intent(getApplicationContext(), MainMenuActivity.class));
+                        finish();
+                    }
+
+                    @Override
+                    public void failure(String s) {
+                        if (s.equals("Cannot find any profile")) {
+                            // TODO: Crea perfil
+                        } else {
+                            // TODO: Control d'errors
+                        }
+                    }
+                }
+        );
+    }
+
+    private void toast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }
