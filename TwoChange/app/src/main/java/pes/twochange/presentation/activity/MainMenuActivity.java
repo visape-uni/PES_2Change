@@ -10,16 +10,21 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 import pes.twochange.R;
+import pes.twochange.domain.model.Chat;
 
 public class MainMenuActivity extends AppCompatActivity {
 
     private static final String TAG = "MenuActivitiy";
+
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     String currentUser = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +44,16 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         };
 
+
         //Show chats button + Pressed button listener
         Button showChatsBtn = (Button)findViewById(R.id.showChatsBtn);
         showChatsBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "ADRI CONECTATE AQUI", Toast.LENGTH_LONG).show();
+                Intent showChats = new Intent(getApplicationContext(), RecyclerChatActivity.class);
+                FirebaseUser userSender = FirebaseAuth.getInstance().getCurrentUser();
+                showChats.putExtra("currentUserUID",userSender.getUid());
+                startActivity(showChats);
             }
         });
 
@@ -51,7 +61,21 @@ public class MainMenuActivity extends AppCompatActivity {
         Button openChatBtn = (Button)findViewById(R.id.openChatBtn);
         openChatBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "VICTOR CONECTATE AQUI", Toast.LENGTH_LONG).show();
+
+                FirebaseUser userSender = FirebaseAuth.getInstance().getCurrentUser();
+                if (userSender != null) {
+                    Intent chatIntent = new Intent (getApplicationContext(), ChatActivity.class);
+                    String userReciverUid = "DEEgGOdjjmVkR29uEtvNi0W2zrv1";
+                    if (userSender.getUid().equals("DEEgGOdjjmVkR29uEtvNi0W2zrv1")) userReciverUid = "PtkvVdIGqdVzx5KJ35t2OJ1wXKm2";
+                    Chat chat = new Chat(userSender.getUid(),userReciverUid);
+                    //Chat chat = new Chat(userReciverUid, userSender.getUid());
+                    chatIntent.putExtra("chat", chat);
+                    startActivity(chatIntent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "You must LogIn first!", Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(MainMenuActivity.this, LoginActivity.class));
+                    finish();
+                }
             }
         });
 
@@ -87,7 +111,11 @@ public class MainMenuActivity extends AppCompatActivity {
                 Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
                 FirebaseAuth.getInstance().signOut();
                 Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
+
                 startActivity(new Intent(MainMenuActivity.this, LoginActivity.class));
+                finish();
+
+
             }
         });
     }
