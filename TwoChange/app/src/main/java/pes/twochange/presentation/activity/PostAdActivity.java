@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +49,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 400;
     public static final int REQUEST_CAMERA = 401;
 
+    private TextView ratingLbl;
     private EditText titleTxt, descriptionTxt, yearTxt, priceTxt;
     private Spinner stateSpn, adTypeSpn;
     private ImageButton addImageBtn1, addImageBtn2, addImageBtn3, addImageBtn4;
@@ -79,6 +81,8 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         ad = new Ad();
 
         itemDetails = (LinearLayout) findViewById(R.id.itemDetailsLayout);
+
+        ratingLbl = (TextView) findViewById(R.id.ratingLbl);
 
         titleTxt = (EditText) findViewById(R.id.titleTxt);
         descriptionTxt = (EditText) findViewById(R.id.descriptionTxt);

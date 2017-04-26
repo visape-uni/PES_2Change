@@ -1,11 +1,8 @@
 package pes.twochange.domain.model;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -59,18 +56,6 @@ public class Ad extends Model {
     private static final int MAX_IMAGES = 4;
     private static final String OUT_OF_BOUNDS_MESSAGE = "Image index must be between 0 and " + MAX_IMAGES;
     private static DatabaseReference db = FirebaseDatabase.getInstance().getReferenceFromUrl("https://change-64bd0.firebaseio.com/").child("ads");
-    private static ValueEventListener firebaseListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-
-        }
-    };
-
 
     private Profile user;
 
@@ -110,10 +95,10 @@ public class Ad extends Model {
         | GETTERS AND SETTERS |
          ---------------------
      */
-    public Profile getUser() {
+    @Exclude public Profile getUser() {
         return user;
     }
-    public void setUser(Profile user) {
+    @Exclude public void setUser(Profile user) {
         this.user = user;
     }
 
