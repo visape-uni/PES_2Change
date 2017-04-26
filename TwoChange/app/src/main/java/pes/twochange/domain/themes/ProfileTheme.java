@@ -1,5 +1,7 @@
 package pes.twochange.domain.themes;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 
 import pes.twochange.domain.callback.ProfileResponse;
@@ -57,8 +59,13 @@ public class ProfileTheme implements ModelAdapter<Profile> {
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
+                        Log.v("LOGIN_LOG", dataSnapshot.toString());
                         Profile profile = dataSnapshot.getValue(Profile.class);
-                        profileResponse.success(profile);
+                        if (profile == null) {
+                            profileResponse.failure("Cannot find any profile");
+                        } else {
+                            profileResponse.success(profile);
+                        }
                     }
 
                     @Override
@@ -71,7 +78,7 @@ public class ProfileTheme implements ModelAdapter<Profile> {
                         profileResponse.failure("Something went wrong :(");
                     }
                 }
-        ).with("uid", uid);
+        ).by("uid", uid);
     }
 
     public void get(final String username, final ProfileResponse profileResponse) {

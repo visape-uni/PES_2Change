@@ -77,11 +77,11 @@ public class Finder {
         );
     }
 
-    public void with(String key, String value) { // anaMestre
-        char lastChar = value.charAt(value.length() - 1); // e
-        char newLastChar = (char) (lastChar + 1); // f
-        String lastValue = value.substring(0, value.length() - 2); // anaMestr
-        lastValue = lastValue + newLastChar; // anaMestrf
+    public void with(String key, String value) {
+        char lastChar = value.charAt(value.length() - 1);
+        char newLastChar = (char) (lastChar + 1);
+        String lastValue = value.substring(0, value.length() - 2);
+        lastValue = lastValue + newLastChar;
         Query queryReference = ref.orderByChild(key).startAt(value).endAt(lastValue);
         queryReference.addListenerForSingleValueEvent(
                 new ValueEventListener() {

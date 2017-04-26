@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -108,6 +109,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (user != null) {
             String uid = user.getUid();
             doLogin(uid);
+
         }
     }
 
@@ -184,6 +186,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
     private void doLogin(final String uid) {
+        Log.v("LOGIN_LOG", uid);
         new ProfileTheme().find(
                 uid,
                 new ProfileResponse() {
@@ -200,10 +203,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     @Override
                     public void failure(String s) {
                         if (s.equals("Cannot find any profile")) {
+                            SharedPreferences.Editor editor = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE).edit();
+                            editor.putString("uid", uid);
+                            editor.apply();
                             Intent intent = new Intent(getApplicationContext(), EditProfileActivity.class);
                             intent.putExtra("editing", false);
-                            intent.putExtra("email", email);
-                            intent.putExtra("password", password);
                             startActivity(intent);
                         } else {
                             // TODO Control d'errors

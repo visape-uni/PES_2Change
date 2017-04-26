@@ -1,36 +1,26 @@
 package pes.twochange.presentation.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-
 import pes.twochange.R;
 import pes.twochange.domain.callback.ProfileResponse;
-import pes.twochange.domain.model.ModelAdapter;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
-import pes.twochange.services.Firebase;
 
 public class EditProfileActivity extends AppCompatActivity {
 
-    private FirebaseAuth firebaseAuth;
     private Boolean editing;
-
     private String uid;
-
-    private String email;
-    private String password;
+    private String username;
 
     private EditText usernameText;
     private EditText nameText;
@@ -61,13 +51,11 @@ public class EditProfileActivity extends AppCompatActivity {
         stateText = (EditText)findViewById(R.id.stateField);
         countryText = (EditText)findViewById(R.id.countryField);
 
-        if (!editing) {
-            email = getIntent().getExtras().getString("email", null);
-            password = getIntent().getExtras().getString("password", null);
-            uid = null;
-        } else {
-            SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
-            uid = sharedPreferences.getString("uid", null);
+        SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+        uid = sharedPreferences.getString("uid", null);
+
+        if (editing) {
+            username = sharedPreferences.getString("username", null);
             usernameInputLayout.setVisibility(View.GONE);
             usernameText.setVisibility(View.GONE);
         }
@@ -86,7 +74,10 @@ public class EditProfileActivity extends AppCompatActivity {
                     // TODO Control d'errors
                 } else {
                     if (editing) {
-                        updateProfile(getCompleteProfile());
+                        Profile profile = getCompleteProfile();
+                        profile.setUid(uid);
+                        profile.setUsername(username);
+                        updateProfile(profile);
                         // TODO update feedback to user
                     } else {
                         checkAvailability();
@@ -115,31 +106,12 @@ public class EditProfileActivity extends AppCompatActivity {
                             if (s.equals("Something went wrong :(")) {
                                 // TODO Control d'errors
                             } else {
-                                createUserAndProfile();
+                                updateProfile(getCompleteProfile());
                             }
                         }
                     }
             );
         }
-    }
-
-    private void createUserAndProfile() {
-        final Profile profile = getCompleteProfile();
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
-                this,
-                new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            String uid = firebaseAuth.getCurrentUser().getUid();
-                            profile.setUid(uid);
-                            updateProfile(profile);
-                            login(email, password, profile.getUsername());
-                        }
-                    }
-                }
-        );
     }
 
     private Profile getCompleteProfile() {
@@ -163,39 +135,26 @@ public class EditProfileActivity extends AppCompatActivity {
         );
     }
 
-    private void updateProfile(final Profile profile) {
-        Firebase.getInstance().insert(
-                "profile",
-                new ModelAdapter<Profile>() {
+    private void updateProfile(Profile profile) {
+        Log.v("LOGIN_LOG", "updateProfile: " + profile.toString());
+        new ProfileTheme(profile).updateProfile(
+                new ProfileResponse() {
                     @Override
-                    public Class classType() {
-                        return Profile.class;
+                    public void success(Profile profile) {
+                        SharedPreferences.Editor editor = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE).edit();
+                        editor.putString("username", profile.getUsername());
+                        editor.putString("uid", uid);
+                        editor.apply();
+                        startActivity(new Intent(getApplicationContext(), MainMenuActivity.class));
+                        finish();
                     }
 
                     @Override
-                    public Profile object() {
-                        return profile;
+                    public void failure(String s) {
                     }
                 }
         );
 
 
-    }
-
-    private void login(String email, String password, final String username) {
-        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(EditProfileActivity.this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    SharedPreferences.Editor editor = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE).edit();
-                    editor.putString("username", username);
-                    editor.putString("uid", firebaseAuth.getCurrentUser().getUid());
-                    editor.apply();
-                    // TODO go to main menu!
-                } else {
-                    // TODO Control d'errors
-                }
-            }
-        });
     }
 }
