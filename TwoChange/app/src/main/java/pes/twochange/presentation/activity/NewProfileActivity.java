@@ -86,38 +86,26 @@ public class NewProfileActivity extends AppCompatActivity {
                                 final String state = stateText.getText().toString().trim();
                                 final String country = countryText.getText().toString().trim();
                                 //Add this new user & profile to Firebase
-                                mAuth = FirebaseAuth.getInstance();
-                                mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(NewProfileActivity.this, new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-                                        if (task.isSuccessful()) {
-                                            logIn(mail, pass);
-                                            //Creem la instancia de Profile a partir dels strings
-                                            String uid = mAuth.getCurrentUser().getUid();
-                                            Profile.Address ad = new Profile.Address(addressStr, zip, city, state, country);
-                                            //Creacio del profile i pujarlo a Firebase
-                                            Profile.PhoneNumber ph = new Profile.PhoneNumber(34, phone);
-                                            Profile prof = new Profile(userName, uid, name, surname, ph, ad);
-                                            updateProfile(prof);
-                                            //Tanquem aquesta activity i anem al Main Menu
-                                            Context context = getApplicationContext();
-                                            Toast.makeText(context, "User successfully created", Toast.LENGTH_LONG).show();
-                                            Intent mainMenu = new Intent(getApplicationContext(), MainMenuActivity.class);
-                                            UserProfileChangeRequest updateProf = new UserProfileChangeRequest.Builder().setDisplayName(userName).build();
-                                            mAuth.getCurrentUser().updateProfile(updateProf).
-                                                    addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {}
-                                                    });
-                                            startActivity(mainMenu);
-                                            finish();
-                                        } else if (!task.isComplete()) {
-                                            Toast.makeText(NewProfileActivity.this, "Error creating user",
-                                                    Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                });
+                                logIn(mail, pass);
+                                //Creem la instancia de Profile a partir dels strings
+                                String uid = mAuth.getCurrentUser().getUid();
+                                Profile.Address ad = new Profile.Address(addressStr, zip, city, state, country);
+                                //Creacio del profile i pujarlo a Firebase
+                                Profile.PhoneNumber ph = new Profile.PhoneNumber(34, phone);
+                                Profile prof = new Profile(userName, uid, name, surname, ph, ad);
+                                updateProfile(prof);
+                                //Tanquem aquesta activity i anem al Main Menu
+                                Context context = getApplicationContext();
+                                Toast.makeText(context, "User successfully created", Toast.LENGTH_LONG).show();
+                                Intent mainMenu = new Intent(getApplicationContext(), MainMenuActivity.class);
+                                UserProfileChangeRequest updateProf = new UserProfileChangeRequest.Builder().setDisplayName(userName).build();
+                                mAuth.getCurrentUser().updateProfile(updateProf).
+                                        addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {}
+                                        });
+                                startActivity(mainMenu);
+                                finish();
                             }
                         }
                         @Override

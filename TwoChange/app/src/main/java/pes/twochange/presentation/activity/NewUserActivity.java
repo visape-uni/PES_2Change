@@ -74,6 +74,7 @@ public class NewUserActivity extends AppCompatActivity {
                                 try {
                                     throw task.getException();
                                 } catch(FirebaseAuthWeakPasswordException e) {
+                                    //TODO Fix: Quan hauria de saltar aquesta excepcio, salta la Unknown
                                     Toast.makeText(NewUserActivity.this, "Error: Password must be larger", Toast.LENGTH_LONG).show();
                                     passText.setText("");
                                     passText.requestFocus();
