@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -295,7 +296,7 @@ public class ChatActivity extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(ChatActivity.this, "Photo sent interrupted", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ChatActivity.this, "Photo sent was interrupted", Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -355,7 +356,7 @@ public class ChatActivity extends AppCompatActivity {
                 messageSender = (TextView) v.findViewById(R.id.message_sender);
                 messageTime = (TextView) v.findViewById(R.id.message_time);
 
-                ImageView imageView = (ImageView) findViewById(R.id.image_view);
+                ImageView imageView = (ImageView) v.findViewById(R.id.image_view);
 
                 LinearLayout layoutMessageContent = (LinearLayout) v.findViewById(R.id.layout_message_content);
                 RelativeLayout.LayoutParams rl = (RelativeLayout.LayoutParams) layoutMessageContent.getLayoutParams();
@@ -377,10 +378,13 @@ public class ChatActivity extends AppCompatActivity {
                     StorageReference httpsReference = storage.getReferenceFromUrl(aux);
 
                     try {
-                        File localFile = File.createTempFile("images", "jpg");
-
+                        String auxPath = Environment.getExternalStorageDirectory() + File.separator + MEDIA_DIRECTORY + File.separator;
+                        Log.d(TAG,auxPath);
+                        File localFile = File.createTempFile("2Change-images-", ".jpg", new File(auxPath));
+                        localFile.deleteOnExit();
 
                         httpsReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+
                             @Override
                             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
 
@@ -390,6 +394,7 @@ public class ChatActivity extends AppCompatActivity {
 
                                 int width = bitmapAux.getWidth();
                                 int height = bitmapAux.getHeight();
+                                //definir tamany del bitmap
                                 int newWidth = 600;
                                 int newHeight = 1000;
 
@@ -425,3 +430,5 @@ public class ChatActivity extends AppCompatActivity {
         messagesList.setAdapter(adapter);
     }
 }
+
+
