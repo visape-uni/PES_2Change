@@ -12,17 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/plublishBtn"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:onClick="publish"
-            android:text="@string/ad_publish"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -189,6 +178,17 @@
                     android:gravity="center_horizontal"
                     android:text="0/100"
                     android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Title" />
+
+                <Button
+                    android:id="@+id/plublishBtn"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:onClick="publish"
+                    android:text="@string/ad_publish"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="0dp" />
 
             </LinearLayout>
         </ScrollView>

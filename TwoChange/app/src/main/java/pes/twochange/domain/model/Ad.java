@@ -1,7 +1,16 @@
 package pes.twochange.domain.model;
 
-import java.math.BigDecimal;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -9,43 +18,65 @@ import java.util.List;
  */
 
 public class Ad extends Model {
-    private static final int MAX_IMAGES = 4;
-    private static final String OUT_OF_BOUNDS_MESSAGE = "Image index must be between 0 and " + MAX_IMAGES;
-
-    public ProductState getState() {
-        return state;
-    }
-
-    public void setState(ProductState state) {
-        this.state = state;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public String getStatus() {
-        return status;
-    }
 
     public enum ProductState {
-        NEW, ALMOST_NEW, GOOD, BAD, BROKEN
+        NEW(0),
+        ALMOST_NEW(5),
+        GOOD(10),
+        BAD(15),
+        BROKEN(30);
+
+        private int penalty;
+
+        ProductState(int penalty) {
+            this.penalty = penalty;
+        }
+
+        public static ProductState from(String s) {
+            String state = s.split("-")[0].trim();
+            switch (state) {
+                case "New":
+                    return NEW;
+                case "Almost new":
+                    return ALMOST_NEW;
+                case "Good":
+                    return GOOD;
+                case "Regular":
+                    return BAD;
+                case "Broken":
+                    return BROKEN;
+                default:
+                    return null;
+            }
+        }
+
+        public int getPenalty() {
+            return penalty;
+        }
     }
+
+
+    private static final int MAX_IMAGES = 4;
+    private static final String OUT_OF_BOUNDS_MESSAGE = "Image index must be between 0 and " + MAX_IMAGES;
+    private static DatabaseReference db = FirebaseDatabase.getInstance().getReferenceFromUrl("https://change-64bd0.firebaseio.com/").child("ads");
+    private static ValueEventListener firebaseListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
 
     private Profile user;
 
     private String title;
     private String description;
-
-    private int year;
-    private ProductState state;
-    private BigDecimal price;
     private int rating;
-    private String status;
 
     private List<Image> images;
 
@@ -100,6 +131,7 @@ public class Ad extends Model {
         this.description = description;
     }
 
+    @Exclude
     public List<Image> getImages() {
         return images;
     }
@@ -116,18 +148,50 @@ public class Ad extends Model {
         return images.get(index);
     }
 
-    public BigDecimal getPrice() { return price; };
-    public void setPrice(BigDecimal price) { this.price = price; }
-
-    public int getYear() { return year; }
-    public void setYear(int year) { this.year = year; }
+    public int getRating() {
+        return rating;
+    }
+    public void setRating(int rating) {
+        if (rating > 100)
+            this.rating = 100;
+        else
+            this.rating = rating;
+    }
 
     /*
          ----------------------
         | OTHER PUBLIC METHODS |
          ----------------------
      */
-    public static int rate(Ad ad) {
-        return 0;
+    public void rate(ProductState state, int year, int price) {
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR) + 1900;
+        int pricePoints = price/500;    // 1 point each 500 €/$/?
+
+        int auxRating = 100;
+        auxRating -= state.getPenalty();
+        auxRating -= currentYear - year;
+        auxRating += pricePoints;
+
+        setRating(auxRating);
+    }
+
+    public void save() {
+        DatabaseReference newAdRef = db.push();
+        setId(newAdRef.getKey());
+        newAdRef.setValue(this);
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef =
+                storage.getReferenceFromUrl("gs://change-64bd0.appspot.com").child("ads").child(getId()).child("images");
+
+        List<String> imageIds = new ArrayList<>();
+        for (Image image : images) {
+            if (image != null) {
+                image.save(storageRef);
+                imageIds.add(image.getId());
+            }
+        }
+
+        newAdRef.child("images").setValue(imageIds);
     }
 }

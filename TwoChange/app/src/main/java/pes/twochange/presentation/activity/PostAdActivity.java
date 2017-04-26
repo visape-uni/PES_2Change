@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +19,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -143,7 +143,22 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     }
 
     public void publish(View v) {
-        Toast.makeText(getApplicationContext(), "PUBLISHING", Toast.LENGTH_LONG).show();
+        ad.setTitle(titleTxt.getText().toString());
+        ad.setDescription(descriptionTxt.getText().toString());
+
+        int year = Integer.valueOf(yearTxt.getText().toString());
+        Ad.ProductState state = Ad.ProductState.from(stateSpn.getSelectedItem().toString());
+        int price = Integer.valueOf(priceTxt.getText().toString());
+
+        ad.rate(state, year, price);
+        try {
+            ad.save();
+            Snackbar.make(v, "Your ad has been published!", Snackbar.LENGTH_LONG).show();
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Snackbar.make(v, "There was an error publishing the ad. Please try again.", Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override

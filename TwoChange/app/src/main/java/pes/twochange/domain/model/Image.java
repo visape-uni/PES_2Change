@@ -1,13 +1,17 @@
 package pes.twochange.domain.model;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.google.firebase.storage.StorageReference;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by kredes on 15/04/2017.
@@ -15,8 +19,40 @@ import java.util.Calendar;
  */
 
 public class Image {
+
+    public enum Format {
+        JPG(".jpg"),
+        JPEG(".jpeg"),
+        PNG(".png");
+
+        private String extension;
+
+        Format(String extension) {
+            this.extension = extension;
+        }
+
+        public String getExtension() {
+            return extension;
+        }
+
+        public static Format fromExtension(String extension) {
+            switch (extension) {
+                case ".jpg":
+                    return JPG;
+                case ".jpeg":
+                    return JPEG;
+                case ".png":
+                    return PNG;
+                default:
+                    return null;
+            }
+        }
+    }
+
+
     private String id;
     private Uri uri;
+    private Format format;
     private Context context;
 
 
@@ -27,7 +63,7 @@ public class Image {
      */
     public Image(Context context) {
         this.context = context.getApplicationContext();
-        id = null;
+        id = Image.generateName();
         uri = null;
     }
 
@@ -67,6 +103,18 @@ public class Image {
 
     public void setUri(Uri uri) {
         this.uri = uri;
+
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(uri, filePathColumn, null, null, null);
+        if (cursor.moveToFirst()) {
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String filePath = cursor.getString(columnIndex);
+            format = Format.fromExtension(filePath.substring(filePath.lastIndexOf(".")));
+        } else {
+            format = null;
+        }
+        cursor.close();
+
         /*
         try {
             ContentUris.parseId(uri);
@@ -96,7 +144,11 @@ public class Image {
     }
 
     public static String generateName() {
-        String date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-        return date;
+        return new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Calendar.getInstance().getTime());
+    }
+
+    public void save(StorageReference ref) {
+        ref = ref.child(id + format.getExtension());
+        ref.putFile(getUri());
     }
 }
