@@ -164,7 +164,7 @@ public class Ad extends Model {
          ----------------------
      */
     public void rate(ProductState state, int year, int price) {
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR) + 1900;
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int pricePoints = price/500;    // 1 point each 500 €/$/?
 
         int auxRating = 100;

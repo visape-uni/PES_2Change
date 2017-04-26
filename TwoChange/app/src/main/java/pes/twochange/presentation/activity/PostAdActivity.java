@@ -3,21 +3,26 @@ package pes.twochange.presentation.activity;
 import android.Manifest;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import java.io.File;
@@ -40,13 +45,20 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     private static final int IMAGE_PICK_CODE_3 = 2;
     private static final int IMAGE_PICK_CODE_4 = 3;
 
-    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 400;
+    public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 400;
+    public static final int REQUEST_CAMERA = 401;
 
     private EditText titleTxt, descriptionTxt, yearTxt, priceTxt;
-    private Spinner stateSpn;
+    private Spinner stateSpn, adTypeSpn;
     private ImageButton addImageBtn1, addImageBtn2, addImageBtn3, addImageBtn4;
+    private LinearLayout itemDetails;
 
     private Ad ad;
+
+    private boolean postingProduct = true;
+    private boolean hasCameraPermission = false;
+    private boolean hasExternalStoragePermission = false;
+    private View selectedImageButton = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,17 +78,40 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
 
         ad = new Ad();
 
+        itemDetails = (LinearLayout) findViewById(R.id.itemDetailsLayout);
+
         titleTxt = (EditText) findViewById(R.id.titleTxt);
         descriptionTxt = (EditText) findViewById(R.id.descriptionTxt);
         yearTxt = (EditText) findViewById(R.id.yearTxt);
         priceTxt = (EditText) findViewById(R.id.priceTxt);
 
         stateSpn = (Spinner) findViewById(R.id.stateSpn);
+        adTypeSpn = (Spinner) findViewById(R.id.adTypeSpn);
 
         addImageBtn1 = (ImageButton) findViewById(R.id.addImageBtn1);
         addImageBtn2 = (ImageButton) findViewById(R.id.addImageBtn2);
         addImageBtn3 = (ImageButton) findViewById(R.id.addImageBtn3);
         addImageBtn4 = (ImageButton) findViewById(R.id.addImageBtn4);
+
+
+        adTypeSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 1) {
+                    itemDetails.setVisibility(View.GONE);
+                    postingProduct = false;
+                }
+                else {
+                    itemDetails.setVisibility(View.VISIBLE);
+                    postingProduct = true;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @Override
@@ -137,20 +172,23 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         Asks the user to select an image from either camera or gallery.
      */
     public void showImageSourcePickDialog(View v) {
-        ImagePickDialog dialog = new ImagePickDialog();
-        dialog.setImageButtonTag(Integer.valueOf((String) v.getTag()));
-        dialog.show(getFragmentManager(), "image_pick");
+        selectedImageButton = v;
+        requestPermissions();
     }
 
     public void publish(View v) {
         ad.setTitle(titleTxt.getText().toString());
         ad.setDescription(descriptionTxt.getText().toString());
 
-        int year = Integer.valueOf(yearTxt.getText().toString());
-        Ad.ProductState state = Ad.ProductState.from(stateSpn.getSelectedItem().toString());
-        int price = Integer.valueOf(priceTxt.getText().toString());
+        if (postingProduct) {
+            int year = Integer.valueOf(yearTxt.getText().toString());
+            Ad.ProductState state = Ad.ProductState.from(stateSpn.getSelectedItem().toString());
+            int price = Integer.valueOf(priceTxt.getText().toString());
+            ad.rate(state, year, price);
+        } else {
+            ad.setRating(100);
+        }
 
-        ad.rate(state, year, price);
         try {
             ad.save();
             Snackbar.make(v, "Your ad has been published!", Snackbar.LENGTH_LONG).show();
@@ -193,5 +231,46 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
             case 3: code = IMAGE_PICK_CODE_4; break;
         }
         startActivityForResult(pickImage, code);
+    }
+
+    private void requestPermissions() {
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            int permissionCheck;
+
+            permissionCheck = ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.CAMERA);
+            if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        REQUEST_CAMERA);
+            } else hasCameraPermission = true;
+
+            permissionCheck = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_WRITE_EXTERNAL_STORAGE);
+            } else hasExternalStoragePermission = true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+            // Do nothing
+        } else {
+            if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE)
+                hasExternalStoragePermission = true;
+            else if (requestCode == REQUEST_CAMERA)
+                hasCameraPermission = true;
+
+            if (hasCameraPermission && hasExternalStoragePermission) {
+                ImagePickDialog dialog = new ImagePickDialog();
+                dialog.setImageButtonTag(Integer.valueOf((String) selectedImageButton.getTag()));
+                dialog.show(getFragmentManager(), "image_pick");
+            }
+        }
     }
 }

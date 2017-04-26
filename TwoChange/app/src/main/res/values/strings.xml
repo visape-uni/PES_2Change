@@ -20,4 +20,9 @@
         <item>Regular - Heavy usage marks</item>
         <item>Broken - Not woking or unusable</item>
     </string-array>
+
+    <string-array name="ad_types">
+        <item>Product</item>
+        <item>Service</item>
+    </string-array>
 </resources>
