@@ -48,7 +48,7 @@ public class NewProfileActivity extends AppCompatActivity {
                 final String userName = userNameText.getText().toString().trim();
                 final String name = nameText.getText().toString().trim();
                 final String surname = surnameText.getText().toString().trim();
-                //Nomes obligatori posar el nom per tenir la mateixa info que amb el login de Google
+                //Nomes obligatori posar el nom i el username
                 if (name.isEmpty() || nameText.getText() == null) {
                     Context context = getApplicationContext();
                     Toast.makeText(context, "Fill in the Name field", Toast.LENGTH_LONG).show();
@@ -61,7 +61,7 @@ public class NewProfileActivity extends AppCompatActivity {
                 } else {
                     //Comprova que no existeix un altre user amb aquest username
                     FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
-                    DatabaseReference mFirebaseRef = mFirebaseDatabase.getReference().child("profiles");
+                    DatabaseReference mFirebaseRef = mFirebaseDatabase.getReference().child("profile");
                     mFirebaseRef.child(userName).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
