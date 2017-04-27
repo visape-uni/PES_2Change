@@ -1,21 +1,21 @@
 package pes.twochange.presentation.activity;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
+import pes.twochange.presentation.Config;
 
 public class MainMenuActivity extends AppCompatActivity {
 
@@ -30,9 +30,19 @@ public class MainMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_provisional);
 
-        mAuth = FirebaseAuth.getInstance();
+        // region getting username from shared preferences
+        SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+        final String currentUsername = sharedPreferences.getString("username", null);
+        // endregion
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
+        TextView uidLbl = (TextView)findViewById(R.id.uidLbl);
+        if (currentUsername != null) {
+            uidLbl.setText(currentUsername);
+        }
+
+        // Esto no se pregunta antes?
+        /*
+        FirebaseAuth.AuthStateListener authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -43,6 +53,7 @@ public class MainMenuActivity extends AppCompatActivity {
                 }
             }
         };
+        */
 
 
         //Show chats button + Pressed button listener
@@ -91,7 +102,7 @@ public class MainMenuActivity extends AppCompatActivity {
         Button viewProfileBtn = (Button)findViewById(R.id.viewProfileBtn);
         viewProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "FELIX CONECTATE AQUI", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
             }
         });
 
@@ -99,19 +110,17 @@ public class MainMenuActivity extends AppCompatActivity {
         Button searchUserBtn = (Button)findViewById(R.id.searchUserBtn);
         searchUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Intent searchProfile = new Intent(getApplicationContext(), SearchProfileActivity.class);
-                startActivity(searchProfile);
+                startActivity(new Intent(getApplicationContext(), SearchProfileActivity.class));
             }
         });
 
-        Button logOutBtn = (Button) findViewById(R.id.logOutBtn);
-        logOutBtn.setOnClickListener(new View.OnClickListener() {
+
+        Button logoutBtn = (Button) findViewById(R.id.logOutBtn);
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
                 FirebaseAuth.getInstance().signOut();
                 Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
-
                 startActivity(new Intent(MainMenuActivity.this, LoginActivity.class));
                 finish();
 

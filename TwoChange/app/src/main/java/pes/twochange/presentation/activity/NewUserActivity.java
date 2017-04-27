@@ -65,7 +65,7 @@ public class NewUserActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
                             if (task.isSuccessful()) {
-                                Intent newProfile = new Intent(getApplicationContext(), NewProfileActivity.class);
+                                Intent newProfile = new Intent(getApplicationContext(), EditProfileActivity.class);
                                 newProfile.putExtra("mail", mail);
                                 newProfile.putExtra("password", pass);
                                 startActivity(newProfile);
