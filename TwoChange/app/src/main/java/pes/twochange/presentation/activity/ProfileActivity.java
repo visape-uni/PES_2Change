@@ -37,7 +37,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        username = getIntent().getExtras().getString("username");
+        username = getIntent().getStringExtra("username");
         selfProfile = username == null;
 
         if (selfProfile) {
@@ -76,8 +76,19 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         // TODO imagen de perfil & image view
         fullNameTextView.setText(profile.obtenirFullName().toUpperCase());
         usernameTextView.setText(username);
-        phoneTextView.setText(profile.getPhoneNumber().toString());
-        addressTextView.setText(profile.getAddress().toString());
+
+        if (profile.getPhoneNumber() != null) {
+            phoneTextView.setText(profile.getPhoneNumber().toString());
+        } else {
+            phoneTextView.setText("No phone number provided");
+        }
+
+        if (profile.getAddress() != null) {
+            addressTextView.setText(profile.getAddress().toString());
+        } else {
+            addressTextView.setText("No address provided");
+        }
+
         if (selfProfile) {
             editProfileButton.setVisibility(View.VISIBLE);
             editProfileButton.setOnClickListener(this);
