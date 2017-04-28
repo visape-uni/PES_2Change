@@ -63,11 +63,20 @@ public class MainMenuActivity extends AppCompatActivity {
         Button showChatsBtn = (Button)findViewById(R.id.showChatsBtn);
         showChatsBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "ADRI CONECTATE AQUI", Toast.LENGTH_LONG).show();
-                Intent showChats = new Intent(getApplicationContext(), RecyclerChatActivity.class);
-                FirebaseUser userSender = FirebaseAuth.getInstance().getCurrentUser();
-                showChats.putExtra("currentUserUID",userSender.getUid());
-                startActivity(showChats);
+
+                new ProfileTheme().get(currentUsername, new ProfileResponse() {
+                            @Override
+                            public void success(Profile profile) {
+                                Intent showChats = new Intent(getApplicationContext(), RecyclerChatActivity.class);
+                                showChats.putExtra("currentUserName",profile.getUsername());
+                                startActivity(showChats);
+                            }
+
+                            @Override
+                            public void failure(String s) {
+                                // TODO: cntrol de errores
+                            }
+                });
             }
         });
 

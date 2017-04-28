@@ -53,7 +53,7 @@ public class RecyclerChatActivity extends Activity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        String user = getIntent().getStringExtra("currentUserUID");
+        String user = getIntent().getStringExtra("currentUserName");
 
         //nombres de prueba
         /*users.add("Félix");
