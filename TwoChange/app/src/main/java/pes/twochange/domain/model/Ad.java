@@ -58,6 +58,7 @@ public class Ad extends Model {
     private static DatabaseReference db = FirebaseDatabase.getInstance().getReferenceFromUrl("https://change-64bd0.firebaseio.com/").child("ads");
 
     private Profile user;
+    private String userId;
 
     private String title;
     private String description;
@@ -100,6 +101,7 @@ public class Ad extends Model {
     }
     @Exclude public void setUser(Profile user) {
         this.user = user;
+        setUserId(user.getUid());
     }
 
     public String getTitle() {
@@ -116,8 +118,7 @@ public class Ad extends Model {
         this.description = description;
     }
 
-    @Exclude
-    public List<Image> getImages() {
+    @Exclude public List<Image> getImages() {
         return images;
     }
     public void setImageAt(int index, Image image) {
@@ -141,6 +142,13 @@ public class Ad extends Model {
             this.rating = 100;
         else
             this.rating = rating;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     /*
@@ -173,7 +181,7 @@ public class Ad extends Model {
         for (Image image : images) {
             if (image != null) {
                 image.save(storageRef);
-                imageIds.add(image.getId());
+                imageIds.add(image.getId() + image.getFormat().getExtension());
             }
         }
 

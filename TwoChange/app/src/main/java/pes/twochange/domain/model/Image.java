@@ -128,6 +128,8 @@ public class Image {
         */
     }
 
+    public Format getFormat() { return format; }
+
 
     /*
          ----------------------

@@ -45,7 +45,8 @@ public class ImagePickDialog extends DialogFragment implements ActivityCompat.On
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final String[] items = {"Gallery", "Camera"};
+        //final String[] items = {"Gallery", "Camera"};
+        final String[] items = {"Gallery"};
 
         AlertDialog.Builder builder =
                 new AlertDialog.Builder(getActivity());

@@ -3,6 +3,7 @@ package pes.twochange.presentation.activity;
 import android.Manifest;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -30,8 +31,12 @@ import java.io.File;
 import java.io.IOException;
 
 import pes.twochange.R;
+import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Image;
+import pes.twochange.domain.model.Profile;
+import pes.twochange.domain.themes.ProfileTheme;
+import pes.twochange.presentation.Config;
 
 public class PostAdActivity extends AppCompatActivity implements ImagePickDialog.ImagePickListener {
 
@@ -69,18 +74,31 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
+        /*  Not happening yet because of problems with camera.
         if (!CAMERA_SAVE_LOCATION.exists()) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_WRITE_EXTERNAL_STORAGE);
-            if (!CAMERA_SAVE_LOCATION.mkdirs()) {
-                Log.e(LOG_TAG, "Unable to create directory: " + CAMERA_SAVE_LOCATION.toString());
-            }
         }
+        */
 
         ad = new Ad();
+
+        ProfileResponse profileResponse = new ProfileResponse() {
+            @Override
+            public void success(Profile profile) {
+                ad.setUser(profile);
+            }
+
+            @Override
+            public void failure(String s) {
+                // Nada
+            }
+        };
+        SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+        final String currentUsername = sharedPreferences.getString("username", null);
+        ProfileTheme profileTheme = new ProfileTheme();
+        profileTheme.get(currentUsername, profileResponse);
 
         itemDetails = (LinearLayout) findViewById(R.id.itemDetailsLayout);
 
@@ -98,7 +116,6 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         addImageBtn2 = (ImageButton) findViewById(R.id.addImageBtn2);
         addImageBtn3 = (ImageButton) findViewById(R.id.addImageBtn3);
         addImageBtn4 = (ImageButton) findViewById(R.id.addImageBtn4);
-
 
         adTypeSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -273,10 +290,21 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
             // Nothing
         } else {
-            if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE)
-                hasExternalStoragePermission = true;
-            else if (requestCode == REQUEST_CAMERA)
-                hasCameraPermission = true;
+            switch (requestCode) {
+                case REQUEST_WRITE_EXTERNAL_STORAGE:
+                    hasExternalStoragePermission = true;
+                    break;
+                case REQUEST_CAMERA:
+                    hasCameraPermission = true;
+                    break;
+            }
+
+            if (hasExternalStoragePermission && !CAMERA_SAVE_LOCATION.exists()) {
+                if (!CAMERA_SAVE_LOCATION.mkdirs())
+                    Log.e(LOG_TAG, "Unable to create directory: " + CAMERA_SAVE_LOCATION.toString());
+                else
+                    Log.i(LOG_TAG, "Created directory: " + CAMERA_SAVE_LOCATION.toString());
+            }
 
             if (hasCameraPermission && hasExternalStoragePermission) {
                 showImagePickDialog();
