@@ -94,7 +94,8 @@ public class MainMenuActivity extends AppCompatActivity {
         Button addPostBtn = (Button)findViewById(R.id.addPostBtn);
         addPostBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "ANDRES CONECTATE AQUI", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(MainMenuActivity.this, PostAdActivity.class);
+                startActivity(intent);
             }
         });
 
