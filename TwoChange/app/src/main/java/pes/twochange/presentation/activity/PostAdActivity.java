@@ -258,6 +258,12 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUEST_WRITE_EXTERNAL_STORAGE);
             } else hasExternalStoragePermission = true;
+
+            if (hasCameraPermission && hasExternalStoragePermission) {
+                showImagePickDialog();
+            }
+        } else {
+            showImagePickDialog();
         }
     }
 
@@ -265,7 +271,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-            // Do nothing
+            // Nothing
         } else {
             if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE)
                 hasExternalStoragePermission = true;
@@ -273,10 +279,14 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 hasCameraPermission = true;
 
             if (hasCameraPermission && hasExternalStoragePermission) {
-                ImagePickDialog dialog = new ImagePickDialog();
-                dialog.setImageButtonTag(Integer.valueOf((String) selectedImageButton.getTag()));
-                dialog.show(getFragmentManager(), "image_pick");
+                showImagePickDialog();
             }
         }
+    }
+
+    private void showImagePickDialog() {
+        ImagePickDialog dialog = new ImagePickDialog();
+        dialog.setImageButtonTag(Integer.valueOf((String) selectedImageButton.getTag()));
+        dialog.show(getFragmentManager(), "image_pick");
     }
 }

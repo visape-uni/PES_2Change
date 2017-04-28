@@ -1,8 +1,13 @@
 package pes.twochange.services;
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import pes.twochange.domain.model.Model;
+import java.util.HashMap;
+import java.util.Map;
+
+import pes.twochange.domain.Utils;
+import pes.twochange.domain.model.ModelAdapter;
 
 public class Firebase {
 
@@ -22,15 +27,27 @@ public class Firebase {
         return new Finder(db.getReference().child(name), callback);
     }
 
-    public void update(String name, String id, Model model, DatabaseResponse callback) {
-        // TODO Metode general per fer update de l'entitat "name" amb id = "id" i canviarla per "model"
+    public void update(String name, String id, ModelAdapter model) {
+        DatabaseReference ref = db.getReference(name);
+        Map values = new HashMap<>();
+        values.put(id, model.object());
+        ref.updateChildren(values);
     }
 
-    public void insert(String name, Model model, DatabaseResponse callback) {
-        // TODO Metode general per fer insert de l'entitat "name" amb "model"
+    public String insert(String name, ModelAdapter model) {
+        String id = Utils.randomID();
+        DatabaseReference ref = db.getReference(name);
+        ref.child(id).setValue(model.object());
+        return id;
     }
 
-    public void delete(String name, String id, DatabaseResponse callback) {
-        // TODO Metode general per fer borrar de l'entitat "name" amb id = "id"
+    public void insert(String name, String key, ModelAdapter model) {
+        DatabaseReference ref = db.getReference(name);
+        ref.child(key).setValue(model.object());
+    }
+
+    public void delete(String name, String id) {
+        DatabaseReference ref = db.getReference(name);
+        ref.child(id).removeValue();
     }
 }
