@@ -14,7 +14,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import pes.twochange.R;
+import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Chat;
+import pes.twochange.domain.model.Profile;
+import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 
 public class MainMenuActivity extends AppCompatActivity {
@@ -73,20 +76,29 @@ public class MainMenuActivity extends AppCompatActivity {
         openChatBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
 
-                FirebaseUser userSender = FirebaseAuth.getInstance().getCurrentUser();
-                if (userSender != null) {
-                    Intent chatIntent = new Intent (getApplicationContext(), ChatActivity.class);
-                    String userReciverUid = "DEEgGOdjjmVkR29uEtvNi0W2zrv1";
-                    if (userSender.getUid().equals("DEEgGOdjjmVkR29uEtvNi0W2zrv1")) userReciverUid = "PtkvVdIGqdVzx5KJ35t2OJ1wXKm2";
-                    Chat chat = new Chat(userSender.getUid(),userReciverUid);
-                    //Chat chat = new Chat(userReciverUid, userSender.getUid());
-                    chatIntent.putExtra("chat", chat);
-                    startActivity(chatIntent);
-                } else {
-                    Toast.makeText(getApplicationContext(), "You must LogIn first!", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(MainMenuActivity.this, LoginActivity.class));
-                    finish();
-                }
+                new ProfileTheme().get("visape", new ProfileResponse() {
+                            @Override
+                            public void success(Profile profile) {
+                                if (profile.getUsername() != null) {
+                                    Intent chatIntent = new Intent (getApplicationContext(), ChatActivity.class);
+                                    String userReciver = "adri1";
+                                    if (profile.getUsername().equals("adri1")) userReciver = "visape";
+                                    Chat chat = new Chat(profile.getUsername(),userReciver);
+                                    chatIntent.putExtra("chat", chat);
+                                    startActivity(chatIntent);
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "You must LogIn first!", Toast.LENGTH_LONG).show();
+                                    startActivity(new Intent(MainMenuActivity.this, LoginActivity.class));
+                                    finish();
+                                }
+                            }
+
+                            @Override
+                            public void failure(String s) {
+                                // TODO: cntrol de errores
+                            }
+                        }
+                );
             }
         });
 
