@@ -76,7 +76,7 @@ public class MainMenuActivity extends AppCompatActivity {
         openChatBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
 
-                new ProfileTheme().get("visape", new ProfileResponse() {
+                new ProfileTheme().get(currentUsername, new ProfileResponse() {
                             @Override
                             public void success(Profile profile) {
                                 if (profile.getUsername() != null) {
