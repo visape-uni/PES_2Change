@@ -1,6 +1,32 @@
 <resources>
     <string name="app_name">2Change</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <string name="title_activity_post_ad">PostAdActivity</string>
+
+    <string name="ad_publish">Publish</string>
+    <string name="ad_title">Title</string>
+    <string name="ad_description">Description</string>
+    <string name="ad_add_images">Add some images to you ad!</string>
+    <string name="ad_product_info">Product info</string>
+    <string name="ad_year">Year</string>
+    <string name="ad_original_price">Original price (€)</string>
+    <string name="ad_state_label">State</string>
+    <string name="ad_estimated_rating">Estimated rating</string>
+
+    <string-array name="product_states">
+        <item>New - Still in the original package</item>
+        <item>Almost new - Very few or no usage marks</item>
+        <item>Good - Normal usage marks</item>
+        <item>Regular - Heavy usage marks</item>
+        <item>Broken - Not woking or unusable</item>
+    </string-array>
+
+    <string-array name="ad_types">
+        <item>Product</item>
+        <item>Service</item>
+    </string-array>
+
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="large_text">
@@ -97,6 +123,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
     <string name="cd">content_description</string>
 
 </resources>

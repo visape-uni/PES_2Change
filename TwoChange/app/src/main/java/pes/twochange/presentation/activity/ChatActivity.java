@@ -52,8 +52,8 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 public class ChatActivity extends AppCompatActivity {
 
     private static final String TAG = "ChatActivitiy";
-    private String userSenderUid;
-    private String userReciverUid;
+    private String userSender;
+    private String userReciver;
     private DatabaseReference mFirebaseChatRefSender;
     private DatabaseReference mFirebaseChatRefReciver;
     FloatingActionButton sendBtn;
@@ -87,23 +87,23 @@ public class ChatActivity extends AppCompatActivity {
         //crear chat
         chat = new Chat(userSenderUid, userReciverUid);*/
 
-        userSenderUid = chat.getMessageSender();
-        userReciverUid = chat.getMessageReciver();
-        getSupportActionBar().setTitle(userReciverUid);
+        userSender = chat.getMessageSender();
+        userReciver = chat.getMessageReciver();
+        getSupportActionBar().setTitle(userReciver);
 
         //Suscribirse al topic para recibir notificaciones de chat
         FirebaseMessaging.getInstance()
-                .subscribeToTopic(userReciverUid);
+                .subscribeToTopic(userReciver);
 
 
         //Firebase database
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
         //Referencia al chat
-        mFirebaseChatRefSender = mFirebaseDatabase.getReference().child("chats").child(userSenderUid).child(userReciverUid);
+        mFirebaseChatRefSender = mFirebaseDatabase.getReference().child("chats").child(userSender).child(userReciver);
 
         displayChatMessage();
 
-        mFirebaseChatRefReciver = mFirebaseDatabase.getReference().child("chats").child(userReciverUid).child(userSenderUid);
+        mFirebaseChatRefReciver = mFirebaseDatabase.getReference().child("chats").child(userReciver).child(userSender);
 
         sendBtn = (FloatingActionButton)findViewById(R.id.sender_btn);
         sendBtn.setOnClickListener(new View.OnClickListener() {
@@ -113,11 +113,11 @@ public class ChatActivity extends AppCompatActivity {
                 String content = messageInput.getText().toString();
                 content = content.trim();
                 if (!content.isEmpty()) {
-                    mFirebaseChatRefSender.push().setValue(new Message(content, userSenderUid, userReciverUid));
-                    mFirebaseChatRefReciver.push().setValue(new Message(content, userSenderUid, userReciverUid));
+                    mFirebaseChatRefSender.push().setValue(new Message(content, userSender, userReciver));
+                    mFirebaseChatRefReciver.push().setValue(new Message(content, userSender, userReciver));
 
                     NotificationSender n = new NotificationSender();
-                    n.sendNotification(userSenderUid);
+                    n.sendNotification(userSender);
 
                     messageInput.setText("");
                 }
@@ -312,7 +312,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 LinearLayout layoutMessageContent = (LinearLayout) v.findViewById(R.id.layout_message_content);
                 RelativeLayout.LayoutParams rl = (RelativeLayout.LayoutParams) layoutMessageContent.getLayoutParams();
-                if (model.getMessageSender().equals(userSenderUid)) {
+                if (model.getMessageSender().equals(userSender)) {
                     layoutMessageContent.setBackgroundResource(R.drawable.ic_send_message);
                     rl.addRule(RelativeLayout.ALIGN_PARENT_LEFT,0);
                     rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
