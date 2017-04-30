@@ -4,16 +4,15 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_icon1"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_icon1"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".presentation.activity.LoginActivity">
@@ -29,31 +28,31 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".presentation.activity.ChatActivity"
             android:parentActivityName=".presentation.activity.MainMenuActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".presentation.activity.MainMenuActivity"/>
+                android:value=".presentation.activity.MainMenuActivity" />
         </activity>
         <activity android:name=".presentation.activity.ProfileActivity" />
         <activity android:name=".presentation.activity.MainMenuActivity" />
-        <activity android:name=".presentation.activity.SearchProfileActivity"/>
-        <activity android:name=".presentation.activity.RecyclerChatActivity">
-        </activity>
+        <activity android:name=".presentation.activity.SearchProfileActivity" />
+        <activity android:name=".presentation.activity.RecyclerChatActivity"></activity>
 
         <service android:name=".services.MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service android:name=".services.MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
         <activity android:name=".presentation.activity.EditProfileActivity" />
+        <activity android:name=".presentation.activity.SplashActivity"></activity>
     </application>
 
 </manifest>
