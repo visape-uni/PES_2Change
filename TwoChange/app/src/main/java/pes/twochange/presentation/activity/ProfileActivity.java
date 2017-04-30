@@ -78,7 +78,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         usernameTextView.setText(username);
 
         if (profile.getPhoneNumber() != null) {
-            phoneTextView.setText(profile.getPhoneNumber().toString());
+            phoneTextView.setText(profile.getPhoneNumber().getNumber());
         } else {
             phoneTextView.setText("No phone number provided");
         }

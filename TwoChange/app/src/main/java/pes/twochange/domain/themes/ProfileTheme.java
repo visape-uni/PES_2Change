@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 
+import java.util.ArrayList;
+
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.ModelAdapter;
 import pes.twochange.domain.model.Profile;
@@ -80,6 +82,45 @@ public class ProfileTheme implements ModelAdapter<Profile> {
                 }
         ).by("uid", uid);
     }
+
+    public void search(final String username, final SearchResponse searchResponse) {
+        Firebase.getInstance().get(
+                "profile",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        ArrayList<String> usernames = new ArrayList<>();
+                        ArrayList<Profile> profiles = new ArrayList<>();
+
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            Profile profile = ds.getValue(Profile.class);
+                            profiles.add(profile);
+                            usernames.add(profile.getUsername());
+                        }
+
+                        searchResponse.listResponse(usernames, profiles);
+                    }
+
+                    @Override
+                    public void empty() {
+                        searchResponse.empty();
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        searchResponse.failure(message);
+                    }
+                }
+        ).with("username", username);
+    }
+
+    public interface SearchResponse {
+        void listResponse(ArrayList<String> usernames, ArrayList<Profile> profiles);
+        void empty();
+        void failure(String message);
+    }
+
+
 
     public void get(final String username, final ProfileResponse profileResponse) {
         Firebase.getInstance().get(
