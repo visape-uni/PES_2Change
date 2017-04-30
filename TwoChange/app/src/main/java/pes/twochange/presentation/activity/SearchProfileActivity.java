@@ -1,10 +1,13 @@
 package pes.twochange.presentation.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -16,12 +19,12 @@ import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 
-public class SearchProfileActivity extends AppCompatActivity implements TextWatcher {
+public class SearchProfileActivity extends AppCompatActivity implements TextWatcher, AdapterView.OnItemClickListener {
 
     //Attributes
     EditText searchField;
     ListView profilesView;
-    ArrayList<String> profilesArray;
+    ArrayList<String> usernamesArray;
     ArrayAdapter<String> profilesAdapter;
     private String username;
 
@@ -36,14 +39,17 @@ public class SearchProfileActivity extends AppCompatActivity implements TextWatc
         searchField = (EditText)findViewById(R.id.searchField);
         profilesView = (ListView)findViewById(R.id.profilesList);
 
-        profilesArray = new ArrayList<>();
+        usernamesArray = new ArrayList<>();
         profilesAdapter = new ArrayAdapter<>(SearchProfileActivity.this,
-                android.R.layout.simple_list_item_1, profilesArray);
+                android.R.layout.simple_list_item_1, usernamesArray);
         profilesView.setAdapter(profilesAdapter);
 
         searchField.addTextChangedListener(this);
+        profilesView.setOnItemClickListener(this);
 
     }
+
+
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -64,9 +70,8 @@ public class SearchProfileActivity extends AppCompatActivity implements TextWatc
                     new ProfileTheme.SearchResponse() {
                         @Override
                         public void listResponse(ArrayList<String> usernames, ArrayList<Profile> profiles) {
-                            profilesAdapter = new ArrayAdapter<>(getApplicationContext(),
-                                    android.R.layout.simple_list_item_1, usernames);
-                            profilesView.setAdapter(profilesAdapter);
+                            usernamesArray = usernames;
+                            setList();
                         }
 
                         @Override
@@ -81,5 +86,21 @@ public class SearchProfileActivity extends AppCompatActivity implements TextWatc
                     }
             );
         }
+    }
+
+    private void setList() {
+        profilesAdapter = new ArrayAdapter<>(getApplicationContext(),
+                android.R.layout.simple_list_item_1, usernamesArray);
+        profilesView.setAdapter(profilesAdapter);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String selectedUsername = usernamesArray.get(position);
+        Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+        if (!selectedUsername.equals(username)) {
+            profileIntent.putExtra("username", selectedUsername);
+        }
+        startActivity(profileIntent);
     }
 }
