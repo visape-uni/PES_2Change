@@ -120,11 +120,15 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="action_photo">Photo</string>
+    <string name="action_add">Add Item</string>
+    <string name="action_edit">Edit Item</string>
+    <string name="action_delete">Delete Item</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
     <string name="cd">content_description</string>
+    <string name="title_activity_ads_lists">AdsListsActivity</string>
 
 </resources>
