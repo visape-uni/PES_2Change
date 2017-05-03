@@ -1,15 +1,19 @@
 package pes.twochange.presentation.activity;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,21 +30,43 @@ public class AdsListsActivity extends AppCompatActivity {
     private DatabaseReference mFirebaseWantedList;
     private DatabaseReference mFirebaseOfferedList;
     String currentUsername = "";
+    private static final String TAG = "AdsListsActivitiy";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ads_lists);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.appbar_ads_lists);
+        setSupportActionBar(toolbar);
 
         SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         currentUsername = sharedPreferences.getString("username", null);
 
         //Firebase database
-        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+        final FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
         //Referencia al chat
         mFirebaseWantedList = mFirebaseDatabase.getReference().child("lists").child(currentUsername).child("wanted");
         mFirebaseOfferedList = mFirebaseDatabase.getReference().child("lists").child(currentUsername).child("offered");
+
+        //delete from wanted list
+        final ListView lv = (ListView) findViewById(R.id.wanted_list_ad);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                AlertDialog.Builder adb=new AlertDialog.Builder(AdsListsActivity.this);
+                adb.setTitle("Delete?");
+                adb.setMessage("Are you sure you want to delete " + lv.getItemAtPosition(position) + "?");
+                final int positionToRemove = position;
+                adb.setNegativeButton("Cancel", null);
+                adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        //mFirebaseWantedList.child();
+                        mFirebaseWantedList.removeValue();
+                    }});
+                adb.show();
+            }
+        });
+
 
         showWanted();
         showOffered();
@@ -56,7 +82,7 @@ public class AdsListsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                addItem();
+                addItemToWanted();
                 break;
             case R.id.action_delete:
                 deleteItem();
@@ -68,7 +94,7 @@ public class AdsListsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void addItem() {
+    private void addItemToWanted() {
         final TextView setProductTitle = (TextView) findViewById(R.id.setTitle_txt);
         final FloatingActionButton btnSetProductTitle = (FloatingActionButton) findViewById(R.id.setTitle_btn);
 
@@ -81,7 +107,9 @@ public class AdsListsActivity extends AppCompatActivity {
                 String productTitle = setProductTitle.getText().toString();
                 productTitle = productTitle.trim();
                 if (!productTitle.isEmpty()) {
-                    mFirebaseWantedList.push().setValue(new Product(productTitle));
+                    DatabaseReference newProduct =  mFirebaseWantedList.push();
+                    newProduct.setValue(new Product(productTitle, newProduct.getKey()));
+
 
                     setProductTitle.setText("");
                 }
@@ -104,14 +132,16 @@ public class AdsListsActivity extends AppCompatActivity {
     private void showWanted() {
 
         ListView wantedList = (ListView)findViewById(R.id.wanted_list_ad);
-        FirebaseListAdapter<Product> adapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.message, mFirebaseWantedList) {
+        FirebaseListAdapter<Product> adapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mFirebaseWantedList) {
             @Override
             protected void populateView(View v, Product model, int position) {
 
-                TextView productTitle;
+                TextView productTitle, productKey;
                 productTitle = (TextView) v.findViewById(R.id.product_title);
+                productKey = (TextView) v.findViewById(R.id.product_key);
 
                 productTitle.setText(model.getTitle());
+                productKey.setText(model.getKey());
             }
         };
 
@@ -121,14 +151,16 @@ public class AdsListsActivity extends AppCompatActivity {
     private void showOffered() {
 
         ListView offeredList = (ListView)findViewById(R.id.offered_list_ad);
-        FirebaseListAdapter<Product> adapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.message, mFirebaseOfferedList) {
+        FirebaseListAdapter<Product> adapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mFirebaseOfferedList) {
             @Override
             protected void populateView(View v, Product model, int position) {
 
-                TextView productTitle;
+                TextView productTitle, productKey;
                 productTitle = (TextView) v.findViewById(R.id.product_title);
+                productKey = (TextView) v.findViewById(R.id.product_key);
 
                 productTitle.setText(model.getTitle());
+                productKey.setText(model.getKey());
             }
         };
 

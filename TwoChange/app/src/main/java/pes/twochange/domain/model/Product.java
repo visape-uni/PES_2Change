@@ -6,12 +6,22 @@ package pes.twochange.domain.model;
 
 public class Product {
     String title;
+    String key;
 
     public Product() {
     }
 
-    public Product(String title) {
+    public Product(String title, String key) {
         this.title = title;
+        this.key = key;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getTitle() {
