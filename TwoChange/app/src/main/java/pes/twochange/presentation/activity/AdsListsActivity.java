@@ -51,19 +51,57 @@ public class AdsListsActivity extends AppCompatActivity {
 
         //delete from wanted list
         final ListView lv = (ListView) findViewById(R.id.wanted_list_ad);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
                 AlertDialog.Builder adb=new AlertDialog.Builder(AdsListsActivity.this);
                 adb.setTitle("Delete?");
-                adb.setMessage("Are you sure you want to delete " + lv.getItemAtPosition(position) + "?");
-                final int positionToRemove = position;
+
+                final TextView keyProduct = (TextView) v.findViewById(R.id.product_key);
+                TextView nameProduct = (TextView) v.findViewById(R.id.product_title);
+
+                adb.setMessage("Are you sure you want to delete " + nameProduct.getText() + "?");
                 adb.setNegativeButton("Cancel", null);
                 adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        //mFirebaseWantedList.child();
-                        mFirebaseWantedList.removeValue();
+                        mFirebaseWantedList.child(keyProduct.getText().toString()).removeValue();
                     }});
                 adb.show();
+
+                return true;
+            }
+        });
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> a, View v, final int position, long id) {
+
+                final TextView setProductTitle = (TextView) findViewById(R.id.setTitle_txt);
+                final FloatingActionButton btnSetProductTitle = (FloatingActionButton) findViewById(R.id.setTitle_btn);
+
+                final TextView keyProduct = (TextView) v.findViewById(R.id.product_key);
+                TextView nameProduct = (TextView) v.findViewById(R.id.product_title);
+
+                setProductTitle.setVisibility(View.VISIBLE);
+                btnSetProductTitle.setVisibility(View.VISIBLE);
+
+                setProductTitle.setText(nameProduct.getText());
+
+                btnSetProductTitle.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick (View view) {
+                        String productTitle = setProductTitle.getText().toString();
+                        productTitle = productTitle.trim();
+                        if (!productTitle.isEmpty()) {
+                            DatabaseReference editProduct = mFirebaseWantedList.child(keyProduct.getText().toString());
+                            editProduct.child("title").setValue(productTitle);
+
+
+                            setProductTitle.setText("");
+                        }
+                        setProductTitle.setVisibility(View.GONE);
+                        btnSetProductTitle.setVisibility(View.GONE);
+                    }
+                });
+
             }
         });
 
@@ -117,10 +155,8 @@ public class AdsListsActivity extends AppCompatActivity {
                 btnSetProductTitle.setVisibility(View.GONE);
             }
         });
-
-
-
     }
+
     private void editItem() {
 
     }
