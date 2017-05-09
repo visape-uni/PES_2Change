@@ -51,7 +51,7 @@ public class ProfileTheme implements ModelAdapter<Profile> {
         Firebase.getInstance().insert("profile", profile.getUsername(), this);
     }
 
-    private void update() {
+    public void update() {
         Firebase.getInstance().update("profile", profile.getUsername(), this);
     }
 

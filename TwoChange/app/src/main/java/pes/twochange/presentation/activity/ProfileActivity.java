@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import pes.twochange.R;
@@ -26,6 +28,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private Button editProfileButton;
     private Button chatButton;
     private ProgressBar loadingProgressBar;
+
+    private TextView notienable;
+    private Switch notifications;
 
     private String username;
     private Profile profile;
@@ -53,6 +58,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         editProfileButton = (Button) findViewById(R.id.edit_profile_button);
         chatButton = (Button) findViewById(R.id.chat_button);
         loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progress_bar);
+        notifications = (Switch) findViewById(R.id.switch_notis);
+        notienable = (TextView) findViewById(R.id.notis);
+
+
 
         new ProfileTheme().get(
                 username,
@@ -92,9 +101,25 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         if (selfProfile) {
             editProfileButton.setVisibility(View.VISIBLE);
             editProfileButton.setOnClickListener(this);
+
+            notifications.setVisibility(View.VISIBLE);
+            notienable.setVisibility(View.VISIBLE);
+            notifications.setChecked(profile.getNotifications());
+
+            notifications.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    profile.setNotifications(!profile.getNotifications());
+                    new ProfileTheme(profile).update();
+                }
+            });
+
         } else {
             chatButton.setVisibility(View.VISIBLE);
             chatButton.setOnClickListener(this);
+
+            notifications.setVisibility(View.GONE);
+            notienable.setVisibility(View.GONE);
         }
         loadingProgressBar.setVisibility(View.GONE);
     }

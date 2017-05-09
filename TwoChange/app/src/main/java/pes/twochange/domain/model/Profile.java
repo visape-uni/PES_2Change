@@ -8,6 +8,7 @@ public class Profile {
     private String surname;
     private PhoneNumber phoneNumber;
     private Address address;
+    private boolean notifications;
 
     public Profile() {
     }
@@ -67,6 +68,14 @@ public class Profile {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public boolean getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Boolean bool) {
+        this.notifications = bool;
     }
 
     public static class Address {

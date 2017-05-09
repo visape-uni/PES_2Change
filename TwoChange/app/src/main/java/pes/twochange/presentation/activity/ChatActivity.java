@@ -3,6 +3,7 @@ package pes.twochange.presentation.activity;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -44,6 +45,7 @@ import java.io.File;
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Message;
+import pes.twochange.presentation.Config;
 import pes.twochange.services.NotificationSender;
 
 import static android.Manifest.permission.CAMERA;
@@ -78,8 +80,8 @@ public class ChatActivity extends AppCompatActivity {
         mRlView = (RelativeLayout) findViewById(R.id.rl_view);
 
         //ActionBar boton atras
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        /*ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);*/
 
         //Coger chat pasado como extra en el intent
         Chat chat = (Chat) getIntent().getExtras().getSerializable("chat");
@@ -89,12 +91,16 @@ public class ChatActivity extends AppCompatActivity {
 
         userSender = chat.getMessageSender();
         userReciver = chat.getMessageReciver();
-        getSupportActionBar().setTitle(userReciver);
+        //getSupportActionBar().setTitle(userReciver);
 
         //Suscribirse al topic para recibir notificaciones de chat
         FirebaseMessaging.getInstance()
                 .subscribeToTopic(userReciver);
 
+
+        //Estado de las notificaciones
+        SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+        final Boolean notisActive = sharedPreferences.getBoolean("notifications", Boolean.parseBoolean(null));
 
         //Firebase database
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -116,8 +122,10 @@ public class ChatActivity extends AppCompatActivity {
                     mFirebaseChatRefSender.push().setValue(new Message(content, userSender, userReciver));
                     mFirebaseChatRefReciver.push().setValue(new Message(content, userSender, userReciver));
 
-                    NotificationSender n = new NotificationSender();
-                    n.sendNotification(userSender);
+                    if(notisActive) {
+                        NotificationSender n = new NotificationSender();
+                        n.sendNotification(userSender);
+                    }
 
                     messageInput.setText("");
                 }
