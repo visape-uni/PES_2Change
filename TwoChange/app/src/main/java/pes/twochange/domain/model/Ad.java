@@ -179,11 +179,12 @@ public class Ad extends Model {
     }
 
     public void save() {
-        DatabaseReference newOffered = mFirebaseOfferedList.child(this.getUserName()).child("offered").push();
-        newOffered.setValue(new Product(this.getTitle(), newOffered.getKey()));
         DatabaseReference newAdRef = db.push();
         setId(newAdRef.getKey());
         newAdRef.setValue(this);
+
+        DatabaseReference newOffered = mFirebaseOfferedList.child(this.getUserName()).child("offered").child(newAdRef.getKey());
+        newOffered.setValue(new Product(this.getTitle(), newAdRef.getKey()));
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef =
