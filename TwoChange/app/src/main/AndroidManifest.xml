@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.activity.zWorking" />
+        <activity android:name=".presentation.activity.BaseActivity" />
         <activity android:name=".presentation.activity.NewUserActivity" />
         <activity
             android:name=".MainActivity"
