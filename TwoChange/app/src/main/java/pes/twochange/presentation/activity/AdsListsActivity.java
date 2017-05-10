@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
@@ -122,8 +123,8 @@ public class AdsListsActivity extends AppCompatActivity {
             case R.id.action_add:
                 addItemToWanted();
                 break;
-            case R.id.action_delete:
-                deleteItem();
+            case R.id.action_match:
+                makeMatch();
                 break;
             case R.id.action_edit:
                 editItem();
@@ -133,25 +134,25 @@ public class AdsListsActivity extends AppCompatActivity {
     }
 
     private void addItemToWanted() {
-        final TextView setProductTitle = (TextView) findViewById(R.id.setTitle_txt);
+        final Spinner setCategory = (Spinner) findViewById(R.id.Category_Spn);
         final FloatingActionButton btnSetProductTitle = (FloatingActionButton) findViewById(R.id.setTitle_btn);
 
-        setProductTitle.setVisibility(View.VISIBLE);
+        setCategory.setVisibility(View.VISIBLE);
         btnSetProductTitle.setVisibility(View.VISIBLE);
 
         btnSetProductTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View view) {
-                String productTitle = setProductTitle.getText().toString();
+                String productTitle = setCategory.getSelectedItem().toString();
                 productTitle = productTitle.trim();
                 if (!productTitle.isEmpty()) {
                     DatabaseReference newProduct =  mFirebaseWantedList.push();
                     newProduct.setValue(new Product(productTitle, newProduct.getKey()));
 
 
-                    setProductTitle.setText("");
+                    //setProductTitle.setText("");
                 }
-                setProductTitle.setVisibility(View.GONE);
+                setCategory.setVisibility(View.GONE);
                 btnSetProductTitle.setVisibility(View.GONE);
             }
         });
@@ -160,7 +161,9 @@ public class AdsListsActivity extends AppCompatActivity {
     private void editItem() {
 
     }
-    private void deleteItem() {
+    private void makeMatch() {
+
+        //Make match
 
     }
 

@@ -25,12 +25,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/Category_Spn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:layout_gravity="center"
+            android:entries="@array/ad_category"
+            android:visibility="gone"/>
+
         <EditText
             android:id="@+id/setTitle_txt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="5"
             android:visibility="gone"/>
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/setTitle_btn"
             android:layout_width="wrap_content"

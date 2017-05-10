@@ -13,8 +13,8 @@
         android:title="@string/action_edit"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_delete"
-        android:icon="@drawable/ic_action_delete"
-        android:title="@string/action_delete"
+        android:id="@+id/action_match"
+        android:icon="@drawable/ic_action_match"
+        android:title="@string/action_match"
         app:showAsAction="always" />
 </menu>
