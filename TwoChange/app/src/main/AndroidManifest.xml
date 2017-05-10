@@ -42,8 +42,7 @@
         <activity
             android:name=".presentation.activity.PostAdActivity"
             android:label="@string/title_activity_post_ad"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -53,8 +52,8 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
-
         </provider>
+
         <service android:name=".services.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -68,6 +67,9 @@
 
         <activity android:name=".presentation.activity.EditProfileActivity" />
         <activity android:name=".presentation.activity.LoginActivity" />
+        <activity android:name=".presentation.activity.ExploreActivity" />
+        <activity android:name=".presentation.activity.AdActivity" />
+        <activity android:name=".presentation.activity.OptionsActivity"></activity>
     </application>
 
 </manifest>

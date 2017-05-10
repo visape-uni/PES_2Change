@@ -1,5 +1,6 @@
 package pes.twochange.presentation.activity;
 
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,8 +16,8 @@ import pes.twochange.R;
 
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final int[] MENU_IDs = { R.id.home, R.id.post, R.id.chat, R.id.profile, R.id.help,
-            R.id.about, R.id.logout };
+    private final int[] MENU_IDs = { R.id.explore, R.id.ad, R.id.chat, R.id.profile, R.id.settings,
+            R.id.help, R.id.about, R.id.logout };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,35 +59,47 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         if (item.getItemId() == MENU_IDs[currentMenuItemIndex()]) {
             return false;
         } else {
+            Intent intent;
             switch (item.getItemId()) {
-                case R.id.home:
-                    // startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                case R.id.explore:
+                    startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
                     break;
 
-                case R.id.post:
-                    // startActivity(new Intent(getApplicationContext(), AdActivity.class));
+                case R.id.ad:
+                    startActivity(new Intent(getApplicationContext(), AdActivity.class));
                     break;
 
                 case R.id.chat:
-                    // startActivity(new Intent(getApplicationContext(), ChatActivity.class));
+//                    startActivity(new Intent(getApplicationContext(), ChatActivity.class));
                     break;
 
                 case R.id.profile:
-                    // startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+//                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                    break;
+
+                case R.id.settings:
+                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                    intent.putExtra("item", 4);
+                    startActivity(intent);
                     break;
 
                 case R.id.help:
-                    // startActivity(new Intent(getApplicationContext(), HelpActivity.class));
+                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                    intent.putExtra("item", 5);
+                    startActivity(intent);
                     break;
 
                 case R.id.about:
-                    // startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                    intent.putExtra("item", 6);
+                    startActivity(intent);
                     break;
 
                 case R.id.logout:
-                    // Logout
+                    // TODO do logout
                     break;
             }
+            finish();
             return false;
         }
     }
@@ -97,7 +110,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             return getColor(colorId);
         } else {
-            return getResources().getColor(colorId);
+            return getResources().getColor(colorId, null);
         }
     }
 

@@ -3,11 +3,11 @@
 
     <group>
         <item
-            android:id="@+id/home"
-            android:title="Home" />
+            android:id="@+id/explore"
+            android:title="Explore" />
         <item
-            android:id="@+id/post"
-            android:title="Posts" />
+            android:id="@+id/ad"
+            android:title="Ads" />
         <item
             android:id="@+id/chat"
             android:title="Chat" />
@@ -17,6 +17,9 @@
     </group>
 
     <group>
+        <item
+            android:id="@+id/settings"
+            android:title="Settings" />
         <item
             android:id="@+id/help"
             android:title="Help" />
