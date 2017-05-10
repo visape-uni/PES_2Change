@@ -214,6 +214,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
 
         try {
             ad.save();
+
             Snackbar.make(v, "Your ad has been published!", Snackbar.LENGTH_LONG).show();
             finish();
         } catch (Exception e) {

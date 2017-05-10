@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import pes.twochange.R;
 import pes.twochange.domain.callback.ProfileResponse;
+import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
@@ -108,7 +109,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent);
                 break;
             case R.id.chat_button:
-                // TODO chat
+
+                SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+                String currentUsername = sharedPreferences.getString("username", null);
+                Intent chatIntent = new Intent(this,ChatActivity.class);
+                Chat chat = new Chat(currentUsername,profile.getUsername());
+                chatIntent.putExtra("chat",chat);
+                startActivity(chatIntent);
                 break;
         }
     }

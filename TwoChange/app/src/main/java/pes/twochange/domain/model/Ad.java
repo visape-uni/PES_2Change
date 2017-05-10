@@ -56,9 +56,10 @@ public class Ad extends Model {
     private static final int MAX_IMAGES = 4;
     private static final String OUT_OF_BOUNDS_MESSAGE = "Image index must be between 0 and " + MAX_IMAGES;
     private static DatabaseReference db = FirebaseDatabase.getInstance().getReferenceFromUrl("https://change-64bd0.firebaseio.com/").child("ads");
+    private static DatabaseReference mFirebaseOfferedList = FirebaseDatabase.getInstance().getReference().child("lists");
 
     private Profile user;
-    private String userId;
+    private String userName;
 
     private String title;
     private String description;
@@ -101,7 +102,7 @@ public class Ad extends Model {
     }
     @Exclude public void setUser(Profile user) {
         this.user = user;
-        setUserId(user.getUid());
+        setUserName(user.getUsername());
     }
 
     public String getTitle() {
@@ -144,11 +145,11 @@ public class Ad extends Model {
             this.rating = rating;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     /*
@@ -169,6 +170,8 @@ public class Ad extends Model {
     }
 
     public void save() {
+        DatabaseReference newOffered = mFirebaseOfferedList.child(this.getUserName()).child("offered").push();
+        newOffered.setValue(new Product(this.getTitle(), newOffered.getKey()));
         DatabaseReference newAdRef = db.push();
         setId(newAdRef.getKey());
         newAdRef.setValue(this);

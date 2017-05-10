@@ -149,5 +149,12 @@ public class MainMenuActivity extends AppCompatActivity {
 
             }
         });
+
+        Button adListBtn = (Button)findViewById(R.id.adListBtn);
+        adListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), AdsListsActivity.class));
+            }
+        });
     }
 }
