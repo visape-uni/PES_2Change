@@ -78,8 +78,8 @@ public class ChatActivity extends AppCompatActivity {
         mRlView = (RelativeLayout) findViewById(R.id.rl_view);
 
         //ActionBar boton atras
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        /*ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);*/
 
         //Coger chat pasado como extra en el intent
         Chat chat = (Chat) getIntent().getExtras().getSerializable("chat");
@@ -89,7 +89,6 @@ public class ChatActivity extends AppCompatActivity {
 
         userSender = chat.getMessageSender();
         userReciver = chat.getMessageReciver();
-        getSupportActionBar().setTitle(userReciver);
 
         //Suscribirse al topic para recibir notificaciones de chat
         FirebaseMessaging.getInstance()
