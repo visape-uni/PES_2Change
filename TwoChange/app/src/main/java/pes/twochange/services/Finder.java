@@ -1,5 +1,8 @@
 package pes.twochange.services;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -7,6 +10,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.NoSuchElementException;
+
+import pes.twochange.presentation.activity.MainMenuActivity;
+import pes.twochange.presentation.activity.SearchProfileActivity;
 
 public class Finder {
 
@@ -80,8 +86,9 @@ public class Finder {
     public void with(String key, String value) {
         char lastChar = value.charAt(value.length() - 1);
         char newLastChar = (char) (lastChar + 1);
-        String lastValue = value.substring(0, value.length() - 2);
+        String lastValue = value.substring(0, value.length() - 1);
         lastValue = lastValue + newLastChar;
+        Log.d("SEAAARCH:", lastValue);
         Query queryReference = ref.orderByChild(key).startAt(value).endAt(lastValue);
         queryReference.addListenerForSingleValueEvent(
                 new ValueEventListener() {
