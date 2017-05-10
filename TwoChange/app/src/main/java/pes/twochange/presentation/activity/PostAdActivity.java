@@ -56,7 +56,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
 
     private TextView ratingLbl;
     private EditText titleTxt, descriptionTxt, yearTxt, priceTxt;
-    private Spinner stateSpn, adTypeSpn;
+    private Spinner stateSpn, adTypeSpn, adCategorySpn;
     private ImageButton addImageBtn1, addImageBtn2, addImageBtn3, addImageBtn4;
     private LinearLayout itemDetails;
 
@@ -111,6 +111,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
 
         stateSpn = (Spinner) findViewById(R.id.stateSpn);
         adTypeSpn = (Spinner) findViewById(R.id.adTypeSpn);
+        adCategorySpn = (Spinner) findViewById(R.id.adCategorySpn);
 
         addImageBtn1 = (ImageButton) findViewById(R.id.addImageBtn1);
         addImageBtn2 = (ImageButton) findViewById(R.id.addImageBtn2);
@@ -125,6 +126,9 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                     postingProduct = false;
                 }
                 else {
+
+                    adCategorySpn.setVisibility(View.VISIBLE);
+
                     itemDetails.setVisibility(View.VISIBLE);
                     postingProduct = true;
                 }
@@ -200,7 +204,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     }
 
     public void publish(View v) {
-        ad.setTitle(titleTxt.getText().toString());
+        ad.setTitle(titleTxt.getText().toString().toUpperCase());
         ad.setDescription(descriptionTxt.getText().toString());
 
         if (postingProduct) {
@@ -208,6 +212,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
             Ad.ProductState state = Ad.ProductState.from(stateSpn.getSelectedItem().toString());
             int price = Integer.valueOf(priceTxt.getText().toString());
             ad.rate(state, year, price);
+            ad.setCategory(adCategorySpn.getSelectedItem().toString());
         } else {
             ad.setRating(100);
         }

@@ -27,6 +27,21 @@
         <item>Service</item>
     </string-array>
 
+    <string-array name="ad_category">
+        <item>Small home appliance</item>
+        <item>Big home appliance</item>
+        <item>Mobile</item>
+        <item>PC/Laptop</item>
+        <item>Motor</item>
+        <item>Clothes</item>
+        <item>Home</item>
+        <item>Tools</item>
+        <item>Toys</item>
+        <item>Books</item>
+        <item>Others</item>
+        <item>Others</item>
+    </string-array>
+
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="large_text">

@@ -64,6 +64,7 @@ public class Ad extends Model {
     private String title;
     private String description;
     private int rating;
+    private String category;
 
     private List<Image> images;
 
@@ -150,6 +151,14 @@ public class Ad extends Model {
     }
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     /*
