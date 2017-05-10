@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
@@ -33,12 +34,15 @@ public class AdsListsActivity extends AppCompatActivity {
 
     private DatabaseReference mFirebaseWantedList;
     private DatabaseReference mFirebaseOfferedList;
-    private DatabaseReference mFirebaseMatches;
+    private DatabaseReference mFirebaseCategories;
     String currentUsername = "";
     private static final String TAG = "AdsListsActivitiy";
 
+    private FirebaseListAdapter<Product> offeredAdapter;
+    private FirebaseListAdapter<Product> wantedAdapter;
+
     private ListView wantedList;
-    private ListView offeredList
+    private ListView offeredList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +60,7 @@ public class AdsListsActivity extends AppCompatActivity {
         //Referencia al chat
         mFirebaseWantedList = mFirebaseDatabase.getReference().child("lists").child(currentUsername).child("wanted");
         mFirebaseOfferedList = mFirebaseDatabase.getReference().child("lists").child(currentUsername).child("offered");
-        mFirebaseMatches = mFirebaseDatabase.getReference().child("matches").child(currentUsername);
+        mFirebaseCategories = mFirebaseDatabase.getReference().child("categories");
 
         //delete from wanted list
         final ListView lv = (ListView) findViewById(R.id.wanted_list_ad);
@@ -151,14 +155,13 @@ public class AdsListsActivity extends AppCompatActivity {
         btnSetProductTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View view) {
-                String productTitle = setCategory.getSelectedItem().toString();
-                productTitle = productTitle.trim();
-                if (!productTitle.isEmpty()) {
-                    DatabaseReference newProduct =  mFirebaseWantedList.push();
-                    newProduct.setValue(new Product(productTitle, newProduct.getKey()));
-
-
-                    //setProductTitle.setText("");
+                String categoryTitle = setCategory.getSelectedItem().toString();
+                categoryTitle = categoryTitle.trim();
+                if (!categoryTitle.isEmpty()) {
+                    if (!isCategoryWanted(categoryTitle)) {
+                        DatabaseReference newProduct = mFirebaseWantedList.push();
+                        newProduct.setValue(new Product(categoryTitle, newProduct.getKey()));
+                    }
                 }
                 setCategory.setVisibility(View.GONE);
                 btnSetProductTitle.setVisibility(View.GONE);
@@ -169,6 +172,17 @@ public class AdsListsActivity extends AppCompatActivity {
     private void editItem() {
 
     }
+
+    private boolean isCategoryWanted (String categoryTitle) {
+        boolean finded = false;
+        int i = 0;
+        while ((!finded) && (i < wantedAdapter.getCount())) {
+            if (wantedAdapter.getItem(i).getName().equals(categoryTitle)) finded = true;
+            ++i;
+        }
+        return finded;
+    }
+
     private void makeMatch() {
 
         //Count matches
@@ -178,8 +192,18 @@ public class AdsListsActivity extends AppCompatActivity {
         for (int i = 0; i < offeredList.getCount(); ++i) {
             //Per cada categoria de la wanted list
             for (int j = 0; j < wantedList.getCount(); ++j) {
+
+                //Nom + key del producte
+                Product auxProduct = offeredAdapter.getItem(i);
+
+                //CONTINUAR AQUI!!!!!!!!!
+                //Buscar producte a ads
+                //Agafar la seva valoracio
+
+                String categoria = wantedAdapter.getItem(j).getName();
+
                 //Buscar 1 match del producte amb la categoria
-                matchedProduct;
+                Ad matchedProduct = searchMatch(/*ValoracioProducte, */ categoria);
 
                 //Guardar el match en la base de datos (KEY = key del producto que tiene la categoria que busca)
                 String productKeySender = offeredList.getItemAtPosition(i).toString();
@@ -193,11 +217,32 @@ public class AdsListsActivity extends AppCompatActivity {
 
     }
 
+    private Ad searchMatch(/*int valoracio, */ String categoria) {
+
+        DatabaseReference mRefMyCat = mFirebaseCategories.child(categoria);
+        mRefMyCat.push().setValue("PROVA");
+
+        //CONTINUAR AQUIIIIIIIII!!!!!!!!!!!!!!
+
+        FirebaseListAdapter<Product> catAdapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mRefMyCat) {
+            @Override
+            protected void populateView(View v, Product model, int position) {
+                //AQUI NO ENTRA!
+                Log.d(TAG, "HOLA");
+            }
+        };
+
+        //GET COUNT DONA 0 ESTA MALAMENT
+        Log.d(TAG, String.valueOf(catAdapter.getCount()));
+
+        return null;
+    }
+
 
     private void showWanted() {
 
         wantedList = (ListView)findViewById(R.id.wanted_list_ad);
-        FirebaseListAdapter<Product> adapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mFirebaseWantedList) {
+        wantedAdapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mFirebaseWantedList) {
             @Override
             protected void populateView(View v, Product model, int position) {
 
@@ -205,18 +250,18 @@ public class AdsListsActivity extends AppCompatActivity {
                 productTitle = (TextView) v.findViewById(R.id.product_title);
                 productKey = (TextView) v.findViewById(R.id.product_key);
 
-                productTitle.setText(model.getTitle());
+                productTitle.setText(model.getName());
                 productKey.setText(model.getKey());
             }
         };
 
-        wantedList.setAdapter(adapter);
+        wantedList.setAdapter(wantedAdapter);
     }
 
     private void showOffered() {
 
         offeredList = (ListView)findViewById(R.id.offered_list_ad);
-        FirebaseListAdapter<Product> adapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mFirebaseOfferedList) {
+        offeredAdapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mFirebaseOfferedList) {
             @Override
             protected void populateView(View v, Product model, int position) {
 
@@ -224,11 +269,11 @@ public class AdsListsActivity extends AppCompatActivity {
                 productTitle = (TextView) v.findViewById(R.id.product_title);
                 productKey = (TextView) v.findViewById(R.id.product_key);
 
-                productTitle.setText(model.getTitle());
+                productTitle.setText(model.getName());
                 productKey.setText(model.getKey());
             }
         };
 
-        offeredList.setAdapter(adapter);
+        offeredList.setAdapter(offeredAdapter);
     }
 }
