@@ -20,15 +20,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Iterator;
+import java.util.Map;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Match;
 import pes.twochange.domain.model.Product;
 import pes.twochange.presentation.Config;
+import pes.twochange.services.DatabaseResponse;
 
 public class AdsListsActivity extends AppCompatActivity {
 
@@ -161,6 +168,8 @@ public class AdsListsActivity extends AppCompatActivity {
                     if (!isCategoryWanted(categoryTitle)) {
                         DatabaseReference newProduct = mFirebaseWantedList.push();
                         newProduct.setValue(new Product(categoryTitle, newProduct.getKey()));
+                    } else {
+                        Toast.makeText(AdsListsActivity.this, categoryTitle + " was already in the list.", Toast.LENGTH_SHORT);
                     }
                 }
                 setCategory.setVisibility(View.GONE);
@@ -219,23 +228,69 @@ public class AdsListsActivity extends AppCompatActivity {
 
     private Ad searchMatch(/*int valoracio, */ String categoria) {
 
+        boolean finded = false;
+
         DatabaseReference mRefMyCat = mFirebaseCategories.child(categoria);
-        mRefMyCat.push().setValue("PROVA");
 
-        //CONTINUAR AQUIIIIIIIII!!!!!!!!!!!!!!
-
-        FirebaseListAdapter<Product> catAdapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mRefMyCat) {
+        final DatabaseResponse callback = new DatabaseResponse() {
             @Override
-            protected void populateView(View v, Product model, int position) {
-                //AQUI NO ENTRA!
-                Log.d(TAG, "HOLA");
+            public void success(DataSnapshot dataSnapshot) {
+                getPosibleMatches((Map<String, String>) dataSnapshot);
+            }
+
+            @Override
+            public void empty() {
+                Log.d(TAG, "EMPTY");
+            }
+
+            @Override
+            public void failure(String message) {
+                Log.d(TAG, "Something went wrong: " + message);
             }
         };
 
-        //GET COUNT DONA 0 ESTA MALAMENT
-        Log.d(TAG, String.valueOf(catAdapter.getCount()));
+        Log.d(TAG, "HOLA?");
+
+        //NO ENTRA AQUIIII!
+        mRefMyCat.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "ENTRAS?");
+                if (dataSnapshot == null) {
+                    callback.empty();
+                } else {
+                    callback.success(dataSnapshot);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //TRACTAR ERROR
+                callback.failure(databaseError.toString());
+            }
+        });
+
+        Log.d(TAG, "ADIOS?");
+
+        //CONTINUAR AQUIIIIIIIII!!!!!!!!!!!!!!
+
 
         return null;
+    }
+
+    private void getPosibleMatches (Map<String,String> posibleMatches) {
+        boolean finded = false;
+        Iterator it = posibleMatches.entrySet().iterator();
+
+        while (!finded && it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Log.d(TAG, pair.getKey() + " = " + pair.getValue());
+            it.remove();
+        }
+
+        /*for (Map.Entry<String,String> entry : posibleMatches.entrySet()) {
+
+        }*/
     }
 
 

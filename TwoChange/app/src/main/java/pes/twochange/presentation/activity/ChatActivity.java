@@ -327,6 +327,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         };
 
+
         messagesList.setAdapter(adapter);
     }
 }
