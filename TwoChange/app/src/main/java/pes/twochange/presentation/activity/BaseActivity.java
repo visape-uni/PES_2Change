@@ -19,8 +19,18 @@ import pes.twochange.R;
 
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final int[] MENU_IDs = { R.id.explore, R.id.ad, R.id.chat, R.id.profile, R.id.settings,
+    private final static int[] MENU_IDs = { R.id.explore, R.id.ad, R.id.chat, R.id.profile, R.id.settings,
             R.id.help, R.id.about, R.id.logout };
+
+    protected final static String FRAGMENT_EXTRA = "fragment-extra-int";
+    protected final static int ADS_LIST = 0;
+    protected final static int SINGLE_AD = 1;
+    protected final static int ADD_EDIT_AD = 2;
+    protected final static int MY_LISTS = 3;
+    protected final static int CHAT_LIST = 4;
+    protected final static int SINGLE_CHAT = 5;
+    protected final static int PROFILE = 6;
+    protected final static int EDIT_PROFILE = 7;
 
     protected Toolbar toolbar;
     protected FragmentManager fragmentManager;

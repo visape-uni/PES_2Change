@@ -10,7 +10,12 @@ public class ExploreActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_explore);
+
         toolbar.setTitle("Explore");
+
+        int fragment = getIntent().getExtras().getInt(FRAGMENT_EXTRA, ADS_LIST);
+
+
     }
 
     @Override
