@@ -5,12 +5,15 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import pes.twochange.R;
 
@@ -19,12 +22,17 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     private final int[] MENU_IDs = { R.id.explore, R.id.ad, R.id.chat, R.id.profile, R.id.settings,
             R.id.help, R.id.about, R.id.logout };
 
+    protected Toolbar toolbar;
+    protected FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.base_activity);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        fragmentManager = getSupportFragmentManager();
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
@@ -96,7 +104,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                     break;
 
                 case R.id.logout:
-                    // TODO do logout
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                    finish();
                     break;
             }
             finish();
