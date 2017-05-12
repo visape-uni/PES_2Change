@@ -3,6 +3,8 @@ package pes.twochange.domain;
 import java.util.Date;
 import java.util.Random;
 
+import static java.lang.String.valueOf;
+
 public class Utils {
 
     public static String generateRandomWord(int wordLength) {
@@ -16,9 +18,7 @@ public class Utils {
     }
 
     public static String randomID() {
-        Long longId = new Date().getTime();
-        String id = String.valueOf(longId) + generateRandomWord(4);
-        return id;
+        return valueOf(new Date().getTime()) + generateRandomWord(4);
     }
 
 }

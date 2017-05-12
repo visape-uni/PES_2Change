@@ -146,5 +146,7 @@
 
     <string name="cd">content_description</string>
     <string name="title_activity_ads_lists">AdsListsActivity</string>
+    <string name="openDrawer">Open Drawer</string>
+    <string name="closeDrawer">Close Drawer</string>
 
 </resources>

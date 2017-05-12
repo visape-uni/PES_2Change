@@ -22,7 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.activity.zWorking" />
         <activity android:name=".presentation.activity.NewUserActivity" />
         <activity
             android:name=".MainActivity"
@@ -42,7 +41,7 @@
         <activity
             android:name=".presentation.activity.PostAdActivity"
             android:label="@string/title_activity_post_ad"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -70,7 +69,10 @@
         <activity
             android:name=".presentation.activity.AdsListsActivity"
             android:label="@string/title_activity_ads_lists"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".presentation.activity.ExploreActivity" />
+        <activity android:name=".presentation.activity.AdActivity" />
+        <activity android:name=".presentation.activity.OptionsActivity" />
     </application>
 
 </manifest>
