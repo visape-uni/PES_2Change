@@ -88,7 +88,6 @@ public class Finder {
         char newLastChar = (char) (lastChar + 1);
         String lastValue = value.substring(0, value.length() - 1);
         lastValue = lastValue + newLastChar;
-        Log.d("SEAAARCH:", lastValue);
         Query queryReference = ref.orderByChild(key).startAt(value).endAt(lastValue);
         queryReference.addListenerForSingleValueEvent(
                 new ValueEventListener() {
