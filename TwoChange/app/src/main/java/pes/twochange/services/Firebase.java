@@ -23,10 +23,12 @@ public class Firebase {
         return instance;
     }
 
+    // Get [name] following finder instruction and get the result in the callback
     public Finder get(String name, DatabaseResponse callback) {
         return new Finder(db.getReference().child(name), callback);
     }
 
+    // Update [name] with key = [id]. The model type is described in the model adapter
     public void update(String name, String id, ModelAdapter model) {
         DatabaseReference ref = db.getReference(name);
         Map values = new HashMap<>();
@@ -34,6 +36,7 @@ public class Firebase {
         ref.updateChildren(values);
     }
 
+    // Insert [name]. Then we return the new random ID. The model type is described in the model adapter
     public String insert(String name, ModelAdapter model) {
         String id = Utils.randomID();
         DatabaseReference ref = db.getReference(name);
@@ -41,11 +44,13 @@ public class Firebase {
         return id;
     }
 
+    // Insert [name] with ID = [key]. The model type is described in the model adapter
     public void insert(String name, String key, ModelAdapter model) {
         DatabaseReference ref = db.getReference(name);
         ref.child(key).setValue(model.object());
     }
 
+    // Delete [name] with key = [ID]
     public void delete(String name, String id) {
         DatabaseReference ref = db.getReference(name);
         ref.child(id).removeValue();
