@@ -71,13 +71,14 @@
             android:layout_height="match_parent"
             android:id="@+id/offered_list_ad"
             android:layout_weight="2"
-            android:layout_margin="10dp"></ListView>
+            android:layout_margin="10dp" />
+
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/wanted_list_ad"
             android:layout_weight="2"
-            android:layout_margin="10dp"></ListView>
+            android:layout_margin="10dp" />
 
 
     </LinearLayout>

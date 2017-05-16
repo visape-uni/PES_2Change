@@ -74,7 +74,7 @@ public class ProfileThemeTest {
 
         String username = testingProfile.getUsername();
 
-        new ProfileTheme().get(
+        ProfileTheme.getInstance().get(
                 username,
                 new ProfileResponse() {
                     @Override
@@ -107,7 +107,7 @@ public class ProfileThemeTest {
 
         String username = testingProfile.getUsername();
 
-        new ProfileTheme().get(
+        ProfileTheme.getInstance().get(
                 username,
                 new ProfileResponse() {
                     @Override
@@ -137,7 +137,7 @@ public class ProfileThemeTest {
         String username = lw();
         final String[] message = new String[1];
 
-        new ProfileTheme().get(
+        ProfileTheme.getInstance().get(
                 username,
                 new ProfileResponse() {
                     @Override
@@ -165,7 +165,7 @@ public class ProfileThemeTest {
         receivedProfile = null;
         final String randomUsername = lw();
 
-        new ProfileTheme().get(
+        ProfileTheme.getInstance().get(
                 randomUsername,
                 new ProfileResponse() {
                     @Override
@@ -180,11 +180,11 @@ public class ProfileThemeTest {
                         // Creamos el nuevo perfil
                         final Profile newProfile = new Profile(randomUsername, null, null, null, null, null);
 
-                        new ProfileTheme(newProfile).updateProfile(
+                        ProfileTheme.getInstance(newProfile).updateProfile(
                                 new ProfileResponse() {
                                     @Override
                                     public void success(Profile profile) {
-                                        new ProfileTheme().get(
+                                        ProfileTheme.getInstance().get(
                                                 newProfile.getUsername(),
                                                 new ProfileResponse() {
                                                     @Override
@@ -240,7 +240,7 @@ public class ProfileThemeTest {
         final String name = sw();
         final String zipCode = sw();
 
-        new ProfileTheme().get(
+        ProfileTheme.getInstance().get(
                 username,
                 new ProfileResponse() {
                     @Override
@@ -249,11 +249,11 @@ public class ProfileThemeTest {
                         profile.setName(name);
                         profile.getAddress().setZipCode(zipCode);
 
-                        new ProfileTheme(profile).updateProfile(
+                        ProfileTheme.getInstance(profile).updateProfile(
                                 new ProfileResponse() {
                                     @Override
                                     public void success(Profile profile) {
-                                        new ProfileTheme().get(
+                                        ProfileTheme.getInstance().get(
                                                 username,
                                                 new ProfileResponse() {
                                                     @Override

@@ -42,7 +42,7 @@
         <activity
             android:name=".presentation.activity.PostAdActivity"
             android:label="@string/title_activity_post_ad"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -70,7 +70,10 @@
         <activity
             android:name=".presentation.activity.AdsListsActivity"
             android:label="@string/title_activity_ads_lists"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".presentation.activity.AdListsActivity"
+            android:label="@string/title_activity_ad_lists"></activity>
     </application>
 
 </manifest>

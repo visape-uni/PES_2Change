@@ -130,5 +130,8 @@
 
     <string name="cd">content_description</string>
     <string name="title_activity_ads_lists">AdsListsActivity</string>
+    <string name="title_activity_ad_lists">AdListsActivity</string>
+    <string name="offered">Offered</string>
+    <string name="wanted">Wanted</string>
 
 </resources>

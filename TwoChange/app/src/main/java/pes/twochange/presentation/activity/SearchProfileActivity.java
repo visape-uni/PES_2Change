@@ -65,7 +65,7 @@ public class SearchProfileActivity extends AppCompatActivity implements TextWatc
     public void afterTextChanged(Editable s) {
         String newText = s.toString();
         if (newText.length() > 2) {
-            new ProfileTheme().search(
+            ProfileTheme.getInstance().search(
                     newText,
                     new ProfileTheme.SearchResponse() {
                         @Override
