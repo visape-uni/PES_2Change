@@ -27,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -166,6 +167,7 @@ public class AdsListsActivity extends AppCompatActivity {
                 categoryTitle = categoryTitle.trim();
                 if (!categoryTitle.isEmpty()) {
                     if (!isCategoryWanted(categoryTitle)) {
+                        Log.d(TAG, "ADD TO WANTED");
                         DatabaseReference newProduct = mFirebaseWantedList.push();
                         newProduct.setValue(new Product(categoryTitle, newProduct.getKey()));
                     } else {
@@ -196,62 +198,86 @@ public class AdsListsActivity extends AppCompatActivity {
 
         //Count matches
         int numMatches = 0;
+        Map<String, String> candidateMatches = new HashMap<>();
 
-        //Per cada ad a la offered list
+        for (int i = 0; i < wantedList.getCount(); ++i) {
+            String categoria = wantedAdapter.getItem(i).getName();
+            //Buscar matches candidatos para esta categoria
+            candidateMatches = getCandidateMatches(categoria);
+        }
+
+
+        //RETORNA 0, ha de retornar els candiates!!!!!;
+        Log.d(TAG, "CANDIDATE MATCHES: " + candidateMatches.size());
+
         for (int i = 0; i < offeredList.getCount(); ++i) {
-            //Per cada categoria de la wanted list
-            for (int j = 0; j < wantedList.getCount(); ++j) {
 
-                //Nom + key del producte
-                Product auxProduct = offeredAdapter.getItem(i);
+            Iterator it = candidateMatches.entrySet().iterator();
+            //Offered product to compare match
+            Product auxProduct = offeredAdapter.getItem(i);
+            //RECORRER TODOS LOS MATCHES POSIBLES
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                Log.d(TAG, pair.getKey() + " = " + pair.getValue());
 
-                //CONTINUAR AQUI!!!!!!!!!
-                //Buscar producte a ads
-                //Agafar la seva valoracio
+                Product posMatch = new Product(pair.getValue().toString(), pair.getKey().toString());
+                if (isMatch(auxProduct, posMatch)) {
+                    //AÑADIR posMatch A LOS MATCHES DE LA BD
 
-                String categoria = wantedAdapter.getItem(j).getName();
+                    //Key del producto del usuario sender con el que se quiere hacer el match
+                    String productKeySender = offeredList.getItemAtPosition(i).toString();
 
-                //Buscar 1 match del producte amb la categoria
-                Ad matchedProduct = searchMatch(/*ValoracioProducte, */ categoria);
+                    //crear match y guardarlo en la BD
+                    Match match = new Match(currentUsername, posMatch.getName(), productKeySender, posMatch.getKey());
+                    match.save();
 
-                //Guardar el match en la base de datos (KEY = key del producto que tiene la categoria que busca)
-                String productKeySender = offeredList.getItemAtPosition(i).toString();
-                Match match = new Match(currentUsername, matchedProduct.getUserName(), productKeySender, matchedProduct.getId());
-                match.save();
+                    //inc contador de matches
+                    ++numMatches;
+                }
+                //it.remove();
             }
         }
 
         if (numMatches > 0) Toast.makeText(AdsListsActivity.this, "Congratulations you have " + numMatches + "matches.", Toast.LENGTH_LONG);
         else  Toast.makeText(AdsListsActivity.this, "Sorry there are no matches.", Toast.LENGTH_LONG);
-
     }
 
-    private Ad searchMatch(/*int valoracio, */ String categoria) {
+    private boolean isMatch (Product offeredProd, Product posMatchProd) {
+        //FALTA IMPLEMENTAR
 
-        boolean finded = false;
+        Ad offeredAd = getAdOfProduct(offeredProd);
+        Ad posMatchAd = getAdOfProduct(posMatchProd);
 
-        DatabaseReference mRefMyCat = mFirebaseCategories.child(categoria);
+        int rateVariable = 10;
+
+        //Si tienen rating similares (+10 o -10) es MATCH
+        if ((offeredAd.getRating() >= (posMatchAd.getRating() - rateVariable)) && (offeredAd.getRating() <= (posMatchAd.getRating() + rateVariable))) return true;
+        else return false;
+    }
+
+    private Map<String, String> getCandidateMatches (String categoria) {
+        final Map<String,String> aux = new HashMap<String, String>();
 
         final DatabaseResponse callback = new DatabaseResponse() {
             @Override
             public void success(DataSnapshot dataSnapshot) {
-                getPosibleMatches((Map<String, String>) dataSnapshot);
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
+                    aux.put(d.getKey().toString(), d.getValue().toString());
+                    Log.d(TAG, d.getValue().toString());
+                }
             }
-
             @Override
             public void empty() {
                 Log.d(TAG, "EMPTY");
             }
-
             @Override
             public void failure(String message) {
                 Log.d(TAG, "Something went wrong: " + message);
             }
         };
 
-        Log.d(TAG, "HOLA?");
+        DatabaseReference mRefMyCat = mFirebaseCategories.child(categoria);
 
-        //NO ENTRA AQUIIII!
         mRefMyCat.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -262,7 +288,6 @@ public class AdsListsActivity extends AppCompatActivity {
                     callback.success(dataSnapshot);
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 //TRACTAR ERROR
@@ -270,15 +295,11 @@ public class AdsListsActivity extends AppCompatActivity {
             }
         });
 
-        Log.d(TAG, "ADIOS?");
-
-        //CONTINUAR AQUIIIIIIIII!!!!!!!!!!!!!!
-
-
-        return null;
+        return aux;
     }
 
-    private void getPosibleMatches (Map<String,String> posibleMatches) {
+
+    /*private void getPosibleMatches (Map<String,String> posibleMatches) {
         boolean finded = false;
         Iterator it = posibleMatches.entrySet().iterator();
 
@@ -288,10 +309,9 @@ public class AdsListsActivity extends AppCompatActivity {
             it.remove();
         }
 
-        /*for (Map.Entry<String,String> entry : posibleMatches.entrySet()) {
+        //for (Map.Entry<String,String> entry : posibleMatches.entrySet()) {
 
-        }*/
-    }
+    }*/
 
 
     private void showWanted() {
