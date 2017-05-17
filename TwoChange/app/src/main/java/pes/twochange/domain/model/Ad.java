@@ -58,11 +58,12 @@ public class Ad extends Model {
     private static DatabaseReference db = FirebaseDatabase.getInstance().getReferenceFromUrl("https://change-64bd0.firebaseio.com/").child("ads");
 
     private Profile user;
-    private String userId;
+    private String userName;
 
     private String title;
     private String description;
     private int rating;
+    private String category;
 
     private List<Image> images;
 
@@ -101,7 +102,6 @@ public class Ad extends Model {
     }
     @Exclude public void setUser(Profile user) {
         this.user = user;
-        setUserId(user.getUid());
     }
 
     public String getTitle() {
@@ -144,11 +144,18 @@ public class Ad extends Model {
             this.rating = rating;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     /*
