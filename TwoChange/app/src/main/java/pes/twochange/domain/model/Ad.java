@@ -104,6 +104,7 @@ public class Ad extends Model {
     }
     @Exclude public void setUser(Profile user) {
         this.user = user;
+        setUserName(user.getUsername());
     }
 
     public String getTitle() {
@@ -182,10 +183,10 @@ public class Ad extends Model {
         setId(newAdRef.getKey());
         newAdRef.setValue(this);
 
-        DatabaseReference newOffered = mFirebaseOfferedList.child(this.getUserName()).child("offered").child(newAdRef.getKey());
-        newOffered.setValue(new Product(this.getTitle(), newAdRef.getKey()));
+        DatabaseReference newOffered = mFirebaseOfferedList.child(this.getUserName()).child("offered").child(getId());
+        newOffered.setValue(new Product(this.getTitle(), getId()));
 
-        DatabaseReference newCategory = mFirebaseCategory.child(this.getCategory()).child(newAdRef.getKey());;
+        DatabaseReference newCategory = mFirebaseCategory.child(this.getCategory()).child(getId());;
         newCategory.setValue(this.getTitle());
 
 
