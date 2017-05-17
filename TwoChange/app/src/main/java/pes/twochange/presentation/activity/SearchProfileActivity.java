@@ -16,7 +16,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import pes.twochange.R;
+import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Profile;
+import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 
@@ -68,11 +70,11 @@ public class SearchProfileActivity extends AppCompatActivity implements TextWatc
     public void afterTextChanged(Editable s) {
         String newText = s.toString();
         if (newText.length() > 2) {
-            new ProfileTheme().search( newText,
-                new ProfileTheme.SearchResponse() {
+            new AdTheme().search( newText,
+                new AdTheme.SearchResponse() {
                     @Override
-                    public void listResponse(ArrayList<String> usernames, ArrayList<Profile> profiles) {
-                        usernamesArray = usernames;
+                    public void listResponse(ArrayList<String> titles, ArrayList<Ad> products) {
+                        usernamesArray = titles;
                         setList();
                     }
 

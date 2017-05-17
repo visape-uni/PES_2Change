@@ -1,5 +1,7 @@
 package pes.twochange.domain.themes;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import java.util.ArrayList;
 import pes.twochange.domain.model.Ad;
@@ -22,21 +24,21 @@ public class AdTheme {
     public AdTheme() {}
 
     //Fa la cerca dels productes segons el nom introduit per l'usuari
-    public void search(final String productName, final SearchResponse searchResponse) {
+    public void search(String productName, final SearchResponse searchResponse) {
+        productName = productName.toUpperCase();
         Firebase.getInstance().get(
                 "ads",
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
-                        ArrayList<String> ids = new ArrayList<>();
-                        ArrayList<Profile> products = new ArrayList<>();
-
+                        ArrayList<String> titles = new ArrayList<>();
+                        ArrayList<Ad> products = new ArrayList<>();
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            Profile profile = ds.getValue(Profile.class);
-                            products.add(profile);
-                            ids.add(profile.getUsername());
+                            Ad product = ds.getValue(Ad.class);
+                            products.add(product);
+                            titles.add(product.getTitle());
                         }
-                        searchResponse.listResponse(ids, products);
+                        searchResponse.listResponse(titles, products);
                     }
 
                     @Override
@@ -49,13 +51,12 @@ public class AdTheme {
                         searchResponse.failure(message);
                     }
                 }
-        //TODO: La cerca retorna els noms dels productes pero volem els seus ids.
-        ).with("username", productName);
+        ).with("title", productName);
     }
 
     //Conjunt de resultats de la cerca
     public interface SearchResponse {
-        void listResponse(ArrayList<String> ids, ArrayList<Profile> products);
+        void listResponse(ArrayList<String> titles, ArrayList<Ad> products);
         void empty();
         void failure(String message);
     }
