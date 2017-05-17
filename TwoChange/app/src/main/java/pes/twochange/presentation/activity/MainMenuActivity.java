@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import pes.twochange.R;
 import pes.twochange.domain.callback.ProfileResponse;
@@ -132,7 +131,7 @@ public class MainMenuActivity extends AppCompatActivity {
         Button searchUserBtn = (Button)findViewById(R.id.searchUserBtn);
         searchUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), SearchProfileActivity.class));
+                startActivity(new Intent(getApplicationContext(), SearchActivity.class));
             }
         });
 
