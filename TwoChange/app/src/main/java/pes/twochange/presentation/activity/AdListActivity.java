@@ -1,6 +1,11 @@
 package pes.twochange.presentation.activity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -13,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import pes.twochange.R;
@@ -20,9 +26,13 @@ import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.AdAdapter;
 
+import static pes.twochange.presentation.activity.PostAdActivity.REQUEST_WRITE_EXTERNAL_STORAGE;
+
 public class AdListActivity extends AppCompatActivity {
 
     private static final String TAG = "AdListActivity";
+    private static final File TMP_IMAGE_LOCATION =
+            new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/2change/tmp");
 
     private AdTheme adTheme;
     private static DatabaseReference db = FirebaseDatabase.getInstance().getReferenceFromUrl("https://change-64bd0.firebaseio.com/").child("ads");
@@ -40,19 +50,22 @@ public class AdListActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int deviceWidth = displayMetrics.widthPixels;
 
-        final AdAdapter adapter = new AdAdapter(new ArrayList<Ad>(), deviceWidth);
+        final AdAdapter adapter = new AdAdapter(new ArrayList<Ad>(), deviceWidth, this);
         recView.setAdapter(adapter);
         recView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
+        if (!TMP_IMAGE_LOCATION.exists()) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
 
 
         db.orderByKey().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Ad ad = dataSnapshot.getValue(Ad.class);
-                Log.i(TAG, "Another ad: " + ad.getTitle());
-                adapter.add(dataSnapshot.getValue(Ad.class));
-                adapter.notifyDataSetChanged();
+                final Ad ad = dataSnapshot.getValue(Ad.class);
+                adapter.add(ad);
             }
 
             @Override
@@ -75,5 +88,22 @@ public class AdListActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+            // Nothing
+        } else {
+            switch (requestCode) {
+                case REQUEST_WRITE_EXTERNAL_STORAGE:
+                    if (!TMP_IMAGE_LOCATION.mkdirs())
+                        Log.e(TAG, "Unable to create directory or directory already exists: " + TMP_IMAGE_LOCATION.toString());
+                    else
+                        Log.i(TAG, "Created directory: " + TMP_IMAGE_LOCATION.toString());
+                    break;
+            }
+        }
     }
 }

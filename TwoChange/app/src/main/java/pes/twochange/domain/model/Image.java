@@ -49,7 +49,6 @@ public class Image {
         }
     }
 
-
     private String id;
     private Uri uri;
     private Format format;
@@ -106,14 +105,14 @@ public class Image {
 
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
         Cursor cursor = context.getContentResolver().query(uri, filePathColumn, null, null, null);
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String filePath = cursor.getString(columnIndex);
             format = Format.fromExtension(filePath.substring(filePath.lastIndexOf(".")));
+            cursor.close();
         } else {
             format = null;
         }
-        cursor.close();
 
         /*
         try {

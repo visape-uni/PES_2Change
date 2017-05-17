@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import pes.twochange.R;
 import pes.twochange.domain.callback.ProfileResponse;
@@ -153,7 +152,7 @@ public class MainMenuActivity extends AppCompatActivity {
         Button adListBtn = (Button)findViewById(R.id.adListBtn);
         adListBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), AdsListsActivity.class));
+                startActivity(new Intent(getApplicationContext(), AdListActivity.class));
             }
         });
     }

@@ -136,6 +136,14 @@ public class Ad extends Model {
         if (index < 0 || index > MAX_IMAGES - 1) throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
         return images.get(index);
     }
+    public void addImage(Image image) {
+        for (int i = 0; i < images.size(); ++i) {
+            if (images.get(i) == null) {
+                setImageAt(i, image);
+                break;
+            }
+        }
+    }
 
     public int getRating() {
         return rating;
@@ -203,5 +211,9 @@ public class Ad extends Model {
         }
 
         newAdRef.child("images").setValue(imageIds);
+    }
+
+    @Exclude public StorageReference getStorageReference() {
+        return FirebaseStorage.getInstance().getReferenceFromUrl("gs://change-64bd0.appspot.com").child("ads").child(getId());
     }
 }
