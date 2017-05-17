@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,11 +16,10 @@ import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 
 public class EditProfileActivity extends AppCompatActivity {
-
+    //Attributes
     private Boolean editing;
     private String uid;
     private String username;
-
     private EditText usernameText;
     private EditText nameText;
     private EditText surnameText;
@@ -136,7 +134,6 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void updateProfile(Profile profile) {
-        Log.v("LOGIN_LOG", "updateProfile: " + profile.toString());
         new ProfileTheme(profile).updateProfile(
                 new ProfileResponse() {
                     @Override
@@ -145,7 +142,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         editor.putString("username", profile.getUsername());
                         editor.putString("uid", uid);
                         editor.apply();
-                        startActivity(new Intent(getApplicationContext(), MainMenuActivity.class));
+                        startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
                         finish();
                     }
 

@@ -135,6 +135,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="16dp" />
 
+                <Spinner
+                    android:id="@+id/adCategorySpn"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:entries="@array/ad_category" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp" />
+
                 <LinearLayout
                     android:id="@+id/itemDetailsLayout"
                     android:layout_width="match_parent"

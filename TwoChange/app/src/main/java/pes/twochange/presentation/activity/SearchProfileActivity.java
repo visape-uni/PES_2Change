@@ -1,5 +1,6 @@
 package pes.twochange.presentation.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,7 +21,6 @@ import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 
 public class SearchProfileActivity extends AppCompatActivity implements TextWatcher, AdapterView.OnItemClickListener {
-
     //Attributes
     EditText searchField;
     ListView profilesView;
@@ -49,6 +49,9 @@ public class SearchProfileActivity extends AppCompatActivity implements TextWatc
 
     }
 
+    public Context getContext() {
+        return getApplicationContext();
+    }
 
 
     @Override
@@ -65,25 +68,20 @@ public class SearchProfileActivity extends AppCompatActivity implements TextWatc
     public void afterTextChanged(Editable s) {
         String newText = s.toString();
         if (newText.length() > 2) {
-            new ProfileTheme().search(
-                    newText,
-                    new ProfileTheme.SearchResponse() {
-                        @Override
-                        public void listResponse(ArrayList<String> usernames, ArrayList<Profile> profiles) {
-                            usernamesArray = usernames;
-                            setList();
-                        }
-
-                        @Override
-                        public void empty() {
-
-                        }
-
-                        @Override
-                        public void failure(String message) {
-
-                        }
+            new ProfileTheme().search( newText,
+                new ProfileTheme.SearchResponse() {
+                    @Override
+                    public void listResponse(ArrayList<String> usernames, ArrayList<Profile> profiles) {
+                        usernamesArray = usernames;
+                        setList();
                     }
+
+                    @Override
+                    public void empty() {}
+
+                    @Override
+                    public void failure(String message) {}
+                }
             );
         }
     }

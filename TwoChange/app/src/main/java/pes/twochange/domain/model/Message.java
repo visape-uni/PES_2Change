@@ -1,5 +1,7 @@
 package pes.twochange.domain.model;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.Date;
 
 /**
@@ -54,5 +56,16 @@ public class Message {
 
     public void setMessageReciver(String messageReciver) {
         this.messageReciver = messageReciver;
+    }
+
+    public void send () {
+
+        //Publish the message on Sender's DB
+        FirebaseDatabase.getInstance().getReference().child("chats").child(messageSender).child(messageReciver).push().setValue(this);
+
+        //Publish the message on Reciver's DB
+        FirebaseDatabase.getInstance().getReference().child("chats").child(messageReciver).child(messageSender).push().setValue(this);
+
+
     }
 }

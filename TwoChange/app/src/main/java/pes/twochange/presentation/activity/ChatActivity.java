@@ -75,50 +75,61 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        //Relative view
         mRlView = (RelativeLayout) findViewById(R.id.rl_view);
 
         //ActionBar boton atras
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        /*ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);*/
 
         //Coger chat pasado como extra en el intent
         Chat chat = (Chat) getIntent().getExtras().getSerializable("chat");
-        /*
-        //crear chat
-        chat = new Chat(userSenderUid, userReciverUid);*/
 
+        //User sender
         userSender = chat.getMessageSender();
+        //User reciver
         userReciver = chat.getMessageReciver();
-        getSupportActionBar().setTitle(userReciver);
 
         //Suscribirse al topic para recibir notificaciones de chat
         FirebaseMessaging.getInstance()
                 .subscribeToTopic(userReciver);
 
 
-        //Firebase database
+        //Instance to Firebase database
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
-        //Referencia al chat
+
+        //Firebase ref to sender's chat
         mFirebaseChatRefSender = mFirebaseDatabase.getReference().child("chats").child(userSender).child(userReciver);
 
+        //Display the messages of the DB into the list view
         displayChatMessage();
 
+        //Firebase ref to reciver's chat
         mFirebaseChatRefReciver = mFirebaseDatabase.getReference().child("chats").child(userReciver).child(userSender);
 
+        //OnClickListener to send messages
         sendBtn = (FloatingActionButton)findViewById(R.id.sender_btn);
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View view) {
+
+                //Get the message to string
                 EditText messageInput = (EditText) findViewById(R.id.message_input);
                 String content = messageInput.getText().toString();
-                content = content.trim();
-                if (!content.isEmpty()) {
-                    mFirebaseChatRefSender.push().setValue(new Message(content, userSender, userReciver));
-                    mFirebaseChatRefReciver.push().setValue(new Message(content, userSender, userReciver));
 
+                //Delete blank spaces of the messages
+                content = content.trim();
+
+                if (!content.isEmpty()) {
+
+                    //If the message is not empty send it to the DBs
+                    new Message(content, userSender, userReciver).send();
+
+                    //Send notification for the reciver
                     NotificationSender n = new NotificationSender();
                     n.sendNotification(userSender);
 
+                    //Put the text field empty again
                     messageInput.setText("");
                 }
             }
@@ -130,11 +141,12 @@ public class ChatActivity extends AppCompatActivity {
 
         photoItem = menu.findItem(R.id.action_photo);
 
+        //IF PHOTO PERMISIONS ARE ACCEPTED SHOW THE ICON TO SEND PICTURES
         if (mayRequestStoragePermission()) {
             photoItem.setEnabled(true);
             photoItem.getIcon().setAlpha(255);
         } else {
-            // disabled
+            // PICTURE'S ICON DISABLED
             photoItem.setEnabled(false);
             photoItem.getIcon().setAlpha(130);
         }
@@ -151,6 +163,7 @@ public class ChatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_photo:
+                //IF Picture's icon is selected show gallery or camera
                 showOptions();
                 break;
         }
@@ -164,6 +177,7 @@ public class ChatActivity extends AppCompatActivity {
         if ((checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) &&
                 (checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED)) return true;
 
+        //ASK PERMISIONS TO ACCESS TO THE CAMERA AND GALLERY (FOR PICTURES)
         if ((shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE)) || (shouldShowRequestPermissionRationale(CAMERA))) {
             Snackbar.make(mRlView, "Permisions are necessary", Snackbar.LENGTH_INDEFINITE).setAction(android.R.string.ok, new View.OnClickListener() {
                 @TargetApi(Build.VERSION_CODES.M)
@@ -180,6 +194,8 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void showOptions() {
+        //Show options to take a picture, open the gallery or cancel
+
         final CharSequence[] option = {"Take a picture", "Gallery", "Cancel"};
         final AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
         builder.setTitle("Choose an option:");
@@ -191,6 +207,7 @@ public class ChatActivity extends AppCompatActivity {
                         openCamera();
                         break;
                     case 1:
+                        //Open the gallery
                         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.setType("image/*");
                         startActivityForResult(intent.createChooser(intent, "Select photo app"), SELECT_PICTURE);
@@ -205,6 +222,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void openCamera() {
+        //OPEN THE CAMERA
         File file = new File(Environment.getExternalStorageDirectory(), MEDIA_DIRECTORY);
         boolean isDirectoryCreated = file.exists();
         if (!isDirectoryCreated) isDirectoryCreated = file.mkdirs();
@@ -225,6 +243,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        //Save path when it goes to the camera
         outState.putString("file_path", mPath);
     }
 
@@ -249,11 +268,11 @@ public class ChatActivity extends AppCompatActivity {
                         }
                     });
                     Bitmap bitmap = BitmapFactory.decodeFile(mPath);
-                    //hacer algo con la imagen(bitmap)
+                    //INCOMPLETE
                     break;
                 case SELECT_PICTURE:
                     Uri path = data.getData();
-                    //hacer algo con la uri de la imagen
+                    //INCOMPLETE
                     break;
             }
         }
@@ -265,16 +284,22 @@ public class ChatActivity extends AppCompatActivity {
 
         if(requestCode == MY_PERMISSIONS) {
             if ((grantResults.length == 2) && (grantResults[0] == PackageManager.PERMISSION_GRANTED) && (grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
+
+                //If permissions accepted enable the picture's icon
                 Toast.makeText(ChatActivity.this, "Accepted permissions", Toast.LENGTH_SHORT).show();
                 photoItem.getIcon().setAlpha(255);
                 photoItem.setEnabled(true);
             }
         } else {
+
+            //If permissions denied request for permisions
             showExplanation();
         }
     }
 
     private void showExplanation() {
+
+        //Explanation why are the permissions needed
         AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
         builder.setTitle("Permissions denied");
         builder.setMessage("Permits are necessary to use app functionalities");
@@ -301,10 +326,13 @@ public class ChatActivity extends AppCompatActivity {
     private void displayChatMessage() {
 
         ListView messagesList = (ListView)findViewById(R.id.messages_list);
+
+        //Firebase adapter for getting the messages
         FirebaseListAdapter<Message> adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message, mFirebaseChatRefSender) {
             @Override
             protected void populateView(View v, Message model, int position) {
 
+                //Getting the textviews of the Message's layout
                 TextView messageContent, messageSender, messageTime;
                 messageContent = (TextView) v.findViewById(R.id.message_content);
                 messageSender = (TextView) v.findViewById(R.id.message_sender);
@@ -313,21 +341,25 @@ public class ChatActivity extends AppCompatActivity {
                 LinearLayout layoutMessageContent = (LinearLayout) v.findViewById(R.id.layout_message_content);
                 RelativeLayout.LayoutParams rl = (RelativeLayout.LayoutParams) layoutMessageContent.getLayoutParams();
                 if (model.getMessageSender().equals(userSender)) {
+                    //If it's a message from the sender use the green (message) and align right
                     layoutMessageContent.setBackgroundResource(R.drawable.ic_send_message);
                     rl.addRule(RelativeLayout.ALIGN_PARENT_LEFT,0);
                     rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 } else {
+                    //If it's a message from the reciver use the orange (message) and align left
                     layoutMessageContent.setBackgroundResource(R.drawable.ic_recive_message);
                     rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,0);
                     rl.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                 }
 
+                //Set with the content of the message, the message sender, and the time when the message was sent
                 messageContent.setText(model.getMessageContent());
                 messageSender.setText(model.getMessageSender());
                 messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm)", model.getMessageTime()));
             }
         };
 
+        //Use the firebase adapter on the listview
         messagesList.setAdapter(adapter);
     }
 }

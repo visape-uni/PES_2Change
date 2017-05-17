@@ -18,6 +18,7 @@ public class Finder {
         this.callback = callback;
     }
 
+    // Get the entire list
     public void list() {
         ref.addValueEventListener(
                 new ValueEventListener() {
@@ -34,6 +35,7 @@ public class Finder {
         );
     }
 
+    // Get one element with that ID (Firebase only allows one)
     public void byId(final String id) {
         ref.addValueEventListener(
                 new ValueEventListener() {
@@ -56,6 +58,7 @@ public class Finder {
         );
     }
 
+    // Get first with [key] equal [value]
     public void by(String key, String value) {
         Query queryReference = ref.orderByChild(key).equalTo(value);
         queryReference.addListenerForSingleValueEvent(
@@ -77,10 +80,12 @@ public class Finder {
         );
     }
 
+    // Search with the value of [key] similar to [value]
+    // with("name", "tomato") --> Search with value of name similar to tomato
     public void with(String key, String value) {
         char lastChar = value.charAt(value.length() - 1);
         char newLastChar = (char) (lastChar + 1);
-        String lastValue = value.substring(0, value.length() - 2);
+        String lastValue = value.substring(0, value.length() - 1);
         lastValue = lastValue + newLastChar;
         Query queryReference = ref.orderByChild(key).startAt(value).endAt(lastValue);
         queryReference.addListenerForSingleValueEvent(
