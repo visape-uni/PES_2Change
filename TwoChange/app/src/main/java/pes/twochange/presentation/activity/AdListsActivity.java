@@ -8,7 +8,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import pes.twochange.presentation.Config;
 import pes.twochange.presentation.fragment.AdListFragment;
 import pes.twochange.presentation.model.ProductItem;
 
-public class AdListsActivity extends AppCompatActivity implements
+public class AdListsActivity extends BaseActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener,
         AdListFragment.OnFragmentInteractionListener
 {
@@ -58,6 +57,11 @@ public class AdListsActivity extends AppCompatActivity implements
             displayFragment(navigationItem, TAGS[navigationItem], -1);
             return true;
         }
+    }
+
+    @Override
+    protected int currentMenuItemIndex() {
+        return AD;
     }
 
     // newFragment = the number of the new fragment
