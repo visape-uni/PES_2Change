@@ -103,7 +103,7 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
         adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 String key = keyProduct.getText().toString();
-                AdTheme.Wanted.getInstance(username).remove(key);
+//                AdTheme.Wanted.getInstance(username).remove(key);
             }});
         adb.show();
 

@@ -1,14 +1,20 @@
 package pes.twochange.presentation.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import pes.twochange.R;
+import pes.twochange.presentation.adapter.RecyclerViewProductAdapter;
+import pes.twochange.presentation.model.ProductItem;
+import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
+import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,14 +25,15 @@ import pes.twochange.R;
  * create an instance of this fragment.
  */
 public class AdListFragment extends Fragment {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "user";
     private static final String ARG_PARAM2 = "list";
-
     private String user;
     private String list;
 
-    private OnFragmentInteractionListener mListener;
+
+    private OnFragmentInteractionListener listener;
+    private RecyclerView recyclerView;
 
     public AdListFragment() {
         // Required empty public constructor
@@ -62,21 +69,35 @@ public class AdListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ad_list, container, false);
-    }
+        // create adapter and list listeners here
+        View view = inflater.inflate(R.layout.fragment_ad_list, container, false);
+        // TODO progress bar
+        recyclerView = (RecyclerView) view.findViewById(R.id.ad_list);
+        listener.getProductList(
+            new ActivityResponse() {
+                @Override
+                public void response(ArrayList<ProductItem> ads) {
+                    // TODO progress bar
+                    recyclerView.setAdapter(new RecyclerViewProductAdapter(ads, listener, listener));
+                }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+                @Override
+                public void error(String errorMessage) {
+                    // TODO error message
+                }
+            }
+        );
+
+
+
+        return view;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+            listener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -86,10 +107,19 @@ public class AdListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        listener = null;
     }
 
-    public String getList() {
-        return list;
+    public interface OnFragmentInteractionListener extends OnRecyclerViewItemClickListener,
+            OnRecyclerViewItemLongClickListener {
+
+        void getProductList(ActivityResponse response);
+
     }
+
+    public interface ActivityResponse {
+        void response(ArrayList<ProductItem> ads);
+        void error(String errorMessage);
+    }
+
 }

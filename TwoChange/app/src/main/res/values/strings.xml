@@ -133,5 +133,6 @@
     <string name="title_activity_ad_lists">AdListsActivity</string>
     <string name="offered">Offered</string>
     <string name="wanted">Wanted</string>
+    <string name="product_item_row_image_description">Product item Image for lists</string>
 
 </resources>
