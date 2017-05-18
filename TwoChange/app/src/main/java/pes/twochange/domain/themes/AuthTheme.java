@@ -44,7 +44,7 @@ public class AuthTheme implements FirebaseAuth.AuthStateListener, ProfileRespons
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             uid = user.getUid();
-            new ProfileTheme().find(uid, this);
+            ProfileTheme.getInstance().find(uid, this);
         }
         FirebaseAuth.getInstance().removeAuthStateListener(this);
     }
@@ -76,7 +76,7 @@ public class AuthTheme implements FirebaseAuth.AuthStateListener, ProfileRespons
     public void onComplete(@NonNull Task<AuthResult> task) {
         if (task.isSuccessful()) {
             uid = task.getResult().getUser().getUid();
-            new ProfileTheme().find(uid, this);
+            ProfileTheme.getInstance().find(uid, this);
         } else {
             // TODO Control d'errors
         }

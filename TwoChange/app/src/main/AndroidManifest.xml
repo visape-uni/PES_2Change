@@ -73,6 +73,9 @@
         <activity android:name=".presentation.activity.ExploreActivity" />
         <activity android:name=".presentation.activity.AdActivity" />
         <activity android:name=".presentation.activity.OptionsActivity" />
+        <activity
+            android:name=".presentation.activity.AdListsActivity"
+            android:label="@string/title_activity_ad_lists" />
     </application>
 
 </manifest>

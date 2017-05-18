@@ -91,7 +91,7 @@ public class EditProfileActivity extends AppCompatActivity {
         if (username.isEmpty()) {
             // TODO Control d'errors
         } else {
-            new ProfileTheme().get(
+            ProfileTheme.getInstance().get(
                     username,
                     new ProfileResponse() {
 
@@ -135,7 +135,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void updateProfile(Profile profile) {
-        new ProfileTheme(profile).updateProfile(
+        ProfileTheme.getInstance(profile).updateProfile(
                 new ProfileResponse() {
                     @Override
                     public void success(Profile profile) {

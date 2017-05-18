@@ -97,8 +97,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         };
         SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         final String currentUsername = sharedPreferences.getString("username", null);
-        ProfileTheme profileTheme = new ProfileTheme();
-        profileTheme.get(currentUsername, profileResponse);
+        ProfileTheme.getInstance().get(currentUsername, profileResponse);
 
         itemDetails = (LinearLayout) findViewById(R.id.itemDetailsLayout);
 
