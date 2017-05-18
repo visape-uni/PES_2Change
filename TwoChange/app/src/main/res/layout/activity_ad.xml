@@ -6,4 +6,65 @@
     android:layout_height="match_parent"
     tools:context="pes.twochange.presentation.activity.AdActivity">
 
+    <TextView
+        android:id="@+id/ad_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/ad_user"
+        android:layout_marginTop="26dp"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/ad_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="41dp"
+        android:layout_marginTop="54dp"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/ad_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/ad_user"
+        android:layout_below="@+id/ad_user"
+        android:layout_marginTop="16dp"
+        android:text="TextView" />
+
+    <RatingBar
+        android:id="@+id/ad_rating"
+        style="@android:style/Widget.Holo.RatingBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/ad_description"
+        android:layout_below="@+id/ad_description"
+        android:layout_marginTop="17dp" />
+
+    <TextView
+        android:id="@+id/ad_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/ad_rating"
+        android:layout_below="@+id/ad_rating"
+        android:layout_marginTop="13dp"
+        android:text="TextView" />
+
+    <ViewFlipper
+        android:id="@+id/ad_photos"
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true" />
+
+    <ListView
+        android:id="@+id/ad_wants"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/ad_photos"
+        android:layout_below="@+id/ad_photos" />
+
 </RelativeLayout>

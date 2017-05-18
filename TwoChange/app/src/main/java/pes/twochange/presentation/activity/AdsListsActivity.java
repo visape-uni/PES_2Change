@@ -1,6 +1,7 @@
 package pes.twochange.presentation.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -189,19 +190,37 @@ public class AdsListsActivity extends AppCompatActivity {
 
     private void showOffered() {
 
-        ListView offeredList = (ListView)findViewById(R.id.offered_list_ad);
+        final ListView offeredList = (ListView)findViewById(R.id.offered_list_ad);
         FirebaseListAdapter<Product> adapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mFirebaseOfferedList) {
             @Override
-            protected void populateView(View v, Product model, int position) {
+            protected void populateView(View v, final Product model, int position) {
 
-                TextView productTitle, productKey;
+                final TextView productTitle, productKey;
                 productTitle = (TextView) v.findViewById(R.id.product_title);
                 productKey = (TextView) v.findViewById(R.id.product_key);
 
+
                 productTitle.setText(model.getTitle());
                 productKey.setText(model.getKey());
+
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d("AdClicked","AdClicked"+model.getKey());
+                        Intent adIntent = new Intent(v.getContext(),AdActivity.class);
+                        adIntent.putExtra("adId", model.getKey());
+                        v.getContext().startActivity(adIntent);
+                    }
+                });
             }
         };
+        /*offeredList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        Log.d("AdClicked","AdClicked");
+            }
+        });*/
 
         offeredList.setAdapter(adapter);
     }
