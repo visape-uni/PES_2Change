@@ -16,11 +16,10 @@ import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 
 public class EditProfileActivity extends AppCompatActivity {
-
+    //Attributes
     private Boolean editing;
     private String uid;
     private String username;
-
     private EditText usernameText;
     private EditText nameText;
     private EditText surnameText;

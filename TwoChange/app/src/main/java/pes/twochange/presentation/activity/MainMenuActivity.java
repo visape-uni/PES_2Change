@@ -131,7 +131,7 @@ public class MainMenuActivity extends AppCompatActivity {
         Button searchUserBtn = (Button)findViewById(R.id.searchUserBtn);
         searchUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), SearchProfileActivity.class));
+                startActivity(new Intent(getApplicationContext(), SearchActivity.class));
             }
         });
 

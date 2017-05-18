@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -81,11 +82,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         email = emailField.getText().toString().trim();
         password = passwordField.getText().toString().trim();
         if (email.isEmpty()) {
-            // TODO Control d'errors
+            Toast.makeText(getApplicationContext(), "You must fill in both fields to log in", Toast.LENGTH_LONG).show();
         } else if (!email.contains("@")) {
-            // TODO Control d'errors
+            Toast.makeText(getApplicationContext(), "Email with incorrect format", Toast.LENGTH_LONG).show();
         } else if (password.isEmpty()) {
-            // TODO Control d'errors
+            Toast.makeText(getApplicationContext(), "You must fill in both fields to log in", Toast.LENGTH_LONG).show();
         } else {
             authTheme.login(email, password);
         }

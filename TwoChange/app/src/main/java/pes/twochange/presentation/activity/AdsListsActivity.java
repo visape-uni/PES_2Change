@@ -20,9 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Product;
-import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.Config;
-import pes.twochange.presentation.adapter.ProductFirebaseListAdapter;
 
 public class AdsListsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener {
@@ -169,22 +167,22 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
 
 
     private void showWanted() {
-        ListView wantedList = (ListView) findViewById(R.id.wanted_list_ad);
-        wantedList.setAdapter(new ProductFirebaseListAdapter(
-                this,
-                Product.class,
-                R.layout.product,
-                AdTheme.Wanted.getInstance(username).getReference()
-        ));
+//        ListView wantedList = (ListView) findViewById(R.id.wanted_list_ad);
+//        wantedList.setAdapter(new ProductFirebaseListAdapter(
+//                this,
+//                Product.class,
+//                R.layout.product,
+//                AdTheme.Wanted.getInstance(username).getReference()
+//        ));
     }
 
     private void showOffered() {
-        ListView wantedList = (ListView) findViewById(R.id.offered_list_ad);
-        wantedList.setAdapter(new ProductFirebaseListAdapter(
-                this,
-                Product.class,
-                R.layout.product,
-                AdTheme.Offered.getInstance(username).getReference()
-        ));
+//        ListView wantedList = (ListView) findViewById(R.id.offered_list_ad);
+//        wantedList.setAdapter(new ProductFirebaseListAdapter(
+//                this,
+//                Product.class,
+//                R.layout.product,
+//                AdTheme.Offered.getInstance(username).getReference()
+//        ));
     }
 }
