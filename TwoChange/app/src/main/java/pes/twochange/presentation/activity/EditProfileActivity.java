@@ -14,6 +14,7 @@ import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
+import pes.twochange.presentation.controller.ExploreActivity;
 
 public class EditProfileActivity extends AppCompatActivity {
     //Attributes

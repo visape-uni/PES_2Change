@@ -1,4 +1,4 @@
-package pes.twochange.presentation.activity;
+package pes.twochange.presentation.controller;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -16,6 +16,8 @@ import android.widget.FrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 import pes.twochange.R;
+import pes.twochange.presentation.activity.AdActivity;
+import pes.twochange.presentation.activity.LoginActivity;
 
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -73,54 +75,50 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == MENU_IDs[currentMenuItemIndex()]) {
-            return false;
-        } else {
-            Intent intent;
-            switch (item.getItemId()) {
-                case R.id.explore:
-                    startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
-                    break;
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.explore:
+                startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
+                break;
 
-                case R.id.ad:
-                    startActivity(new Intent(getApplicationContext(), AdActivity.class));
-                    break;
+            case R.id.ad:
+                startActivity(new Intent(getApplicationContext(), AdActivity.class));
+                break;
 
-                case R.id.chat:
+            case R.id.chat:
 //                    startActivity(new Intent(getApplicationContext(), ChatActivity.class));
-                    break;
+                break;
 
-                case R.id.profile:
+            case R.id.profile:
 //                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                    break;
+                break;
 
-                case R.id.settings:
-                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                    intent.putExtra("item", 4);
-                    startActivity(intent);
-                    break;
+            case R.id.settings:
+                intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                intent.putExtra("item", 4);
+                startActivity(intent);
+                break;
 
-                case R.id.help:
-                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                    intent.putExtra("item", 5);
-                    startActivity(intent);
-                    break;
+            case R.id.help:
+                intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                intent.putExtra("item", 5);
+                startActivity(intent);
+                break;
 
-                case R.id.about:
-                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                    intent.putExtra("item", 6);
-                    startActivity(intent);
-                    break;
+            case R.id.about:
+                intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                intent.putExtra("item", 6);
+                startActivity(intent);
+                break;
 
-                case R.id.logout:
-                    FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                    finish();
-                    break;
-            }
-            finish();
-            return false;
+            case R.id.logout:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                finish();
+                break;
         }
+        finish();
+        return false;
     }
 
     protected abstract int currentMenuItemIndex();

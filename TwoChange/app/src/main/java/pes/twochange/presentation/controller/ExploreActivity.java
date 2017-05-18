@@ -1,4 +1,4 @@
-package pes.twochange.presentation.activity;
+package pes.twochange.presentation.controller;
 
 import android.os.Bundle;
 
@@ -13,13 +13,13 @@ public class ExploreActivity extends BaseActivity {
 
         toolbar.setTitle("Explore");
 
-        int fragment = getIntent().getExtras().getInt(FRAGMENT_EXTRA, ADS_LIST);
+
 
 
     }
 
     @Override
     protected int currentMenuItemIndex() {
-        return 0;
+        return EXPLORE_ACTIVITY;
     }
 }

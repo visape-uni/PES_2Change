@@ -18,6 +18,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import pes.twochange.R;
 import pes.twochange.domain.themes.AuthTheme;
 import pes.twochange.presentation.Config;
+import pes.twochange.presentation.controller.ExploreActivity;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, AuthTheme.Response {
 

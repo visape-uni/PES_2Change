@@ -3,6 +3,7 @@ package pes.twochange.presentation.activity;
 import android.os.Bundle;
 
 import pes.twochange.R;
+import pes.twochange.presentation.controller.BaseActivity;
 
 public class AdActivity extends BaseActivity {
 

@@ -1,4 +1,4 @@
-package pes.twochange.presentation.activity;
+package pes.twochange.presentation.controller;
 
 import android.os.Bundle;
 

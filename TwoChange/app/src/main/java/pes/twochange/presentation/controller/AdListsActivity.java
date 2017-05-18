@@ -1,4 +1,4 @@
-package pes.twochange.presentation.activity;
+package pes.twochange.presentation.controller;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -61,7 +61,7 @@ public class AdListsActivity extends BaseActivity implements
 
     @Override
     protected int currentMenuItemIndex() {
-        return AD;
+        return AD_ACTIVITY;
     }
 
     // newFragment = the number of the new fragment
