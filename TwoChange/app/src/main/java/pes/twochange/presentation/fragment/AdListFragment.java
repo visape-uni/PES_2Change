@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Product;
 import pes.twochange.presentation.adapter.RecyclerViewAdAdapter;
 import pes.twochange.presentation.adapter.RecyclerViewWantedAdapter;
 import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
@@ -86,14 +87,15 @@ public class AdListFragment extends Fragment {
         activity = null;
     }
 
-    public void response(String title, ArrayList<Ad> ads) {
+    public void responseAds(ArrayList<Ad> ads) {
         progressBar.setVisibility(View.GONE);
-        RecyclerView.Adapter adapter;
-        if (title.equals("wanted")) {
-            adapter = new RecyclerViewWantedAdapter(ads, activity, activity);
-        } else {
-            adapter = new RecyclerViewAdAdapter(ads, activity, activity);
-        }
+        RecyclerView.Adapter adapter = new RecyclerViewAdAdapter(ads, activity, activity);
+        recyclerView.setAdapter(adapter);
+    }
+
+    public void responseProducts(ArrayList<Product> products) {
+        progressBar.setVisibility(View.GONE);
+        RecyclerView.Adapter adapter = new RecyclerViewWantedAdapter(products, activity, activity);
         recyclerView.setAdapter(adapter);
     }
 
