@@ -1,5 +1,6 @@
 package pes.twochange.domain.model;
 
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
@@ -136,6 +137,14 @@ public class Ad extends Model {
         if (index < 0 || index > MAX_IMAGES - 1) throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
         return images.get(index);
     }
+    public void addImage(Image image) {
+        for (int i = 0; i < images.size(); ++i) {
+            if (images.get(i) == null) {
+                setImageAt(i, image);
+                break;
+            }
+        }
+    }
 
     public int getRating() {
         return rating;
@@ -157,7 +166,6 @@ public class Ad extends Model {
     public String getCategory() {
         return category;
     }
-
     public void setCategory(String category) {
         this.category = category;
     }
@@ -184,10 +192,10 @@ public class Ad extends Model {
         setId(newAdRef.getKey());
         newAdRef.setValue(this);
 
-        DatabaseReference newOffered = mFirebaseOfferedList.child(this.getUserName()).child("offered").child(newAdRef.getKey());
-        newOffered.setValue(new Product(this.getTitle(), newAdRef.getKey()));
+        DatabaseReference newOffered = mFirebaseOfferedList.child(this.getUserName()).child("offered").child(getId());
+        newOffered.setValue(new Product(this.getTitle(), getId()));
 
-        DatabaseReference newCategory = mFirebaseCategory.child(this.getCategory()).child(newAdRef.getKey());;
+        DatabaseReference newCategory = mFirebaseCategory.child(this.getCategory()).child(getId());;
         newCategory.setValue(this.getTitle());
 
 
@@ -204,5 +212,18 @@ public class Ad extends Model {
         }
 
         newAdRef.child("images").setValue(imageIds);
+    }
+
+    public void delete() {
+        db.child(getId()).removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+            }
+        });
+    }
+
+    @Exclude public StorageReference getStorageReference() {
+        return FirebaseStorage.getInstance().getReferenceFromUrl("gs://change-64bd0.appspot.com").child("ads").child(getId());
     }
 }
