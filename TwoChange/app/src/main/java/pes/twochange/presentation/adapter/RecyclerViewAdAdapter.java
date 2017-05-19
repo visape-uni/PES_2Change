@@ -10,39 +10,39 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import pes.twochange.R;
-import pes.twochange.presentation.model.ProductItem;
+import pes.twochange.domain.model.Ad;
 import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
 import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
 
-public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerViewProductAdapter.ProductHolder> {
+public class RecyclerViewAdAdapter extends RecyclerView.Adapter<RecyclerViewAdAdapter.ProductHolder> {
 
-    protected ArrayList<ProductItem> products;
+    protected ArrayList<Ad> ads;
     protected OnRecyclerViewItemClickListener listener;
     protected OnRecyclerViewItemLongClickListener longListener;
 
-    public RecyclerViewProductAdapter(ArrayList<ProductItem> products,
-                                      OnRecyclerViewItemClickListener listener,
-                                      OnRecyclerViewItemLongClickListener longListener
+    public RecyclerViewAdAdapter(ArrayList<Ad> ads,
+                                 OnRecyclerViewItemClickListener listener,
+                                 OnRecyclerViewItemLongClickListener longListener
     ) {
-        this.products = products;
+        this.ads = ads;
         this.listener = listener;
         this.longListener = longListener;
     }
 
     @Override
-    public RecyclerViewProductAdapter.ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerViewAdAdapter.ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_item_row, parent);
         return new ProductHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewProductAdapter.ProductHolder holder, int position) {
+    public void onBindViewHolder(RecyclerViewAdAdapter.ProductHolder holder, int position) {
         final int finalPosition = position;
-        ProductItem product = products.get(finalPosition);
+        Ad ad = ads.get(finalPosition);
             // TODO load image
 //        holder.image.setImageBitmap(product.getImage());
-        holder.title.setText(product.getTitle());
+        holder.title.setText(ad.getTitle());
         holder.itemView.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -64,7 +64,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemCount() {
-        return products != null ? products.size() : 0;
+        return ads != null ? ads.size() : 0;
     }
 
     class ProductHolder extends RecyclerView.ViewHolder {

@@ -13,10 +13,10 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 
 import pes.twochange.R;
+import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.fragment.AdListFragment;
-import pes.twochange.presentation.model.ProductItem;
 
 public class AdListsActivity extends BaseActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener,
@@ -123,8 +123,8 @@ public class AdListsActivity extends BaseActivity implements
 
     }
 
-    private ArrayList<ProductItem> wantedProducts;
-    private ArrayList<ProductItem> offeredProducts;
+    private ArrayList<Ad> wantedProducts;
+    private ArrayList<Ad> offeredProducts;
 
     @Override
     public void onRecyclerViewItemClickListener(int position) {
@@ -133,14 +133,14 @@ public class AdListsActivity extends BaseActivity implements
 
     @Override
     public void onRecyclerViewItemLongClickListener(int position) {
-        ProductItem item = null;
+        Ad item = null;
         if (currentFragment == WANTED) {
             item = wantedProducts.get(position);
         } else {
             item = offeredProducts.get(position);
         }
         // for the dialog listener
-        final String finalItemKey = item.getKey();
+        final String finalItemKey = item.getId();
         new AlertDialog.Builder(getApplicationContext())
                 .setTitle("Delete item?")
                 .setMessage("Are you sure you want to remove " + item.getTitle() + "?")
@@ -182,7 +182,11 @@ public class AdListsActivity extends BaseActivity implements
             if (offeredProducts != null) {
                 response.response(title, offeredProducts);
             } else {
-                // TODO get offered products from firebase
+                AdTheme.getInstance().getOfferedList(
+                        username,
+                        this,
+                        this
+                );
             }
         }
     }
@@ -193,9 +197,9 @@ public class AdListsActivity extends BaseActivity implements
     }
 
     @Override
-    public void listResponse(ArrayList<ProductItem> productItems) {
-        if (fragment instanceof AdListFragment) {
-            fragment.response(TAGS[currentFragment], productItems);
+    public void listResponse(ArrayList<Ad> ads) {
+        if (fragment != null) {
+            fragment.response(TAGS[currentFragment], ads);
         }
     }
 }

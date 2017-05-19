@@ -12,9 +12,9 @@ import android.widget.ProgressBar;
 import java.util.ArrayList;
 
 import pes.twochange.R;
-import pes.twochange.presentation.adapter.RecyclerViewProductAdapter;
-import pes.twochange.presentation.adapter.RecyclerViewWantedProductAdapter;
-import pes.twochange.presentation.model.ProductItem;
+import pes.twochange.domain.model.Ad;
+import pes.twochange.presentation.adapter.RecyclerViewAdAdapter;
+import pes.twochange.presentation.adapter.RecyclerViewWantedAdapter;
 import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
 import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
@@ -86,13 +86,13 @@ public class AdListFragment extends Fragment {
         activity = null;
     }
 
-    public void response(String title, ArrayList<ProductItem> ads) {
+    public void response(String title, ArrayList<Ad> ads) {
         progressBar.setVisibility(View.GONE);
         RecyclerView.Adapter adapter;
         if (title.equals("wanted")) {
-            adapter = new RecyclerViewWantedProductAdapter(ads, activity, activity);
+            adapter = new RecyclerViewWantedAdapter(ads, activity, activity);
         } else {
-            adapter = new RecyclerViewProductAdapter(ads, activity, activity);
+            adapter = new RecyclerViewAdAdapter(ads, activity, activity);
         }
         recyclerView.setAdapter(adapter);
     }

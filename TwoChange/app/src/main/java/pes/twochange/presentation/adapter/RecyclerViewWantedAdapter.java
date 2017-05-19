@@ -4,25 +4,25 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import pes.twochange.presentation.model.ProductItem;
+import pes.twochange.domain.model.Ad;
 import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
 import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
-public class RecyclerViewWantedProductAdapter extends RecyclerViewProductAdapter {
+public class RecyclerViewWantedAdapter extends RecyclerViewAdAdapter {
 
-    public RecyclerViewWantedProductAdapter(
-            ArrayList<ProductItem> products,
+    public RecyclerViewWantedAdapter(
+            ArrayList<Ad> ads,
             OnRecyclerViewItemClickListener listener,
             OnRecyclerViewItemLongClickListener longListener
     ) {
-        super(products, listener, longListener);
+        super(ads, listener, longListener);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewProductAdapter.ProductHolder holder, int position) {
+    public void onBindViewHolder(RecyclerViewAdAdapter.ProductHolder holder, int position) {
         final int finalPosition = position;
-        ProductItem product = products.get(finalPosition);
-        holder.title.setText(product.getTitle());
+        Ad ad = ads.get(finalPosition);
+        holder.title.setText(ad.getTitle());
         holder.itemView.setOnClickListener(
                 new View.OnClickListener() {
                     @Override

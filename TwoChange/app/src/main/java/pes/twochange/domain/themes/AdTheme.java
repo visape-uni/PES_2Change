@@ -6,8 +6,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 import pes.twochange.domain.model.Ad;
-import pes.twochange.domain.model.Product;
-import pes.twochange.presentation.model.ProductItem;
 import pes.twochange.services.DatabaseResponse;
 import pes.twochange.services.Firebase;
 
@@ -73,20 +71,20 @@ public class AdTheme {
 
     public void getWantedList(String username, final ListResponse response, final ErrorResponse error) {
         Firebase.getInstance().get(
-                "lists/" + "/wanted",
+                "lists/" + username + "/wanted",
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
-                        ArrayList<ProductItem> products = new ArrayList<>();
+                        ArrayList<Ad> ads = new ArrayList<>();
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            products.add((ProductItem) ds.getValue(Product.class));
+                            ads.add(ds.getValue(Ad.class));
                         }
-                        response.listResponse(products);
+                        response.listResponse(ads);
                     }
 
                     @Override
                     public void empty() {
-                        response.listResponse(new ArrayList<ProductItem>());
+                        response.listResponse(new ArrayList<Ad>());
                     }
 
                     @Override
@@ -99,20 +97,20 @@ public class AdTheme {
 
     public void getOfferedList(String username, final ListResponse response, final ErrorResponse error) {
         Firebase.getInstance().get(
-                "lists/" + "/offered",
+                "lists/" + username + "/offered",
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
-                        ArrayList<ProductItem> products = new ArrayList<>();
+                        ArrayList<Ad> ads = new ArrayList<>();
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            products.add((ProductItem) ds.getValue(Product.class));
+                            ads.add(ds.getValue(Ad.class));
                         }
-                        response.listResponse(products);
+                        response.listResponse(ads);
                     }
 
                     @Override
                     public void empty() {
-                        response.listResponse(new ArrayList<ProductItem>());
+                        response.listResponse(new ArrayList<Ad>());
                     }
 
                     @Override
@@ -124,7 +122,7 @@ public class AdTheme {
     }
 
     public interface ListResponse {
-        void listResponse(ArrayList<ProductItem> productItems);
+        void listResponse(ArrayList<Ad> productItems);
     }
 
     public interface ErrorResponse {
