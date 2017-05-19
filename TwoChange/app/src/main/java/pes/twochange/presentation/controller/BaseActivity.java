@@ -1,7 +1,6 @@
 package pes.twochange.presentation.controller;
 
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -16,8 +15,8 @@ import android.widget.FrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 import pes.twochange.R;
-import pes.twochange.presentation.activity.AdActivity;
 import pes.twochange.presentation.activity.LoginActivity;
+import pes.twochange.presentation.activity.ProfileActivity;
 
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -82,7 +81,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 break;
 
             case R.id.ad:
-                startActivity(new Intent(getApplicationContext(), AdActivity.class));
+                startActivity(new Intent(getApplicationContext(), AdListsActivity.class));
                 break;
 
             case R.id.chat:
@@ -90,7 +89,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 break;
 
             case R.id.profile:
-//                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                 break;
 
             case R.id.settings:

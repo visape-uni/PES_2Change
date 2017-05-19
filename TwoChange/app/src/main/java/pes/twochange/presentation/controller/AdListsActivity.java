@@ -1,27 +1,25 @@
 package pes.twochange.presentation.controller;
 
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
 
 import pes.twochange.R;
+import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Product;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.fragment.AdListFragment;
-import pes.twochange.presentation.model.ProductItem;
 
 public class AdListsActivity extends BaseActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener,
-        AdListFragment.OnFragmentInteractionListener
-{
+        AdListFragment.OnFragmentInteractionListener, AdTheme.ErrorResponse, AdTheme.ListResponse, AdTheme.WantedResponse {
 
     private FragmentManager fragmentManager;
     private String username;
@@ -78,7 +76,7 @@ public class AdListsActivity extends BaseActivity implements
         switch (newFragment) {
             case WANTED:
             case OFFERED:
-                fragment = AdListFragment.newInstance(username, itemList);
+                fragment = AdListFragment.newInstance();
                 break;
 
             case SINGLE:
@@ -98,7 +96,8 @@ public class AdListsActivity extends BaseActivity implements
         currentFragment = newFragment;
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.content, fragment, TAGS[newFragment]);
+        transaction.add(R.id.content, fragment);
+        transaction.addToBackStack(TAGS[newFragment]);
         transaction.commit();
 
     }
@@ -117,32 +116,16 @@ public class AdListsActivity extends BaseActivity implements
 
         currentFragment = WANTED;
         fragmentManager = getSupportFragmentManager();
-        fragment = AdListFragment.newInstance(username, TAGS[currentFragment]);
+        fragment = AdListFragment.newInstance();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(R.id.content, fragment);
+        transaction.addToBackStack(TAGS[WANTED]);
         transaction.commit();
 
     }
 
-    private ArrayList<ProductItem> wantedProducts;
-    private ArrayList<ProductItem> offeredProducts;
-
-    @Override
-    public void getProductList(AdListFragment.ActivityResponse response) {
-        if (currentFragment == WANTED) {
-            if (wantedProducts != null) {
-                response.response(wantedProducts);
-            } else {
-                // TODO get wanted products from firebase
-            }
-        } else {
-            if (offeredProducts != null) {
-                response.response(offeredProducts);
-            } else {
-                // TODO get offered products from firebase
-            }
-        }
-    }
+    private ArrayList<Product> wantedProducts;
+    private ArrayList<Ad> offeredAds;
 
     @Override
     public void onRecyclerViewItemClickListener(int position) {
@@ -151,35 +134,47 @@ public class AdListsActivity extends BaseActivity implements
 
     @Override
     public void onRecyclerViewItemLongClickListener(int position) {
-        ProductItem item = null;
+
+    }
+
+    @Override
+    public void getProductList(final AdListFragment response) {
+        String title = TAGS[currentFragment];
         if (currentFragment == WANTED) {
-            item = wantedProducts.get(position);
+            if (wantedProducts != null) {
+                response.responseProducts(wantedProducts);
+            } else {
+                AdTheme.getInstance().getWantedList(
+                        username,
+                        this,
+                        this
+                );
+            }
         } else {
-            item = offeredProducts.get(position);
+            if (offeredAds != null) {
+                response.responseAds(offeredAds);
+            } else {
+                AdTheme.getInstance().getOfferedList(
+                        username,
+                        this,
+                        this
+                );
+            }
         }
-        // for the dialog listener
-        final String finalItemKey = item.getKey();
-        new AlertDialog.Builder(getApplicationContext())
-                .setTitle("Delete item?")
-                .setMessage("Are you sure you want to remove " + item.getTitle() + "?")
-                .setPositiveButton(
-                        "Yes",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                AdTheme.getInstance().remove(username, TAGS[currentFragment], finalItemKey);
-                            }
-                        }
-                )
-                .setNegativeButton(
-                        "No",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        }
-                )
-                .show();
+    }
+
+    @Override
+    public void error(String error) {
+
+    }
+
+    @Override
+    public void listResponse(ArrayList<Ad> ads) {
+        fragment.responseAds(ads);
+    }
+
+    @Override
+    public void wantedListResponse(ArrayList<Product> products) {
+        fragment.responseProducts(products);
     }
 }

@@ -16,7 +16,6 @@ import pes.twochange.domain.themes.AuthTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.activity.EditProfileActivity;
 import pes.twochange.presentation.activity.LoginActivity;
-import pes.twochange.presentation.activity.MainMenuActivity;
 
 public class SplashActivity extends AppCompatActivity implements Animation.AnimationListener, AuthTheme.Response {
 
@@ -89,7 +88,7 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
 
     @Override
     public void main() {
-        startActivity(new Intent(getApplicationContext(), MainMenuActivity.class));
+        startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
     }
 
     @Override

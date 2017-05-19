@@ -6,6 +6,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Product;
 import pes.twochange.services.DatabaseResponse;
 import pes.twochange.services.Firebase;
 
@@ -67,6 +68,71 @@ public class AdTheme {
                     }
                 }
         ).with("title", productName);
+    }
+
+    public void getWantedList(String username, final WantedResponse response, final ErrorResponse error) {
+
+        Firebase.getInstance().get(
+                "lists/" + username + "/wanted",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        ArrayList<Product> products = new ArrayList<>();
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            products.add(ds.getValue(Product.class));
+                        }
+                        response.wantedListResponse(products);
+                    }
+
+                    @Override
+                    public void empty() {
+                        response.wantedListResponse(new ArrayList<Product>());
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        error.error(message);
+                    }
+                }
+        ).list();
+    }
+
+    public void getOfferedList(String username, final ListResponse response, final ErrorResponse error) {
+        Firebase.getInstance().get(
+                "lists/" + username + "/offered",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        ArrayList<Ad> ads = new ArrayList<>();
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            ads.add(ds.getValue(Ad.class));
+                        }
+                        response.listResponse(ads);
+                    }
+
+                    @Override
+                    public void empty() {
+                        response.listResponse(new ArrayList<Ad>());
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        error.error(message);
+                    }
+                }
+        ).list();
+    }
+
+    public interface ListResponse {
+        void listResponse(ArrayList<Ad> productItems);
+    }
+
+    public interface WantedResponse {
+        void wantedListResponse(ArrayList<Product> productItems);
+    }
+
+    public interface ErrorResponse {
+        void error(String error);
     }
 
     //Conjunt de resultats de la cerca
