@@ -40,7 +40,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  * Created by kredes on 03/05/2017.
  */
 
-public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
+public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> implements View.OnClickListener{
 
     public static class AdViewHolder extends RecyclerView.ViewHolder {
 
@@ -294,12 +294,17 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
 
             new AsyncImageToBitmap(activity).execute();
         }
+
+        public Ad getAd() {
+            return ad;
+        }
     }
 
     private List<Ad> ads;
     private int deviceWidth;
     private Context context;
     private Activity activity;
+    private View.OnClickListener listener;
 
     public AdAdapter(List<Ad> ads, int deviceWidth, Activity activity) {
         this.ads = ads;
@@ -312,6 +317,8 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
     public AdViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_ad, parent, false);
+
+        itemView.setOnClickListener(this);
 
         return new AdViewHolder(itemView, deviceWidth, activity);
     }
@@ -327,6 +334,18 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
     public int getItemCount() {
         return ads.size();
     }
+
+
+    public void setOnClickListener(View.OnClickListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(listener != null)
+            listener.onClick(view);
+    }
+
 
     public void add(Ad ad) {
         ads.add(ad);

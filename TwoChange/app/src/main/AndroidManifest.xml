@@ -66,7 +66,7 @@
 
         <activity android:name=".presentation.activity.EditProfileActivity" />
         <activity android:name=".presentation.activity.LoginActivity" />
-        <activity android:name=".presentation.activity.AdListActivity">
+        <activity android:name=".presentation.activity.AdList2Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

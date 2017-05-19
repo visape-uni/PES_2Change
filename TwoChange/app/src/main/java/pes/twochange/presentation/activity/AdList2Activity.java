@@ -1,16 +1,19 @@
 package pes.twochange.presentation.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -53,6 +56,18 @@ public class AdList2Activity extends AppCompatActivity {
         final AdAdapter adapter = new AdAdapter(new ArrayList<Ad>(), deviceWidth, this);
         recView.setAdapter(adapter);
         recView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        recView.setItemAnimator(new DefaultItemAnimator());
+
+        adapter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AdAdapter.AdViewHolder avh = (AdAdapter.AdViewHolder) recView.getChildViewHolder(v);
+
+                Intent adIntent = new Intent(v.getContext(), AdActivity.class);
+                adIntent.putExtra("adId", avh.getAd().getId());
+                startActivity(adIntent);
+            }
+        });
 
         if (!TMP_IMAGE_LOCATION.exists()) {
             ActivityCompat.requestPermissions(this,
