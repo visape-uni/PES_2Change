@@ -191,7 +191,7 @@ public class Ad extends Model {
         DatabaseReference newAdRef = db.push();
         setId(newAdRef.getKey());
         newAdRef.setValue(this);
-        
+
         DatabaseReference newOffered = mFirebaseOfferedList.child(this.getUserName()).child("offered").child(newAdRef.getKey());
         newOffered.setValue(new Product(this.getTitle(), newAdRef.getKey(), this.getUserName()));
 
