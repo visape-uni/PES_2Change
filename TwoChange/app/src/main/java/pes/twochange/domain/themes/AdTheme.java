@@ -69,6 +69,66 @@ public class AdTheme {
         ).with("title", productName);
     }
 
+    public void getWantedList(String username, final ListResponse response, final ErrorResponse error) {
+        Firebase.getInstance().get(
+                "lists/" + username + "/wanted",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        ArrayList<Ad> ads = new ArrayList<>();
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            ads.add(ds.getValue(Ad.class));
+                        }
+                        response.listResponse(ads);
+                    }
+
+                    @Override
+                    public void empty() {
+                        response.listResponse(new ArrayList<Ad>());
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        error.error(message);
+                    }
+                }
+        ).list();
+    }
+
+    public void getOfferedList(String username, final ListResponse response, final ErrorResponse error) {
+        Firebase.getInstance().get(
+                "lists/" + username + "/offered",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        ArrayList<Ad> ads = new ArrayList<>();
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            ads.add(ds.getValue(Ad.class));
+                        }
+                        response.listResponse(ads);
+                    }
+
+                    @Override
+                    public void empty() {
+                        response.listResponse(new ArrayList<Ad>());
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        error.error(message);
+                    }
+                }
+        ).list();
+    }
+
+    public interface ListResponse {
+        void listResponse(ArrayList<Ad> productItems);
+    }
+
+    public interface ErrorResponse {
+        void error(String error);
+    }
+
     //Conjunt de resultats de la cerca
     public interface SearchResponse {
         void listResponse(ArrayList<String> titles, ArrayList<Ad> products);
