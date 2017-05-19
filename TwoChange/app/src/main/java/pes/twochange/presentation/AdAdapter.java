@@ -1,5 +1,6 @@
 package pes.twochange.presentation;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -17,11 +18,11 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.StorageReference;
 
@@ -44,7 +45,16 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
     public static class AdViewHolder extends RecyclerView.ViewHolder {
 
         private class AsyncImageToBitmap extends AsyncTask<Void, Void, Boolean> {
+            private static final int TIMEOUT = 2500;
+
             private Bitmap bitmap = null;
+            private boolean failure = false;
+            private Activity activity;
+
+            public AsyncImageToBitmap(Activity activity) {
+                super();
+                this.activity = activity;
+            }
 
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -53,96 +63,187 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
                     if (i != null && i.getUri() != null) {
                         try {
                             this.bitmap = i.toBitmap();
+                            break;
                         } catch (IOException e) {
-                            Log.e(TAG, e.getStackTrace().toString());
+                            failure = true;
+                            Log.e(TAG, "Exception", e);
                         }
                     }
                 }
 
-                db.child(ad.getId()).child("images").limitToFirst(1).addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        final String filename = (String) dataSnapshot.getValue();
-                        StorageReference storage = ad.getStorageReference();
-
-                        final File path = new File(String.format("%s/%s", TMP_IMAGE_LOCATION.toString(), ad.getId()));
-
-                        final File tmp;
-                        final String[] things = filename.split("\\.");
-
-                        try {
-                            path.mkdirs();
-                            tmp = File.createTempFile(things[0], "." + things[1], path);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-
-                        FileDownloadTask t = storage.child("images").child(filename).getFile(tmp);
-
-                        t.addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                Log.i(TAG,
-                                        String.format("Downloaded image %s to path %s",
-                                                filename, tmp.toString()));
-
-                                String id = things[0];
-                                Uri uri = Uri.fromFile(tmp);
-                                Image i = new Image(getApplicationContext(), id, uri);
-
-                                ad.addImage(i);
-
-                                try {
-                                    bitmap = i.toBitmap();
-                                } catch (IOException e) {
-                                    Log.e(TAG, e.getStackTrace().toString());
+                if (bitmap == null) {
+                    db.child(ad.getId()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            boolean hasImages = false;
+                            for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                if (child.getKey().equals("images")) {
+                                    hasImages = true;
+                                    break;
                                 }
                             }
-                        });
 
-                        t.addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e(TAG,
-                                        String.format("Failed to download image %s to path %s",
-                                                filename, tmp.toString()));
-                                e.printStackTrace();
-                            }
-                        });
+                            if (!hasImages) return;
 
-                        while (bitmap == null) {
-                            try {
-                                Thread.sleep(100);
-                                Log.i(TAG, "I am waiting.");
-                            } catch (InterruptedException e) {
-                                Log.e(TAG, e.getStackTrace().toString());
+                            for (DataSnapshot img : dataSnapshot.child("images").getChildren()) {
+                                final String filename = (String) img.getValue();
+                                StorageReference storage = ad.getStorageReference();
+
+                                final File path = new File(String.format("%s/%s", TMP_IMAGE_LOCATION.toString(), ad.getId()));
+
+                                final File tmp;
+                                final String[] things = filename.split("\\.");
+
+                                try {
+                                    path.mkdirs();
+                                    tmp = File.createTempFile(things[0], "." + things[1], path);
+
+                                    FileDownloadTask t = storage.child("images").child(filename).getFile(tmp);
+
+                                    t.addOnSuccessListener(activity, new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                            Log.i(TAG,
+                                                    String.format("Downloaded image %s to path %s",
+                                                            filename, tmp.toString()));
+
+                                            String id = things[0];
+                                            Uri uri = Uri.fromFile(tmp);
+                                            Image i = new Image(getApplicationContext(), id, uri);
+
+                                            ad.addImage(i);
+
+                                            try {
+                                                bitmap = i.toBitmap();
+                                            } catch (IOException e) {
+                                                failure = true;
+                                                Log.e(TAG, "Exception", e);
+                                            }
+                                        }
+                                    });
+
+                                    t.addOnFailureListener(activity, new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e(TAG,
+                                                    String.format("Failed to download image %s to path %s",
+                                                            filename, tmp.toString()));
+                                            Log.e(TAG, "Exception", e);
+                                        }
+                                    });
+                                } catch (IOException e) {
+                                    Log.e(TAG, "Exception", e);
+                                }
+                                break;
                             }
                         }
 
-                        Log.i(TAG, "IMAGE LOADED ASYNCHRONOUSLY!");
-                    }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+/*
+                    db.child(ad.getId()).addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {}
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {}
-                });
+                            if (!dataSnapshot.getKey().equals("images")) {
+                                return;
+                            }
+
+                            final String filename = (String) dataSnapshot.getValue();
+                            StorageReference storage = ad.getStorageReference();
+
+                            final File path = new File(String.format("%s/%s", TMP_IMAGE_LOCATION.toString(), ad.getId()));
+
+                            final File tmp;
+                            final String[] things = filename.split("\\.");
+
+                            try {
+                                path.mkdirs();
+                                tmp = File.createTempFile(things[0], "." + things[1], path);
+
+                                FileDownloadTask t = storage.child("images").child(filename).getFile(tmp);
+
+                                t.addOnSuccessListener(activity, new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                        Log.i(TAG,
+                                                String.format("Downloaded image %s to path %s",
+                                                        filename, tmp.toString()));
+
+                                        String id = things[0];
+                                        Uri uri = Uri.fromFile(tmp);
+                                        Image i = new Image(getApplicationContext(), id, uri);
+
+                                        ad.addImage(i);
+
+                                        try {
+                                            bitmap = i.toBitmap();
+                                        } catch (IOException e) {
+                                            failure = true;
+                                            Log.e(TAG, "Exception", e);
+                                        }
+                                    }
+                                });
+
+                                t.addOnFailureListener(activity, new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e(TAG,
+                                                String.format("Failed to download image %s to path %s",
+                                                        filename, tmp.toString()));
+                                        Log.e(TAG, "Exception", e);
+                                    }
+                                });
+                            } catch (IOException e) {
+                                Log.e(TAG, "Exception", e);
+                            }
+                        }
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });*/
+
+                    int elapsed = 0;
+                    while (bitmap == null) {
+                        if (failure || elapsed >= TIMEOUT) {
+                            Log.e(TAG, "Failed to load image");
+                            return false;
+                        }
+                        try {
+                            Thread.sleep(100);
+                            elapsed += 100;
+                            Log.i(TAG, "I am waiting.");
+                        } catch (InterruptedException e) {
+                            Log.e(TAG, "Exception", e);
+                        }
+                    }
+                }
+
+                Log.i(TAG, "IMAGE LOADED SUCCESSFULLY!");
 
                 return true;
             }
 
             @Override
             protected void onPostExecute(Boolean result) {
-                if (bitmap != null)
+                if (result)
                     image.setImageBitmap(bitmap);
             }
-
-
         }
 
 
@@ -163,12 +264,14 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
         private Ad ad;
 
         private Context context;
+        private Activity activity;
 
 
-        public AdViewHolder(View itemView, int deviceWidth, Context context) {
+        public AdViewHolder(View itemView, int deviceWidth, Activity activity) {
             super(itemView);
 
-            this.context = context.getApplicationContext();
+            this.context = activity.getApplicationContext();
+            this.activity = activity;
 
             title = (TextView) itemView.findViewById(R.id.title);
             description = (TextView) itemView.findViewById(R.id.description);
@@ -189,18 +292,20 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
             rating.setText(String.format("%d/100", ad.getRating()));
             description.setText(ad.getDescription());
 
-            new AsyncImageToBitmap().execute();
+            new AsyncImageToBitmap(activity).execute();
         }
     }
 
     private List<Ad> ads;
     private int deviceWidth;
     private Context context;
+    private Activity activity;
 
-    public AdAdapter(List<Ad> ads, int deviceWidth, Context context) {
+    public AdAdapter(List<Ad> ads, int deviceWidth, Activity activity) {
         this.ads = ads;
         this.deviceWidth = deviceWidth;
-        this.context = context.getApplicationContext();
+        this.activity = activity;
+        this.context = activity.getApplicationContext();
     }
 
     @Override
@@ -208,7 +313,7 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_ad, parent, false);
 
-        return new AdViewHolder(itemView, deviceWidth, context);
+        return new AdViewHolder(itemView, deviceWidth, activity);
     }
 
 

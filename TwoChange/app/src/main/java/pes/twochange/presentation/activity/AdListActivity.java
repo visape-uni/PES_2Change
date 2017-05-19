@@ -60,11 +60,20 @@ public class AdListActivity extends AppCompatActivity {
                     REQUEST_WRITE_EXTERNAL_STORAGE);
         }
 
-
         db.orderByKey().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
                 final Ad ad = dataSnapshot.getValue(Ad.class);
+
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    if (dataSnapshot.hasChild("images")) {
+                        for (DataSnapshot img : dataSnapshot.getChildren()) {
+
+                        }
+                    }
+                }
+
                 adapter.add(ad);
             }
 
