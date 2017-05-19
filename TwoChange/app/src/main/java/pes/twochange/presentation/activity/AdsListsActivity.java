@@ -339,6 +339,7 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
                         Intent adIntent = new Intent(v.getContext(),AdActivity.class);
                         adIntent.putExtra("adId", model.getKey());
                         v.getContext().startActivity(adIntent);
@@ -346,7 +347,7 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
                 });
             }
         };
-
         offeredList.setAdapter(offeredAdapter);
+
     }
 }

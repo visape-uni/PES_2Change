@@ -66,6 +66,13 @@
 
         <activity android:name=".presentation.activity.EditProfileActivity" />
         <activity android:name=".presentation.activity.LoginActivity" />
+        <activity android:name=".presentation.activity.AdList2Activity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".presentation.activity.AdsListsActivity"
             android:label="@string/title_activity_ads_lists"
