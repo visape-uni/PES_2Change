@@ -51,6 +51,11 @@ public class AdActivity extends BaseActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 adSelected = dataSnapshot.getValue(Ad.class);
+                titleTextView.setText(adSelected.getTitle());
+                usernameTextView.setText(adSelected.getUserName());
+                descriptionTextView.setText(adSelected.getDescription());
+                ratingBar.setRating((float)adSelected.getRating());
+                categoryTextView.setText(adSelected.getCategory());
             }
 
             @Override
@@ -60,11 +65,7 @@ public class AdActivity extends BaseActivity {
         });
 
 
-        titleTextView.setText(adSelected.getTitle());
-        usernameTextView.setText(adSelected.getUserName());
-        descriptionTextView.setText(adSelected.getDescription());
-        ratingBar.setRating((float)adSelected.getRating());
-        categoryTextView.setText(adSelected.getCategory());
+
 
 
     }

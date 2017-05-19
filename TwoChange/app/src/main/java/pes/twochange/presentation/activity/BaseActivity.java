@@ -60,10 +60,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        MenuItem currentMenuItem = navigationView.getMenu().getItem(currentMenuItemIndex());
+        /*MenuItem currentMenuItem = navigationView.getMenu().getItem(currentMenuItemIndex());
         int colorPrimary = getResourceColor(R.color.colorPrimary);
         PorterDuff.Mode srcAtop = PorterDuff.Mode.SRC_ATOP;
-        currentMenuItem.getIcon().setColorFilter(colorPrimary, srcAtop);
+        currentMenuItem.getIcon().setColorFilter(colorPrimary, srcAtop);*/
     }
 
     @Override
