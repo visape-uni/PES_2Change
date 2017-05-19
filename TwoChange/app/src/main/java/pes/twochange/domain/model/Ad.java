@@ -1,5 +1,6 @@
 package pes.twochange.domain.model;
 
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
@@ -211,6 +212,15 @@ public class Ad extends Model {
         }
 
         newAdRef.child("images").setValue(imageIds);
+    }
+
+    public void delete() {
+        db.child(getId()).removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+            }
+        });
     }
 
     @Exclude public StorageReference getStorageReference() {
