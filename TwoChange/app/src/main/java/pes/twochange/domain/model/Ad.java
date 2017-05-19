@@ -185,10 +185,10 @@ public class Ad extends Model {
         newAdRef.setValue(this);
 
         DatabaseReference newOffered = mFirebaseOfferedList.child(this.getUserName()).child("offered").child(newAdRef.getKey());
-        newOffered.setValue(new Product(this.getTitle(), newAdRef.getKey()));
+        newOffered.setValue(new Product(this.getTitle(), newAdRef.getKey(), this.getUserName()));
 
         DatabaseReference newCategory = mFirebaseCategory.child(this.getCategory()).child(newAdRef.getKey());;
-        newCategory.setValue(this.getTitle());
+        newCategory.setValue(new Product(this.getTitle(), newAdRef.getKey(), this.getUserName()));
 
 
         FirebaseStorage storage = FirebaseStorage.getInstance();

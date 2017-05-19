@@ -52,10 +52,7 @@ public class AdsListsActivity extends AppCompatActivity {
     private ListView wantedList;
     private ListView offeredList;
 
-    private Map<String,String> auxCandidateMatches = new HashMap<String, String>();
-
-    boolean matchStarted = false;
-    boolean matchFinished = false;
+    private Map<String,Product> auxCandidateMatches = new HashMap<String, Product>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,7 +171,7 @@ public class AdsListsActivity extends AppCompatActivity {
                     if (!isCategoryWanted(categoryTitle)) {
                         Log.d(TAG, "ADD TO WANTED");
                         DatabaseReference newProduct = mFirebaseWantedList.push();
-                        newProduct.setValue(new Product(categoryTitle, newProduct.getKey()));
+                        newProduct.setValue(new Product(categoryTitle, newProduct.getKey(), null));
                     } else {
                         Toast.makeText(AdsListsActivity.this, categoryTitle + " was already in the list.", Toast.LENGTH_SHORT);
                     }
@@ -204,50 +201,13 @@ public class AdsListsActivity extends AppCompatActivity {
         //Count matches
         int numMatches = 0;
 
-        //informar que ha empezado match
-        matchStarted = true;
-        matchFinished = false;
-
-        Toast.makeText(AdsListsActivity.this, "Matchig has started, we will notificate when it finish.", Toast.LENGTH_LONG).show();
+        Toast.makeText(AdsListsActivity.this, "Matchig has started, we will notificate you when it finish.", Toast.LENGTH_LONG).show();
 
         for (int i = 0; i < wantedList.getCount(); ++i) {
             String categoria = wantedAdapter.getItem(i).getName();
             //Buscar matches candidatos para esta categoria
             getCandidateMatches(categoria);
         }
-
-
-
-        /*for (int i = 0; i < offeredList.getCount(); ++i) {
-
-            Iterator it = candidateMatches.entrySet().iterator();
-            //Offered product to compare match
-            Product auxProduct = offeredAdapter.getItem(i);
-            //RECORRER TODOS LOS MATCHES POSIBLES
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
-                Log.d(TAG, pair.getKey() + " = " + pair.getValue());
-
-                Product posMatch = new Product(pair.getValue().toString(), pair.getKey().toString());
-                if (isMatch(auxProduct, posMatch)) {
-                    //AÑADIR posMatch A LOS MATCHES DE LA BD
-
-                    //Key del producto del usuario sender con el que se quiere hacer el match
-                    String productKeySender = offeredList.getItemAtPosition(i).toString();
-
-                    //crear match y guardarlo en la BD
-                    Match match = new Match(currentUsername, posMatch.getName(), productKeySender, posMatch.getKey());
-                    match.save();
-
-                    //inc contador de matches
-                    ++numMatches;
-                }
-                //it.remove();
-            }
-        }*/
-
-        if (numMatches > 0) Toast.makeText(AdsListsActivity.this, "Congratulations you have " + numMatches + "matches.", Toast.LENGTH_LONG);
-        else  Toast.makeText(AdsListsActivity.this, "Sorry there are no matches.", Toast.LENGTH_LONG);
     }
 
     private boolean isMatch (Product offeredProd, Product posMatchProd) {
@@ -257,7 +217,8 @@ public class AdsListsActivity extends AppCompatActivity {
         /*Ad offeredAd = getAdOfProduct(offeredProd);
         Ad posMatchAd = getAdOfProduct(posMatchProd);
 
-        int rateVariable = 10;
+        //rate permision
+        int rateVariable = 5;
 
         //Si tienen rating similares (+10 o -10) es MATCH
         if ((offeredAd.getRating() >= (posMatchAd.getRating() - rateVariable)) && (offeredAd.getRating() <= (posMatchAd.getRating() + rateVariable))) return true;
@@ -274,7 +235,7 @@ public class AdsListsActivity extends AppCompatActivity {
                 for (DataSnapshot d: dataSnapshot.getChildren()) {
                     //Si no es un match descartat afegir als candidates
                     //if(){}
-                    auxCandidateMatches.put(d.getKey().toString(), d.getValue().toString());
+                    auxCandidateMatches.put(d.getKey().toString(), d.getValue(Product.class));
                     Log.d(TAG, d.getValue().toString());
                 }
 
@@ -287,10 +248,10 @@ public class AdsListsActivity extends AppCompatActivity {
                     Product auxProduct = offeredAdapter.getItem(i);
                     //RECORRER TODOS LOS MATCHES POSIBLES
                     while (it.hasNext()) {
-                        Map.Entry pair = (Map.Entry)it.next();
+                        Map.Entry<String, Product> pair = (Map.Entry)it.next();
 
                         //Posible match
-                        Product posMatch = new Product(pair.getValue().toString(), pair.getKey().toString());
+                        Product posMatch = new Product(pair.getValue().getName(), pair.getKey().toString(), pair.getValue().getUsername());
 
                         //SI es match, AÑADIR posMatch A LOS MATCHES DE LA BD
                         if (isMatch(auxProduct, posMatch)) {

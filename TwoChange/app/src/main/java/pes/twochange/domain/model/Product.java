@@ -15,15 +15,17 @@ import com.google.firebase.database.ValueEventListener;
 public class Product {
     String name;
     String key;
+    String username;
 
     private static DatabaseReference mFirebaseAds = FirebaseDatabase.getInstance().getReference().child("ads");
 
     public Product() {
     }
 
-    public Product(String name, String key) {
+    public Product(String name, String key, String username) {
         this.name = name;
         this.key = key;
+        this.username = username;
     }
 
     public String getKey() {
@@ -43,11 +45,10 @@ public class Product {
     }
 
     public String getUsername() {
-        String username = "";
+        return this.username;
+    }
 
-        //Buscar en la BD user que ha subido ese producto
-        mFirebaseAds.child(this.key).child("userName");
-
-        return username;
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
