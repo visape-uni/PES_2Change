@@ -68,17 +68,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         blockButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
-                final String currentUsername = sharedPreferences.getString("username", null);
-                String blocked = db.child(currentUsername).child(username).toString();
-                if(blocked == null) {
-                    DatabaseReference newBlockedRef = db.push();
-                    newBlockedRef.setValue(username);
-                    Log.d("bloqueado",username);
-                }
-                else {
-
-                }
 
             }
         });
