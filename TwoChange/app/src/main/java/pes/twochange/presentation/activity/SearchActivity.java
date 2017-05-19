@@ -16,11 +16,11 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import pes.twochange.R;
-import pes.twochange.domain.model.Profile;
-import pes.twochange.domain.themes.ProfileTheme;
+import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.Config;
 
-public class SearchProfileActivity extends AppCompatActivity implements TextWatcher, AdapterView.OnItemClickListener {
+public class SearchActivity extends AppCompatActivity implements TextWatcher, AdapterView.OnItemClickListener {
     //Attributes
     EditText searchField;
     ListView profilesView;
@@ -31,7 +31,7 @@ public class SearchProfileActivity extends AppCompatActivity implements TextWatc
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_profile);
+        setContentView(R.layout.activity_search);
 
         SharedPreferences sp = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         username = sp.getString("username", null);
@@ -40,7 +40,7 @@ public class SearchProfileActivity extends AppCompatActivity implements TextWatc
         profilesView = (ListView)findViewById(R.id.profilesList);
 
         usernamesArray = new ArrayList<>();
-        profilesAdapter = new ArrayAdapter<>(SearchProfileActivity.this,
+        profilesAdapter = new ArrayAdapter<>(SearchActivity.this,
                 android.R.layout.simple_list_item_1, usernamesArray);
         profilesView.setAdapter(profilesAdapter);
 
@@ -68,11 +68,11 @@ public class SearchProfileActivity extends AppCompatActivity implements TextWatc
     public void afterTextChanged(Editable s) {
         String newText = s.toString();
         if (newText.length() > 2) {
-            new ProfileTheme().search( newText,
-                new ProfileTheme.SearchResponse() {
+            new AdTheme().search( newText,
+                new AdTheme.SearchResponse() {
                     @Override
-                    public void listResponse(ArrayList<String> usernames, ArrayList<Profile> profiles) {
-                        usernamesArray = usernames;
+                    public void listResponse(ArrayList<String> titles, ArrayList<Ad> products) {
+                        usernamesArray = titles;
                         setList();
                     }
 

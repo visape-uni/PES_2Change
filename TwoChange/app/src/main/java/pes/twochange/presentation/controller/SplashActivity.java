@@ -1,4 +1,4 @@
-package pes.twochange.presentation.activity;
+package pes.twochange.presentation.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,9 @@ import android.widget.TextView;
 import pes.twochange.R;
 import pes.twochange.domain.themes.AuthTheme;
 import pes.twochange.presentation.Config;
+import pes.twochange.presentation.activity.EditProfileActivity;
+import pes.twochange.presentation.activity.LoginActivity;
+import pes.twochange.presentation.activity.MainMenuActivity;
 
 public class SplashActivity extends AppCompatActivity implements Animation.AnimationListener, AuthTheme.Response {
 

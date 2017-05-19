@@ -55,7 +55,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         chatButton = (Button) findViewById(R.id.chat_button);
         loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progress_bar);
 
-        new ProfileTheme().get(
+        ProfileTheme.getInstance().get(
                 username,
                 new ProfileResponse() {
                     @Override

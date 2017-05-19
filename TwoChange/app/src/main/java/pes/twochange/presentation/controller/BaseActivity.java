@@ -1,4 +1,4 @@
-package pes.twochange.presentation.activity;
+package pes.twochange.presentation.controller;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -16,21 +16,22 @@ import android.widget.FrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 import pes.twochange.R;
+import pes.twochange.presentation.activity.AdActivity;
+import pes.twochange.presentation.activity.LoginActivity;
 
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private final static int[] MENU_IDs = { R.id.explore, R.id.ad, R.id.chat, R.id.profile, R.id.settings,
             R.id.help, R.id.about, R.id.logout };
 
-    protected final static String FRAGMENT_EXTRA = "fragment-extra-int";
-    protected final static int ADS_LIST = 0;
-    protected final static int SINGLE_AD = 1;
-    protected final static int ADD_EDIT_AD = 2;
-    protected final static int MY_LISTS = 3;
-    protected final static int CHAT_LIST = 4;
-    protected final static int SINGLE_CHAT = 5;
-    protected final static int PROFILE = 6;
-    protected final static int EDIT_PROFILE = 7;
+//    protected final static String FRAGMENT_EXTRA = "fragment-extra-int";
+    protected final static int EXPLORE_ACTIVITY = 0;
+    protected final static int AD_ACTIVITY = 1;
+    protected final static int CHAT_ACTIVITY = 2;
+    protected final static int PROFILE_ACTIVITY = 3;
+    protected final static int SETTINGS_ACTIVITY = 4;
+    protected final static int HELP_ACTIVITY = 5;
+    protected final static int ABOUT_ACTIVITY = 6;
 
     protected Toolbar toolbar;
     protected FragmentManager fragmentManager;
@@ -60,10 +61,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        MenuItem currentMenuItem = navigationView.getMenu().getItem(currentMenuItemIndex());
+        /*MenuItem currentMenuItem = navigationView.getMenu().getItem(currentMenuItemIndex());
         int colorPrimary = getResourceColor(R.color.colorPrimary);
         PorterDuff.Mode srcAtop = PorterDuff.Mode.SRC_ATOP;
-        currentMenuItem.getIcon().setColorFilter(colorPrimary, srcAtop);
+        currentMenuItem.getIcon().setColorFilter(colorPrimary, srcAtop);*/
     }
 
     @Override
@@ -74,54 +75,50 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == MENU_IDs[currentMenuItemIndex()]) {
-            return false;
-        } else {
-            Intent intent;
-            switch (item.getItemId()) {
-                case R.id.explore:
-                    startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
-                    break;
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.explore:
+                startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
+                break;
 
-                case R.id.ad:
-                    startActivity(new Intent(getApplicationContext(), AdActivity.class));
-                    break;
+            case R.id.ad:
+                startActivity(new Intent(getApplicationContext(), AdActivity.class));
+                break;
 
-                case R.id.chat:
+            case R.id.chat:
 //                    startActivity(new Intent(getApplicationContext(), ChatActivity.class));
-                    break;
+                break;
 
-                case R.id.profile:
+            case R.id.profile:
 //                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                    break;
+                break;
 
-                case R.id.settings:
-                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                    intent.putExtra("item", 4);
-                    startActivity(intent);
-                    break;
+            case R.id.settings:
+                intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                intent.putExtra("item", 4);
+                startActivity(intent);
+                break;
 
-                case R.id.help:
-                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                    intent.putExtra("item", 5);
-                    startActivity(intent);
-                    break;
+            case R.id.help:
+                intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                intent.putExtra("item", 5);
+                startActivity(intent);
+                break;
 
-                case R.id.about:
-                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                    intent.putExtra("item", 6);
-                    startActivity(intent);
-                    break;
+            case R.id.about:
+                intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                intent.putExtra("item", 6);
+                startActivity(intent);
+                break;
 
-                case R.id.logout:
-                    FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                    finish();
-                    break;
-            }
-            finish();
-            return false;
+            case R.id.logout:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                finish();
+                break;
         }
+        finish();
+        return false;
     }
 
     protected abstract int currentMenuItemIndex();

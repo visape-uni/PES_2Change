@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/green_100"
-    tools:context="pes.twochange.presentation.activity.SplashActivity">
+    tools:context="pes.twochange.presentation.controller.SplashActivity">
 
     <ImageView
         android:id="@+id/logo_image"

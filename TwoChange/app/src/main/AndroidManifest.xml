@@ -15,7 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_icon4"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".presentation.activity.SplashActivity">
+        <activity android:name=".presentation.controller.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +36,7 @@
         </activity>
         <activity android:name=".presentation.activity.ProfileActivity" />
         <activity android:name=".presentation.activity.MainMenuActivity" />
-        <activity android:name=".presentation.activity.SearchProfileActivity" />
+        <activity android:name=".presentation.activity.SearchActivity" />
         <activity android:name=".presentation.activity.RecyclerChatActivity" />
         <activity
             android:name=".presentation.activity.PostAdActivity"
@@ -77,9 +77,12 @@
             android:name=".presentation.activity.AdsListsActivity"
             android:label="@string/title_activity_ads_lists"
             android:theme="@style/AppTheme" />
-        <activity android:name=".presentation.activity.ExploreActivity" />
+        <activity android:name=".presentation.controller.ExploreActivity" />
         <activity android:name=".presentation.activity.AdActivity" />
-        <activity android:name=".presentation.activity.OptionsActivity" />
+        <activity android:name=".presentation.controller.OptionsActivity" />
+        <activity
+            android:name=".presentation.controller.AdListsActivity"
+            android:label="@string/title_activity_ad_lists" />
     </application>
 
 </manifest>

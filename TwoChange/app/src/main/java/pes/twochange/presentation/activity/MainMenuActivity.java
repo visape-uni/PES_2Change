@@ -63,7 +63,7 @@ public class MainMenuActivity extends AppCompatActivity {
         showChatsBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
 
-                new ProfileTheme().get(currentUsername, new ProfileResponse() {
+                ProfileTheme.getInstance().get(currentUsername, new ProfileResponse() {
                             @Override
                             public void success(Profile profile) {
                                 Intent showChats = new Intent(getApplicationContext(), RecyclerChatActivity.class);
@@ -84,7 +84,7 @@ public class MainMenuActivity extends AppCompatActivity {
         openChatBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
 
-                new ProfileTheme().get(currentUsername, new ProfileResponse() {
+                ProfileTheme.getInstance().get(currentUsername, new ProfileResponse() {
                             @Override
                             public void success(Profile profile) {
                                 if (profile.getUsername() != null) {
@@ -131,7 +131,7 @@ public class MainMenuActivity extends AppCompatActivity {
         Button searchUserBtn = (Button)findViewById(R.id.searchUserBtn);
         searchUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), SearchProfileActivity.class));
+                startActivity(new Intent(getApplicationContext(), SearchActivity.class));
             }
         });
 

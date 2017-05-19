@@ -1,17 +1,13 @@
 package pes.twochange.domain.themes;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 import pes.twochange.domain.model.Ad;
-import pes.twochange.domain.model.Profile;
 import pes.twochange.services.DatabaseResponse;
 import pes.twochange.services.Firebase;
-
-/**
- * Created by vilhjalmr on 5/10/17.
- */
 
 public class AdTheme {
     //Attributes
@@ -23,22 +19,41 @@ public class AdTheme {
 
     public AdTheme() {}
 
+    private static final AdTheme ourInstance = new AdTheme();
+    private static final String REFERENCE = "lists";
+    private static String user;
+
+    public static AdTheme getInstance() {
+        return ourInstance;
+    }
+
+    public void remove(String username, String list, String key) {
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .child(REFERENCE)
+                .child(username)
+                .child(list)
+                .child(key)
+                .removeValue();
+    }
+
     //Fa la cerca dels productes segons el nom introduit per l'usuari
-    public void search(final String productName, final SearchResponse searchResponse) {
+    public void search(String productName, final SearchResponse searchResponse) {
+        productName = productName.toUpperCase();
         Firebase.getInstance().get(
                 "ads",
                 new DatabaseResponse() {
+
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
-                        ArrayList<String> ids = new ArrayList<>();
-                        ArrayList<Profile> products = new ArrayList<>();
-
+                        ArrayList<String> titles = new ArrayList<>();
+                        ArrayList<Ad> products = new ArrayList<>();
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            Profile profile = ds.getValue(Profile.class);
-                            products.add(profile);
-                            ids.add(profile.getUsername());
+                            Ad product = ds.getValue(Ad.class);
+                            products.add(product);
+                            titles.add(product.getTitle());
                         }
-                        searchResponse.listResponse(ids, products);
+                        searchResponse.listResponse(titles, products);
                     }
 
                     @Override
@@ -51,13 +66,12 @@ public class AdTheme {
                         searchResponse.failure(message);
                     }
                 }
-        //TODO: La cerca retorna els noms dels productes pero volem els seus ids.
-        ).with("username", productName);
+        ).with("title", productName);
     }
 
     //Conjunt de resultats de la cerca
     public interface SearchResponse {
-        void listResponse(ArrayList<String> ids, ArrayList<Profile> products);
+        void listResponse(ArrayList<String> titles, ArrayList<Ad> products);
         void empty();
         void failure(String message);
     }
