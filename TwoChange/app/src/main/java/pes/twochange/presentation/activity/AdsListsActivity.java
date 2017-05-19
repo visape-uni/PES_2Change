@@ -1,6 +1,7 @@
 package pes.twochange.presentation.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -177,6 +179,7 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
     }
 
     private void showOffered() {
+
 //        ListView wantedList = (ListView) findViewById(R.id.offered_list_ad);
 //        wantedList.setAdapter(new ProductFirebaseListAdapter(
 //                this,
@@ -184,5 +187,40 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
 //                R.layout.product,
 //                AdTheme.Offered.getInstance(username).getReference()
 //        ));
+
+
+        final ListView offeredList = (ListView)findViewById(R.id.offered_list_ad);
+        FirebaseListAdapter<Product> adapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mFirebaseOfferedList) {
+            @Override
+            protected void populateView(View v, final Product model, int position) {
+
+                final TextView productTitle, productKey;
+                productTitle = (TextView) v.findViewById(R.id.product_title);
+                productKey = (TextView) v.findViewById(R.id.product_key);
+
+
+                productTitle.setText(model.getTitle());
+                productKey.setText(model.getKey());
+
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Log.d("AdClicked","AdClicked"+model.getKey());
+                        Intent adIntent = new Intent(v.getContext(),AdActivity.class);
+                        adIntent.putExtra("adId", model.getKey());
+                        v.getContext().startActivity(adIntent);
+                    }
+                });
+            }
+        };
+        /*offeredList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        Log.d("AdClicked","AdClicked");
+            }
+        });*/
+
+        offeredList.setAdapter(adapter);
     }
 }
