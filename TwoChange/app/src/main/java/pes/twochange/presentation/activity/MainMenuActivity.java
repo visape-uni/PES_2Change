@@ -152,7 +152,7 @@ public class MainMenuActivity extends AppCompatActivity {
         Button adListBtn = (Button)findViewById(R.id.adListBtn);
         adListBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), AdListActivity.class));
+                startActivity(new Intent(getApplicationContext(), AdList2Activity.class));
             }
         });
     }

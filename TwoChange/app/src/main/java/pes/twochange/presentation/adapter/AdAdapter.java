@@ -1,4 +1,4 @@
-package pes.twochange.presentation;
+package pes.twochange.presentation.adapter;
 
 import android.app.Activity;
 import android.content.Context;

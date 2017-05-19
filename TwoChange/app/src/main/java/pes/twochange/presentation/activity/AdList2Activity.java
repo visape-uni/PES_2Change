@@ -24,13 +24,13 @@ import java.util.ArrayList;
 import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.themes.AdTheme;
-import pes.twochange.presentation.AdAdapter;
+import pes.twochange.presentation.adapter.AdAdapter;
 
 import static pes.twochange.presentation.activity.PostAdActivity.REQUEST_WRITE_EXTERNAL_STORAGE;
 
-public class AdListActivity extends AppCompatActivity {
+public class AdList2Activity extends AppCompatActivity {
 
-    private static final String TAG = "AdListActivity";
+    private static final String TAG = "AdList2Activity";
     private static final File TMP_IMAGE_LOCATION =
             new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/2change/tmp");
 
