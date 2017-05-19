@@ -2,32 +2,17 @@ package pes.twochange.presentation.model;
 
 import android.graphics.Bitmap;
 
-public class ProductItem {
-    private String key;
-    private String title;
+import pes.twochange.domain.model.Product;
+
+public class ProductItem extends Product {
     private Bitmap image;
 
     public ProductItem(String key, String title, Bitmap image) {
-        this.key = key;
-        this.title = title;
+        super(key, title);
         this.image = image;
     }
 
-    public String getKey() {
-        return key;
+    public Bitmap getImage() {
+        return image;
     }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-
 }

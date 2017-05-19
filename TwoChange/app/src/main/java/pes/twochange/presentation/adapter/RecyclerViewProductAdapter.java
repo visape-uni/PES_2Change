@@ -17,9 +17,9 @@ import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
 public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerViewProductAdapter.ProductHolder> {
 
-    private ArrayList<ProductItem> products;
-    private OnRecyclerViewItemClickListener listener;
-    private OnRecyclerViewItemLongClickListener longListener;
+    protected ArrayList<ProductItem> products;
+    protected OnRecyclerViewItemClickListener listener;
+    protected OnRecyclerViewItemLongClickListener longListener;
 
     public RecyclerViewProductAdapter(ArrayList<ProductItem> products,
                                       OnRecyclerViewItemClickListener listener,
@@ -32,7 +32,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public RecyclerViewProductAdapter.ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_item_row, null);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_item_row, parent);
         return new ProductHolder(itemView);
     }
 
@@ -40,7 +40,8 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
     public void onBindViewHolder(RecyclerViewProductAdapter.ProductHolder holder, int position) {
         final int finalPosition = position;
         ProductItem product = products.get(finalPosition);
-//        holder.image.setImageBitmap(product.image);
+            // TODO load image
+//        holder.image.setImageBitmap(product.getImage());
         holder.title.setText(product.getTitle());
         holder.itemView.setOnClickListener(
                 new View.OnClickListener() {
@@ -63,7 +64,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemCount() {
-        return products.size();
+        return products != null ? products.size() : 0;
     }
 
     class ProductHolder extends RecyclerView.ViewHolder {

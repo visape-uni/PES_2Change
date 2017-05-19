@@ -20,8 +20,7 @@ import pes.twochange.presentation.model.ProductItem;
 
 public class AdListsActivity extends BaseActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener,
-        AdListFragment.OnFragmentInteractionListener
-{
+        AdListFragment.OnFragmentInteractionListener, AdTheme.ErrorResponse, AdTheme.ListResponse {
 
     private FragmentManager fragmentManager;
     private String username;
@@ -78,7 +77,7 @@ public class AdListsActivity extends BaseActivity implements
         switch (newFragment) {
             case WANTED:
             case OFFERED:
-                fragment = AdListFragment.newInstance(username, itemList);
+                fragment = AdListFragment.newInstance();
                 break;
 
             case SINGLE:
@@ -117,7 +116,7 @@ public class AdListsActivity extends BaseActivity implements
 
         currentFragment = WANTED;
         fragmentManager = getSupportFragmentManager();
-        fragment = AdListFragment.newInstance(username, TAGS[currentFragment]);
+        fragment = AdListFragment.newInstance();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(R.id.content, fragment);
         transaction.commit();
@@ -126,23 +125,6 @@ public class AdListsActivity extends BaseActivity implements
 
     private ArrayList<ProductItem> wantedProducts;
     private ArrayList<ProductItem> offeredProducts;
-
-    @Override
-    public void getProductList(AdListFragment.ActivityResponse response) {
-        if (currentFragment == WANTED) {
-            if (wantedProducts != null) {
-                response.response(wantedProducts);
-            } else {
-                // TODO get wanted products from firebase
-            }
-        } else {
-            if (offeredProducts != null) {
-                response.response(offeredProducts);
-            } else {
-                // TODO get offered products from firebase
-            }
-        }
-    }
 
     @Override
     public void onRecyclerViewItemClickListener(int position) {
@@ -181,5 +163,39 @@ public class AdListsActivity extends BaseActivity implements
                         }
                 )
                 .show();
+    }
+
+    @Override
+    public void getProductList(final AdListFragment response) {
+        final String title = TAGS[currentFragment];
+        if (currentFragment == WANTED) {
+            if (wantedProducts != null) {
+                response.response(title, wantedProducts);
+            } else {
+                AdTheme.getInstance().getWantedList(
+                        username,
+                        this,
+                        this
+                );
+            }
+        } else {
+            if (offeredProducts != null) {
+                response.response(title, offeredProducts);
+            } else {
+                // TODO get offered products from firebase
+            }
+        }
+    }
+
+    @Override
+    public void error(String error) {
+
+    }
+
+    @Override
+    public void listResponse(ArrayList<ProductItem> productItems) {
+        if (fragment instanceof AdListFragment) {
+            fragment.response(TAGS[currentFragment], productItems);
+        }
     }
 }

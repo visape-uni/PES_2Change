@@ -6,6 +6,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Product;
+import pes.twochange.presentation.model.ProductItem;
 import pes.twochange.services.DatabaseResponse;
 import pes.twochange.services.Firebase;
 
@@ -67,6 +69,66 @@ public class AdTheme {
                     }
                 }
         ).with("title", productName);
+    }
+
+    public void getWantedList(String username, final ListResponse response, final ErrorResponse error) {
+        Firebase.getInstance().get(
+                "lists/" + "/wanted",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        ArrayList<ProductItem> products = new ArrayList<>();
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            products.add((ProductItem) ds.getValue(Product.class));
+                        }
+                        response.listResponse(products);
+                    }
+
+                    @Override
+                    public void empty() {
+                        response.listResponse(new ArrayList<ProductItem>());
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        error.error(message);
+                    }
+                }
+        ).list();
+    }
+
+    public void getOfferedList(String username, final ListResponse response, final ErrorResponse error) {
+        Firebase.getInstance().get(
+                "lists/" + "/offered",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        ArrayList<ProductItem> products = new ArrayList<>();
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            products.add((ProductItem) ds.getValue(Product.class));
+                        }
+                        response.listResponse(products);
+                    }
+
+                    @Override
+                    public void empty() {
+                        response.listResponse(new ArrayList<ProductItem>());
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        error.error(message);
+                    }
+                }
+        ).list();
+    }
+
+    public interface ListResponse {
+        void listResponse(ArrayList<ProductItem> productItems);
+    }
+
+    public interface ErrorResponse {
+        void error(String error);
     }
 
     //Conjunt de resultats de la cerca
