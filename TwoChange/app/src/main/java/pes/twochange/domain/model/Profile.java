@@ -1,5 +1,9 @@
 package pes.twochange.domain.model;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+
 public class Profile {
 
     private String username;
@@ -8,6 +12,7 @@ public class Profile {
     private String surname;
     private PhoneNumber phoneNumber;
     private Address address;
+
 
     public Profile() {
     }
