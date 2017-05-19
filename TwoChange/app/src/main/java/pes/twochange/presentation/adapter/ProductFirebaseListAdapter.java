@@ -21,7 +21,7 @@ public class ProductFirebaseListAdapter extends FirebaseListAdapter<Product> {
         productTitle = (TextView) v.findViewById(R.id.product_title);
         productKey = (TextView) v.findViewById(R.id.product_key);
 
-        productTitle.setText(model.getTitle());
+        productTitle.setText(model.getName());
         productKey.setText(model.getKey());
     }
 }

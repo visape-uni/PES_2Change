@@ -1,12 +1,14 @@
 package pes.twochange.presentation.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,21 +16,42 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import pes.twochange.R;
+import pes.twochange.domain.model.Match;
 import pes.twochange.domain.model.Product;
 import pes.twochange.presentation.Config;
+import pes.twochange.services.DatabaseResponse;
 
 public class AdsListsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener {
 
     private DatabaseReference mFirebaseWantedList;
     private DatabaseReference mFirebaseOfferedList;
-    private static final String TAG = "AdsListsActivity";
-    private String username;
+    private DatabaseReference mFirebaseCategories;
+    String currentUsername = "";
+    private static final String TAG = "AdsListsActivitiy";
+
+    private FirebaseListAdapter<Product> offeredAdapter;
+    private FirebaseListAdapter<Product> wantedAdapter;
+
+    private ListView wantedList;
+    private ListView offeredList;
+
+    private Map<String,Product> auxCandidateMatches = new HashMap<String, Product>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +62,16 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
         setSupportActionBar(toolbar);
 
         SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
-        username = sharedPreferences.getString("username", null);
+        currentUsername = sharedPreferences.getString("username", null);
 
         //Firebase database
         final FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
-        //Lists reference
-        mFirebaseWantedList = mFirebaseDatabase.getReference().child("lists").child(username).child("wanted");
-        mFirebaseOfferedList = mFirebaseDatabase.getReference().child("lists").child(username).child("offered");
+
+        //Referencia al chat
+        mFirebaseWantedList = mFirebaseDatabase.getReference().child("lists").child(currentUsername).child("wanted");
+        mFirebaseOfferedList = mFirebaseDatabase.getReference().child("lists").child(currentUsername).child("offered");
+        mFirebaseCategories = mFirebaseDatabase.getReference().child("categories");
+
 
         //remove from wanted list
         ListView listView = (ListView) findViewById(R.id.wanted_list_ad);
@@ -141,14 +167,16 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
         btnSetProductTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View view) {
-                String productTitle = setCategory.getSelectedItem().toString();
-                productTitle = productTitle.trim();
-                if (!productTitle.isEmpty()) {
-                    DatabaseReference newProduct =  mFirebaseWantedList.push();
-                    newProduct.setValue(new Product(productTitle, newProduct.getKey()));
-
-
-                    //setProductTitle.setText("");
+                String categoryTitle = setCategory.getSelectedItem().toString();
+                categoryTitle = categoryTitle.trim();
+                if (!categoryTitle.isEmpty()) {
+                    if (!isCategoryWanted(categoryTitle)) {
+                        Log.d(TAG, "ADD TO WANTED");
+                        DatabaseReference newProduct = mFirebaseWantedList.push();
+                        newProduct.setValue(new Product(categoryTitle, newProduct.getKey(), null));
+                    } else {
+                        Toast.makeText(AdsListsActivity.this, categoryTitle + " was already in the list.", Toast.LENGTH_SHORT);
+                    }
                 }
                 setCategory.setVisibility(View.GONE);
                 btnSetProductTitle.setVisibility(View.GONE);
@@ -159,30 +187,166 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
     private void editItem() {
 
     }
-    private void makeMatch() {
 
-        //Make match
-
+    private boolean isCategoryWanted (String categoryTitle) {
+        boolean finded = false;
+        int i = 0;
+        while ((!finded) && (i < wantedAdapter.getCount())) {
+            if (wantedAdapter.getItem(i).getName().equals(categoryTitle)) finded = true;
+            ++i;
+        }
+        return finded;
     }
 
+    private void makeMatch() {
+
+        //Count matches
+        int numMatches = 0;
+
+        Toast.makeText(AdsListsActivity.this, "Matchig has started, we will notificate you when it finish.", Toast.LENGTH_LONG).show();
+
+        for (int i = 0; i < wantedList.getCount(); ++i) {
+            String categoria = wantedAdapter.getItem(i).getName();
+            //Buscar matches candidatos para esta categoria
+            getCandidateMatches(categoria);
+        }
+    }
+
+    private boolean isMatch (Product offeredProd, Product posMatchProd) {
+        //FALTA IMPLEMENTAR
+        return true;
+
+        /*Ad offeredAd = getAdOfProduct(offeredProd);
+        Ad posMatchAd = getAdOfProduct(posMatchProd);
+
+        //rate permision
+        int rateVariable = 5;
+
+        //Si tienen rating similares (+10 o -10) es MATCH
+        if ((offeredAd.getRating() >= (posMatchAd.getRating() - rateVariable)) && (offeredAd.getRating() <= (posMatchAd.getRating() + rateVariable))) return true;
+        else return false;*/
+    }
+
+    //Agafa de la BD els mathces candidats i els guarda al map auxCandidateMatches
+    private void getCandidateMatches (String categoria) {
+
+
+        final DatabaseResponse callback = new DatabaseResponse() {
+            @Override
+            public void success(DataSnapshot dataSnapshot) {
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
+                    //Si no es un match descartat afegir als candidates
+                    //if(){}
+                    auxCandidateMatches.put(d.getKey().toString(), d.getValue(Product.class));
+                    Log.d(TAG, d.getValue().toString());
+                }
+
+                int numMatches = 0;
+
+                for (int i = 0; i < offeredList.getCount(); ++i) {
+
+                    Iterator it = auxCandidateMatches.entrySet().iterator();
+                    //Offered product to compare match
+                    Product auxProduct = offeredAdapter.getItem(i);
+                    //RECORRER TODOS LOS MATCHES POSIBLES
+                    while (it.hasNext()) {
+                        Map.Entry<String, Product> pair = (Map.Entry)it.next();
+
+                        //Posible match
+                        Product posMatch = new Product(pair.getValue().getName(), pair.getKey().toString(), pair.getValue().getUsername());
+
+                        //SI es match, AÑADIR posMatch A LOS MATCHES DE LA BD
+                        if (isMatch(auxProduct, posMatch)) {
+
+                            //Key del producto del usuario sender con el que se quiere hacer el match
+                            String productKeySender = offeredAdapter.getItem(i).getKey();
+
+                            //crear match y guardarlo en la BD
+                            Match match = new Match(currentUsername, posMatch.getUsername(), productKeySender, posMatch.getKey());
+                            match.save();
+
+                            //inc contador de matches
+                            ++numMatches;
+                        }
+                        //it.remove();
+                    }
+                }
+
+            }
+            @Override
+            public void empty() {
+                Log.d(TAG, "EMPTY");
+            }
+            @Override
+            public void failure(String message) {
+                Log.d(TAG, "Something went wrong: " + message);
+            }
+        };
+
+        DatabaseReference mRefMyCat = mFirebaseCategories.child(categoria);
+
+        mRefMyCat.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "ENTRAS?");
+                if (dataSnapshot == null) {
+                    callback.empty();
+                } else {
+                    callback.success(dataSnapshot);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //TRACTAR ERROR
+                callback.failure(databaseError.toString());
+            }
+        });
+    }
 
     private void showWanted() {
-//        ListView wantedList = (ListView) findViewById(R.id.wanted_list_ad);
-//        wantedList.setAdapter(new ProductFirebaseListAdapter(
-//                this,
-//                Product.class,
-//                R.layout.product,
-//                AdTheme.Wanted.getInstance(username).getReference()
-//        ));
+
+        wantedList = (ListView)findViewById(R.id.wanted_list_ad);
+        wantedAdapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mFirebaseWantedList) {
+            @Override
+            protected void populateView(View v, Product model, int position) {
+
+                TextView productTitle, productKey;
+                productTitle = (TextView) v.findViewById(R.id.product_title);
+                productKey = (TextView) v.findViewById(R.id.product_key);
+
+                productTitle.setText(model.getName());
+                productKey.setText(model.getKey());
+            }
+        };
+
+        wantedList.setAdapter(wantedAdapter);
     }
 
     private void showOffered() {
-//        ListView wantedList = (ListView) findViewById(R.id.offered_list_ad);
-//        wantedList.setAdapter(new ProductFirebaseListAdapter(
-//                this,
-//                Product.class,
-//                R.layout.product,
-//                AdTheme.Offered.getInstance(username).getReference()
-//        ));
+
+        offeredList = (ListView)findViewById(R.id.offered_list_ad);
+        offeredAdapter = new FirebaseListAdapter<Product>(this, Product.class, R.layout.product, mFirebaseOfferedList) {
+            @Override
+            protected void populateView(View v, final Product model, int position) {
+
+                TextView productTitle, productKey;
+                productTitle = (TextView) v.findViewById(R.id.product_title);
+                productKey = (TextView) v.findViewById(R.id.product_key);
+
+                productTitle.setText(model.getName());
+                productKey.setText(model.getKey());
+
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent adIntent = new Intent(v.getContext(),AdActivity.class);
+                        adIntent.putExtra("adId", model.getKey());
+                        v.getContext().startActivity(adIntent);
+                    }
+                });
+            }
+        };
+
+        offeredList.setAdapter(offeredAdapter);
     }
 }
