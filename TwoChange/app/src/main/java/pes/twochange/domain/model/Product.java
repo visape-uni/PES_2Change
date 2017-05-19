@@ -13,19 +13,21 @@ import com.google.firebase.database.ValueEventListener;
  */
 
 public class Product {
-    String name;
-    String key;
-    String username;
+    private String name;
+    private String key;
+    private String username;
+    private int rating;
 
     private static DatabaseReference mFirebaseAds = FirebaseDatabase.getInstance().getReference().child("ads");
 
     public Product() {
     }
 
-    public Product(String name, String key, String username) {
+    public Product(String name, String key, String username, int rating) {
         this.name = name;
         this.key = key;
         this.username = username;
+        this.rating = rating;
     }
 
     public String getKey() {
@@ -50,5 +52,13 @@ public class Product {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public int getRating() {
+        return this.rating;
+    }
+
+    public void setRating (int rating) {
+        this.rating = rating;
     }
 }

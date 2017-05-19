@@ -171,7 +171,9 @@ public class AdsListsActivity extends AppCompatActivity {
                     if (!isCategoryWanted(categoryTitle)) {
                         Log.d(TAG, "ADD TO WANTED");
                         DatabaseReference newProduct = mFirebaseWantedList.push();
-                        newProduct.setValue(new Product(categoryTitle, newProduct.getKey(), null));
+
+                        //no username y rating = -1 (no rate)
+                        newProduct.setValue(new Product(categoryTitle, newProduct.getKey(), null, -1));
                     } else {
                         Toast.makeText(AdsListsActivity.this, categoryTitle + " was already in the list.", Toast.LENGTH_SHORT);
                     }
@@ -212,17 +214,14 @@ public class AdsListsActivity extends AppCompatActivity {
 
     private boolean isMatch (Product offeredProd, Product posMatchProd) {
         //FALTA IMPLEMENTAR
-        return true;
-
-        /*Ad offeredAd = getAdOfProduct(offeredProd);
-        Ad posMatchAd = getAdOfProduct(posMatchProd);
+        //return true;
 
         //rate permision
-        int rateVariable = 5;
+        int rateVariable = 10;
 
         //Si tienen rating similares (+10 o -10) es MATCH
-        if ((offeredAd.getRating() >= (posMatchAd.getRating() - rateVariable)) && (offeredAd.getRating() <= (posMatchAd.getRating() + rateVariable))) return true;
-        else return false;*/
+        if ((offeredProd.getRating() >= (posMatchProd.getRating() - rateVariable)) && (offeredProd.getRating() <= (posMatchProd.getRating() + rateVariable))) return true;
+        else return false;
     }
 
     //Agafa de la BD els mathces candidats i els guarda al map auxCandidateMatches
@@ -251,10 +250,10 @@ public class AdsListsActivity extends AppCompatActivity {
                         Map.Entry<String, Product> pair = (Map.Entry)it.next();
 
                         //Posible match
-                        Product posMatch = new Product(pair.getValue().getName(), pair.getKey().toString(), pair.getValue().getUsername());
+                        Product posMatch = new Product(pair.getValue().getName(), pair.getKey().toString(), pair.getValue().getUsername(), pair.getValue().getRating());
 
                         //SI es match, AÑADIR posMatch A LOS MATCHES DE LA BD
-                        if (isMatch(auxProduct, posMatch)) {
+                        if (!(posMatch.getUsername().equals(currentUsername))&&(isMatch(auxProduct, posMatch))) {
 
                             //Key del producto del usuario sender con el que se quiere hacer el match
                             String productKeySender = offeredAdapter.getItem(i).getKey();
@@ -262,9 +261,6 @@ public class AdsListsActivity extends AppCompatActivity {
                             //crear match y guardarlo en la BD
                             Match match = new Match(currentUsername, posMatch.getUsername(), productKeySender, posMatch.getKey());
                             match.save();
-
-                            //inc contador de matches
-                            ++numMatches;
                         }
                         //it.remove();
                     }
