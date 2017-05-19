@@ -206,7 +206,7 @@ public class AdsListsActivity extends AppCompatActivity {
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d("AdClicked","AdClicked"+model.getKey());
+                        //Log.d("AdClicked","AdClicked"+model.getKey());
                         Intent adIntent = new Intent(v.getContext(),AdActivity.class);
                         adIntent.putExtra("adId", model.getKey());
                         v.getContext().startActivity(adIntent);
