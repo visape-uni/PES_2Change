@@ -152,7 +152,7 @@
     <string name="offered">Offered</string>
     <string name="wanted">Wanted</string>
     <string name="product_item_row_image_description">Product item Image for lists</string>
-    <string name="adlists_title">My lists</string>
+    <string name="ad_list_title">My lists</string>
     <string name="explore">Explore</string>
     <string name="ads">Ads</string>
     <string name="chat">Chat</string>
@@ -161,5 +161,9 @@
     <string name="help">Help</string>
     <string name="about">About</string>
     <string name="logout">Logout</string>
+    <string name="remove">Remove</string>
+    <string name="remove_wanted_title">Remove wanted item</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

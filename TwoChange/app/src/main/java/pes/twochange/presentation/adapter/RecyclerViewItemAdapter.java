@@ -32,7 +32,6 @@ public abstract class RecyclerViewItemAdapter extends RecyclerView.Adapter<Recyc
 
     @Override
     public void onBindViewHolder(RecyclerViewAdAdapter.ProductHolder holder, int position) {
-        onBindViewHolderData(holder, position);
         final int finalPosition = position;
         holder.itemView.setOnClickListener(
                 new View.OnClickListener() {
@@ -50,6 +49,7 @@ public abstract class RecyclerViewItemAdapter extends RecyclerView.Adapter<Recyc
                     }
                 }
         );
+        onBindViewHolderData(holder, position);
     }
 
     public abstract void onBindViewHolderData(RecyclerViewAdAdapter.ProductHolder holder, int position);

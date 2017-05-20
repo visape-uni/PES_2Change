@@ -80,10 +80,8 @@ public class AdTheme {
                     public void success(DataSnapshot dataSnapshot) {
                         ArrayList<Product> products = new ArrayList<>();
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            Log.wtf("HOTFIX", ds.toString());
                             products.add(ds.getValue(Product.class));
                         }
-                        Log.wtf("HOTFIX", "Size: " + products.size());
                         response.wantedListResponse(products);
                     }
 

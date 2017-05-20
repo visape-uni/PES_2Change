@@ -25,7 +25,7 @@ public class RecyclerViewAdAdapter extends RecyclerViewItemAdapter {
 //        TODO load image
 //        holder.image.setImageBitmap(product.getImage());
         holder.title.setText(ad.getTitle());
-
+        holder.itemView.setOnLongClickListener(null);
     }
 
     @Override
