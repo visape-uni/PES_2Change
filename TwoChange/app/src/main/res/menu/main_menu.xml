@@ -4,34 +4,34 @@
     <group>
         <item
             android:id="@+id/explore"
-            android:title="Explore" />
+            android:title="@string/explore" />
         <item
             android:id="@+id/ad"
-            android:title="Ads" />
+            android:title="@string/ads" />
         <item
             android:id="@+id/chat"
-            android:title="Chat" />
+            android:title="@string/chat" />
         <item
             android:id="@+id/profile"
-            android:title="Profile" />
+            android:title="@string/profile" />
     </group>
 
     <group>
         <item
             android:id="@+id/settings"
-            android:title="Settings" />
+            android:title="@string/settings" />
         <item
             android:id="@+id/help"
-            android:title="Help" />
+            android:title="@string/help" />
         <item
             android:id="@+id/about"
-            android:title="About" />
+            android:title="@string/about" />
     </group>
 
     <group>
         <item
             android:id="@+id/logout"
-            android:title="Logout" />
+            android:title="@string/logout" />
     </group>
 
 </menu>

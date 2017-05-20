@@ -3,7 +3,9 @@ package pes.twochange.presentation.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +35,7 @@ public class AdListFragment extends Fragment {
     private OnFragmentInteractionListener activity;
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
+    private LinearLayoutManager layoutManager;
 
     public AdListFragment() {
         // Required empty public constructor
@@ -64,6 +67,8 @@ public class AdListFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.ad_list);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
+        layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         activity.getProductList(this);
 
@@ -90,12 +95,15 @@ public class AdListFragment extends Fragment {
     public void responseAds(ArrayList<Ad> ads) {
         progressBar.setVisibility(View.GONE);
         RecyclerView.Adapter adapter = new RecyclerViewAdAdapter(ads, activity, activity);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }
 
     public void responseProducts(ArrayList<Product> products) {
+        Log.wtf("HOTFIX", "Size: " + products.size());
         progressBar.setVisibility(View.GONE);
         RecyclerView.Adapter adapter = new RecyclerViewWantedAdapter(products, activity, activity);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }
 

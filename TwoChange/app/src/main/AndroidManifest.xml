@@ -23,13 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".presentation.activity.NewUserActivity" />
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".presentation.activity.ChatActivity"
-            android:parentActivityName=".presentation.activity.MainMenuActivity">
+        <activity android:name=".MainActivity" />
+        <activity android:name=".presentation.activity.ChatActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".presentation.activity.MainMenuActivity" />
@@ -38,10 +33,15 @@
         <activity android:name=".presentation.activity.MainMenuActivity" />
         <activity android:name=".presentation.activity.SearchActivity" />
         <activity android:name=".presentation.activity.RecyclerChatActivity" />
-        <activity
-            android:name=".presentation.activity.PostAdActivity"
-            android:label="@string/title_activity_post_ad"
-            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".presentation.activity.PostAdActivity" />
+        <activity android:name=".presentation.activity.EditProfileActivity" />
+        <activity android:name=".presentation.activity.LoginActivity" />
+        <activity android:name=".presentation.activity.AdList2Activity" />
+        <activity android:name=".presentation.activity.AdsListsActivity"/>
+        <activity android:name=".presentation.controller.ExploreActivity" />
+        <activity android:name=".presentation.activity.AdActivity" />
+        <activity android:name=".presentation.controller.OptionsActivity" />
+        <activity android:name=".presentation.controller.AdListsActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -63,26 +63,6 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
-        <activity android:name=".presentation.activity.EditProfileActivity" />
-        <activity android:name=".presentation.activity.LoginActivity" />
-        <activity android:name=".presentation.activity.AdList2Activity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".presentation.activity.AdsListsActivity"
-            android:label="@string/title_activity_ads_lists"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".presentation.controller.ExploreActivity" />
-        <activity android:name=".presentation.activity.AdActivity" />
-        <activity android:name=".presentation.controller.OptionsActivity" />
-        <activity
-            android:name=".presentation.controller.AdListsActivity"
-            android:label="@string/title_activity_ad_lists" />
     </application>
 
 </manifest>

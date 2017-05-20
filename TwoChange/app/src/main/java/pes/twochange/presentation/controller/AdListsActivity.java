@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -21,7 +21,6 @@ public class AdListsActivity extends BaseActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener,
         AdListFragment.OnFragmentInteractionListener, AdTheme.ErrorResponse, AdTheme.ListResponse, AdTheme.WantedResponse {
 
-    private FragmentManager fragmentManager;
     private String username;
     private AdListFragment fragment;
 
@@ -94,12 +93,8 @@ public class AdListsActivity extends BaseActivity implements
         }
 
         currentFragment = newFragment;
-
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.content, fragment);
-        transaction.addToBackStack(TAGS[newFragment]);
-        transaction.commit();
-
+        fragment = AdListFragment.newInstance();
+        addFragment(R.id.content, fragment, TAGS[newFragment]);
     }
 
 
@@ -115,13 +110,10 @@ public class AdListsActivity extends BaseActivity implements
         navigation.setOnNavigationItemSelectedListener(this);
 
         currentFragment = WANTED;
-        fragmentManager = getSupportFragmentManager();
         fragment = AdListFragment.newInstance();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.content, fragment);
-        transaction.addToBackStack(TAGS[WANTED]);
-        transaction.commit();
+        addFragment(R.id.content, fragment, TAGS[WANTED]);
 
+        toolbar.setTitle(R.string.adlists_title);
     }
 
     private ArrayList<Product> wantedProducts;
@@ -133,8 +125,9 @@ public class AdListsActivity extends BaseActivity implements
     }
 
     @Override
-    public void onRecyclerViewItemLongClickListener(int position) {
-
+    public boolean onRecyclerViewItemLongClickListener(int position) {
+        Toast.makeText(this, "Long click on item " + position + " of the list", Toast.LENGTH_SHORT).show();
+        return true;
     }
 
     @Override

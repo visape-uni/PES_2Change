@@ -199,7 +199,7 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
                 productKey = (TextView) v.findViewById(R.id.product_key);
 
 
-                productTitle.setText(model.getTitle());
+                productTitle.setText(model.getName());
                 productKey.setText(model.getKey());
 
                 v.setOnClickListener(new View.OnClickListener() {

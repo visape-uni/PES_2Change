@@ -5,14 +5,14 @@ package pes.twochange.domain.model;
  */
 
 public class Product {
-    String title;
+    String name;
     String key;
 
     public Product() {
     }
 
-    public Product(String title, String key) {
-        this.title = title;
+    public Product(String name, String key) {
+        this.name = name;
         this.key = key;
     }
 
@@ -24,11 +24,11 @@ public class Product {
         this.key = key;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 }
