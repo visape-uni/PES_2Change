@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import pes.twochange.R;
 import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
 import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
@@ -16,37 +14,53 @@ import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
 public abstract class RecyclerViewItemAdapter extends RecyclerView.Adapter<RecyclerViewItemAdapter.ProductHolder> {
 
-    protected ArrayList items;
     protected OnRecyclerViewItemClickListener listener;
     protected OnRecyclerViewItemLongClickListener longListener;
 
-    public RecyclerViewItemAdapter(ArrayList items,
-                                   OnRecyclerViewItemClickListener listener,
+    public RecyclerViewItemAdapter(OnRecyclerViewItemClickListener listener,
                                    OnRecyclerViewItemLongClickListener longListener
     ) {
-        this.items = items;
         this.listener = listener;
         this.longListener = longListener;
     }
 
     @Override
     public RecyclerViewItemAdapter.ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_item_row, parent);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_item_row, null);
         return new ProductHolder(itemView);
     }
 
     @Override
-    public int getItemCount() {
-        return items != null ? items.size() : 0;
+    public void onBindViewHolder(RecyclerViewAdAdapter.ProductHolder holder, int position) {
+        final int finalPosition = position;
+        holder.itemView.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onRecyclerViewItemClickListener(finalPosition);
+                    }
+                }
+        );
+        holder.itemView.setOnLongClickListener(
+                new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        return longListener.onRecyclerViewItemLongClickListener(finalPosition);
+                    }
+                }
+        );
+        onBindViewHolderData(holder, position);
     }
 
-    class ProductHolder extends RecyclerView.ViewHolder {
+    public abstract void onBindViewHolderData(RecyclerViewAdAdapter.ProductHolder holder, int position);
 
-        View itemView;
-        ImageView image;
-        TextView title;
+    protected class ProductHolder extends RecyclerView.ViewHolder {
 
-        ProductHolder(View itemView) {
+        protected View itemView;
+        protected ImageView image;
+        protected TextView title;
+
+        protected ProductHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
             this.image = (ImageView) itemView.findViewById(R.id.product_item_row_image);

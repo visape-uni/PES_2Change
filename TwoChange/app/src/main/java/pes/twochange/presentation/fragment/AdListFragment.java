@@ -3,6 +3,7 @@ package pes.twochange.presentation.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,19 +34,12 @@ public class AdListFragment extends Fragment {
     private OnFragmentInteractionListener activity;
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
+    private LinearLayoutManager layoutManager;
 
     public AdListFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param user Parameter 1.
-     * @param list Parameter 2.
-     * @return A new instance of fragment AdListFragment.
-     */
     public static AdListFragment newInstance() {
         return new AdListFragment();
     }
@@ -64,8 +58,10 @@ public class AdListFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.ad_list);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
+        layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        activity.getProductList(this);
+        activity.getProductList(this, false);
 
         return view;
     }
@@ -87,16 +83,33 @@ public class AdListFragment extends Fragment {
         activity = null;
     }
 
-    public void responseAds(ArrayList<Ad> ads) {
+    private RecyclerViewAdAdapter adAdapter;
+    private RecyclerViewWantedAdapter wantedAdapter;
+
+    private void setAdapter(RecyclerView.Adapter adapter) {
         progressBar.setVisibility(View.GONE);
-        RecyclerView.Adapter adapter = new RecyclerViewAdAdapter(ads, activity, activity);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }
 
+    public void notifyDataSetChanged() {
+        if (adAdapter != null) {
+            adAdapter.notifyDataSetChanged();
+        }
+        if (wantedAdapter != null) {
+            wantedAdapter.notifyDataSetChanged();
+        }
+    }
+
+
+    public void responseAds(ArrayList<Ad> ads) {
+        adAdapter = new RecyclerViewAdAdapter(ads, activity, activity);
+        setAdapter(adAdapter);
+    }
+
     public void responseProducts(ArrayList<Product> products) {
-        progressBar.setVisibility(View.GONE);
-        RecyclerView.Adapter adapter = new RecyclerViewWantedAdapter(products, activity, activity);
-        recyclerView.setAdapter(adapter);
+        wantedAdapter = new RecyclerViewWantedAdapter(products, activity, activity);
+        setAdapter(wantedAdapter);
     }
 
     public void error(String errorMessage) {
@@ -106,7 +119,7 @@ public class AdListFragment extends Fragment {
     public interface OnFragmentInteractionListener extends OnRecyclerViewItemClickListener,
             OnRecyclerViewItemLongClickListener {
 
-        void getProductList(AdListFragment response);
+        void getProductList(AdListFragment response, boolean force);
 
     }
 

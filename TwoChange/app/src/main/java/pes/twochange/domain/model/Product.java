@@ -21,7 +21,6 @@ public class Product {
 
     public Product() {
     }
-
     public Product(String name, String key, String username) {
         this.name = name;
         this.key = key;

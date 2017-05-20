@@ -1,5 +1,7 @@
 package pes.twochange.domain.themes;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -71,7 +73,6 @@ public class AdTheme {
     }
 
     public void getWantedList(String username, final WantedResponse response, final ErrorResponse error) {
-
         Firebase.getInstance().get(
                 "lists/" + username + "/wanted",
                 new DatabaseResponse() {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,7 +19,7 @@ import pes.twochange.R;
 import pes.twochange.presentation.activity.LoginActivity;
 import pes.twochange.presentation.activity.ProfileActivity;
 
-public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public abstract class BaseActivity extends AppCompatActivity {
 
     private final static int[] MENU_IDs = { R.id.explore, R.id.ad, R.id.chat, R.id.profile, R.id.settings,
             R.id.help, R.id.about, R.id.logout };
@@ -34,6 +35,57 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
     protected Toolbar toolbar;
     protected FragmentManager fragmentManager;
+
+    private NavigationView.OnNavigationItemSelectedListener listener =
+    new NavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Intent intent;
+            switch (item.getItemId()) {
+                case R.id.explore:
+                    startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
+                    break;
+
+                case R.id.ad:
+                    startActivity(new Intent(getApplicationContext(), AdListsActivity.class));
+                    break;
+
+                case R.id.chat:
+//                    startActivity(new Intent(getApplicationContext(), ChatActivity.class));
+                    break;
+
+                case R.id.profile:
+                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                    break;
+
+                case R.id.settings:
+                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                    intent.putExtra("item", 4);
+                    startActivity(intent);
+                    break;
+
+                case R.id.help:
+                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                    intent.putExtra("item", 5);
+                    startActivity(intent);
+                    break;
+
+                case R.id.about:
+                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                    intent.putExtra("item", 6);
+                    startActivity(intent);
+                    break;
+
+                case R.id.logout:
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                    finish();
+                    break;
+            }
+            finish();
+            return true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,66 +110,22 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setNavigationItemSelectedListener(listener);
 
-        /*MenuItem currentMenuItem = navigationView.getMenu().getItem(currentMenuItemIndex());
-        int colorPrimary = getResourceColor(R.color.colorPrimary);
-        PorterDuff.Mode srcAtop = PorterDuff.Mode.SRC_ATOP;
-        currentMenuItem.getIcon().setColorFilter(colorPrimary, srcAtop);*/
+        fragmentManager = getSupportFragmentManager();
+    }
+
+    protected void addFragment(int contentResId, Fragment fragment, String tag) {
+        fragmentManager.beginTransaction()
+                .add(contentResId, fragment)
+                .addToBackStack(tag)
+                .commit();
     }
 
     @Override
     public void setContentView(int layoutResID) {
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_layout);
         getLayoutInflater().inflate(layoutResID, frameLayout);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.explore:
-                startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
-                break;
-
-            case R.id.ad:
-                startActivity(new Intent(getApplicationContext(), AdListsActivity.class));
-                break;
-
-            case R.id.chat:
-//                    startActivity(new Intent(getApplicationContext(), ChatActivity.class));
-                break;
-
-            case R.id.profile:
-                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                break;
-
-            case R.id.settings:
-                intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                intent.putExtra("item", 4);
-                startActivity(intent);
-                break;
-
-            case R.id.help:
-                intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                intent.putExtra("item", 5);
-                startActivity(intent);
-                break;
-
-            case R.id.about:
-                intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                intent.putExtra("item", 6);
-                startActivity(intent);
-                break;
-
-            case R.id.logout:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                finish();
-                break;
-        }
-        finish();
-        return false;
     }
 
     protected abstract int currentMenuItemIndex();

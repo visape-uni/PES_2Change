@@ -1,11 +1,12 @@
 package pes.twochange.presentation.controller;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -21,7 +22,6 @@ public class AdListsActivity extends BaseActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener,
         AdListFragment.OnFragmentInteractionListener, AdTheme.ErrorResponse, AdTheme.ListResponse, AdTheme.WantedResponse {
 
-    private FragmentManager fragmentManager;
     private String username;
     private AdListFragment fragment;
 
@@ -94,12 +94,8 @@ public class AdListsActivity extends BaseActivity implements
         }
 
         currentFragment = newFragment;
-
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.content, fragment);
-        transaction.addToBackStack(TAGS[newFragment]);
-        transaction.commit();
-
+        fragment = AdListFragment.newInstance();
+        addFragment(R.id.content, fragment, TAGS[newFragment]);
     }
 
 
@@ -115,13 +111,10 @@ public class AdListsActivity extends BaseActivity implements
         navigation.setOnNavigationItemSelectedListener(this);
 
         currentFragment = WANTED;
-        fragmentManager = getSupportFragmentManager();
         fragment = AdListFragment.newInstance();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.content, fragment);
-        transaction.addToBackStack(TAGS[WANTED]);
-        transaction.commit();
+        addFragment(R.id.content, fragment, TAGS[WANTED]);
 
+        toolbar.setTitle(R.string.ad_list_title);
     }
 
     private ArrayList<Product> wantedProducts;
@@ -133,15 +126,43 @@ public class AdListsActivity extends BaseActivity implements
     }
 
     @Override
-    public void onRecyclerViewItemLongClickListener(int position) {
-
+    public boolean onRecyclerViewItemLongClickListener(final int position) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.remove_wanted_title)
+                .setMessage("Do you really want to remove \"" + wantedProducts.get(position).getName()
+                                + "\" from your wanted list?")
+                .setPositiveButton(
+                        R.string.yes,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                AdTheme.getInstance().remove(
+                                        username,
+                                        TAGS[WANTED],
+                                        wantedProducts.get(position).getKey()
+                                );
+                                getProductList(fragment, true);
+                            }
+                        }
+                )
+                .setNegativeButton(
+                        R.string.no,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        }
+                )
+                .show();
+        return true;
     }
 
     @Override
-    public void getProductList(final AdListFragment response) {
+    public void getProductList(final AdListFragment response, boolean force) {
         String title = TAGS[currentFragment];
         if (currentFragment == WANTED) {
-            if (wantedProducts != null) {
+            if (wantedProducts != null && !force) {
                 response.responseProducts(wantedProducts);
             } else {
                 AdTheme.getInstance().getWantedList(
@@ -151,7 +172,7 @@ public class AdListsActivity extends BaseActivity implements
                 );
             }
         } else {
-            if (offeredAds != null) {
+            if (offeredAds != null && !force) {
                 response.responseAds(offeredAds);
             } else {
                 AdTheme.getInstance().getOfferedList(
@@ -170,11 +191,15 @@ public class AdListsActivity extends BaseActivity implements
 
     @Override
     public void listResponse(ArrayList<Ad> ads) {
+        this.offeredAds = ads;
         fragment.responseAds(ads);
+        //fragment.notifyDataSetChanged();
     }
 
     @Override
     public void wantedListResponse(ArrayList<Product> products) {
+        this.wantedProducts = products;
         fragment.responseProducts(products);
+//        fragment.notifyDataSetChanged();
     }
 }

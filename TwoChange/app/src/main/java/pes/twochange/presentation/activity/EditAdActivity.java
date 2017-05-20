@@ -1,9 +1,7 @@
 package pes.twochange.presentation.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-import pes.twochange.R;
+import android.support.v7.app.AppCompatActivity;
 
 public class EditAdActivity extends AppCompatActivity {
 
