@@ -1,6 +1,7 @@
 package pes.twochange.presentation.activity;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,10 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,10 +67,12 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
 
     private Ad ad;
 
-    private boolean postingProduct = true;
+    private boolean isEdition = true;
     private boolean hasCameraPermission = false;
     private boolean hasExternalStoragePermission = false;
     private View selectedImageButton = null;
+
+    private ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,23 +88,6 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                     REQUEST_WRITE_EXTERNAL_STORAGE);
         }
         */
-
-        ad = new Ad();
-
-        ProfileResponse profileResponse = new ProfileResponse() {
-            @Override
-            public void success(Profile profile) {
-                ad.setUser(profile);
-            }
-
-            @Override
-            public void failure(String s) {
-                // Nada
-            }
-        };
-        SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
-        final String currentUsername = sharedPreferences.getString("username", null);
-        ProfileTheme.getInstance().get(currentUsername, profileResponse);
 
         itemDetails = (LinearLayout) findViewById(R.id.itemDetailsLayout);
 
@@ -117,19 +107,78 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         addImageBtn3 = (ImageButton) findViewById(R.id.addImageBtn3);
         addImageBtn4 = (ImageButton) findViewById(R.id.addImageBtn4);
 
+
+        pDialog = new ProgressDialog(PostAdActivity.this);
+        pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
+        pDialog.setMax(100);
+
+
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null) {
+            isEdition = extras.getBoolean("edition", false);
+            String adId = extras.getString("adId", null);
+
+            if (isEdition && adId == null)
+                throw new IllegalStateException("PostAdActivity called for edition but no Ad provided");
+            else if (isEdition) {
+                Ad.findById(adId, new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.i(LOG_TAG, "LOADED AD");
+                        ad = dataSnapshot.getValue(Ad.class);
+                        titleTxt.setText(ad.getTitle());
+                        descriptionTxt.setText(ad.getDescription());
+                        pDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        pDialog.dismiss();
+                    }
+                });
+            } else {
+                ad = new Ad();
+                pDialog.dismiss();
+            }
+        }
+
+        if (isEdition) {
+            itemDetails.setVisibility(View.GONE);
+            adCategorySpn.setVisibility(View.GONE);
+            adTypeSpn.setVisibility(View.GONE);
+
+            findViewById(R.id.addImgLayout).setVisibility(View.GONE);
+            findViewById(R.id.addImagesLbl).setVisibility(View.GONE);
+        } else {
+            ProfileResponse profileResponse = new ProfileResponse() {
+                @Override
+                public void success(Profile profile) {
+                    ad.setUser(profile);
+                }
+
+                @Override
+                public void failure(String s) {
+                    // Nada
+                }
+            };
+            SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+            final String currentUsername = sharedPreferences.getString("username", null);
+            ProfileTheme.getInstance().get(currentUsername, profileResponse);
+        }
+
         adTypeSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 1) {
                     itemDetails.setVisibility(View.GONE);
-                    postingProduct = false;
                 }
                 else {
 
                     adCategorySpn.setVisibility(View.VISIBLE);
-
                     itemDetails.setVisibility(View.VISIBLE);
-                    postingProduct = true;
                 }
             }
 
@@ -194,9 +243,6 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         }
     }
 
-    /*
-        Asks the user to select an image from either camera or gallery.
-     */
     public void showImageSourcePickDialog(View v) {
         selectedImageButton = v;
         requestPermissions();
@@ -206,20 +252,25 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         ad.setTitle(titleTxt.getText().toString().toUpperCase());
         ad.setDescription(descriptionTxt.getText().toString());
 
-        if (postingProduct) {
-            int year = Integer.valueOf(yearTxt.getText().toString());
+        if (!isEdition) {
+            Integer year = yearTxt.getText().length() == 0 ? null : Integer.valueOf(yearTxt.getText().toString());
+            Integer price = priceTxt.getText().length() == 0 ? null : Integer.valueOf(priceTxt.getText().toString());
             Ad.ProductState state = Ad.ProductState.from(stateSpn.getSelectedItem().toString());
-            int price = Integer.valueOf(priceTxt.getText().toString());
+
             ad.rate(state, year, price);
             ad.setCategory(adCategorySpn.getSelectedItem().toString());
-        } else {
-            ad.setRating(100);
         }
 
-        try {
-            ad.save();
 
-            Snackbar.make(v, "Your ad has been published!", Snackbar.LENGTH_LONG).show();
+        try {
+            if (isEdition) {
+                ad.update();
+                Snackbar.make(v, "Ad successfully saved!", Snackbar.LENGTH_LONG).show();
+
+            } else {
+                ad.save();
+                Snackbar.make(v, "Your ad has been published!", Snackbar.LENGTH_LONG).show();
+            }
             finish();
         } catch (Exception e) {
             e.printStackTrace();

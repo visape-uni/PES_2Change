@@ -273,7 +273,7 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
             this.context = activity.getApplicationContext();
             this.activity = activity;
 
-            title = (TextView) itemView.findViewById(R.id.title);
+            title = (TextView) itemView.findViewById(R.id.name);
             description = (TextView) itemView.findViewById(R.id.description);
             rating = (TextView) itemView.findViewById(R.id.rating);
             image = (ImageView) itemView.findViewById(R.id.image);
@@ -349,6 +349,16 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
 
     public void add(Ad ad) {
         ads.add(ad);
+        notifyDataSetChanged();
+    }
+
+    public void update(Ad ad) {
+        /*for (Ad a : ads)
+            if (a.getId().equals(ad.getId())) {
+                ads.set(ads.indexOf(a), ad);
+                notifyDataSetChanged();
+            }*/
+        ads.set(ads.indexOf(ad), ad);
         notifyDataSetChanged();
     }
 }

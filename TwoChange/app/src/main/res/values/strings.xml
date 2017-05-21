@@ -13,6 +13,8 @@
     <string name="ad_original_price">Original price (€)</string>
     <string name="ad_state_label">State</string>
     <string name="ad_estimated_rating">Estimated rating</string>
+    <string name="ad_save">Save</string>
+    <string name="ad_images">Images</string>
 
     <string-array name="product_states">
         <item>New - Still in the original package</item>

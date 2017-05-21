@@ -119,6 +119,7 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
 
+
         //View Profile button + Pressed button listener
         Button viewProfileBtn = (Button)findViewById(R.id.viewProfileBtn);
         viewProfileBtn.setOnClickListener(new View.OnClickListener() {

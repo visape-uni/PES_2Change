@@ -1,9 +1,12 @@
 package pes.twochange.domain.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -56,7 +59,7 @@ public class Ad extends Model {
 
     private static final int MAX_IMAGES = 4;
     private static final String OUT_OF_BOUNDS_MESSAGE = "Image index must be between 0 and " + MAX_IMAGES;
-    private static DatabaseReference db = FirebaseDatabase.getInstance().getReferenceFromUrl("https://change-64bd0.firebaseio.com/").child("ads");
+    private static DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("ads");
     private static DatabaseReference mFirebaseOfferedList = FirebaseDatabase.getInstance().getReference().child("lists");
     private static DatabaseReference mFirebaseCategory = FirebaseDatabase.getInstance().getReference().child("categories");
 
@@ -175,16 +178,21 @@ public class Ad extends Model {
         | OTHER PUBLIC METHODS |
          ----------------------
      */
-    public void rate(ProductState state, int year, int price) {
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        int pricePoints = price/500;    // 1 point each 500 €/$/?
-
+    public void rate(ProductState state, Integer year, Integer price) {
         int auxRating = 100;
         auxRating -= state.getPenalty();
-        auxRating -= currentYear - year;
-        auxRating += pricePoints;
 
-        setRating(auxRating);
+        if (year != null) {
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            auxRating -= currentYear - year;
+        }
+
+        if (price != null) {
+            int pricePoints = price / 500;    // 1 point each 500 €/$/?
+            auxRating += pricePoints;
+        }
+
+        setRating(auxRating < 0 ? 0 : auxRating);
     }
 
     public void save() {
@@ -214,6 +222,10 @@ public class Ad extends Model {
         newAdRef.child("images").setValue(imageIds);
     }
 
+    public void update() {
+        db.child(getId()).setValue(this);
+    }
+
     public void delete() {
         db.child(getId()).removeValue(new DatabaseReference.CompletionListener() {
             @Override
@@ -223,7 +235,25 @@ public class Ad extends Model {
         });
     }
 
+    public void delete(DatabaseReference.CompletionListener listener) {
+        db.child(getId()).removeValue(listener);
+    }
+
+    public static void findById(String id, @NonNull ValueEventListener listener) {
+        db.child(id).addListenerForSingleValueEvent(listener);
+    }
+
     @Exclude public StorageReference getStorageReference() {
         return FirebaseStorage.getInstance().getReferenceFromUrl("gs://change-64bd0.appspot.com").child("ads").child(getId());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+
+        if (obj.getClass() != getClass())
+            return false;
+
+        return ((Ad) obj).getId().equals(getId());
     }
 }

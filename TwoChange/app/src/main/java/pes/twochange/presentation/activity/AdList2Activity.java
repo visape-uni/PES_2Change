@@ -63,8 +63,10 @@ public class AdList2Activity extends AppCompatActivity {
             public void onClick(View v) {
                 AdAdapter.AdViewHolder avh = (AdAdapter.AdViewHolder) recView.getChildViewHolder(v);
 
-                Intent adIntent = new Intent(v.getContext(), AdActivity.class);
+                //Intent adIntent = new Intent(v.getContext(), AdActivity.class);
+                Intent adIntent = new Intent(v.getContext(), PostAdActivity.class);
                 adIntent.putExtra("adId", avh.getAd().getId());
+                adIntent.putExtra("edition", true);
                 startActivity(adIntent);
             }
         });
@@ -80,21 +82,12 @@ public class AdList2Activity extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
                 final Ad ad = dataSnapshot.getValue(Ad.class);
-
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    if (dataSnapshot.hasChild("images")) {
-                        for (DataSnapshot img : dataSnapshot.getChildren()) {
-
-                        }
-                    }
-                }
-
                 adapter.add(ad);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                adapter.update(dataSnapshot.getValue(Ad.class));
             }
 
             @Override
