@@ -35,6 +35,8 @@ public class Match {
         this.state = state.UNDEFINED;
     }
 
+    public Match() {}
+
     //GETTERS y SETTERS
 
     public String getUsernameSender() {

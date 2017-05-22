@@ -43,7 +43,7 @@ public class AdsListsActivity extends AppCompatActivity {
     private DatabaseReference mFirebaseWantedList;
     private DatabaseReference mFirebaseOfferedList;
     private DatabaseReference mFirebaseCategories;
-    String currentUsername = "";
+    private String currentUsername = "";
     private static final String TAG = "AdsListsActivitiy";
 
     private FirebaseListAdapter<Product> offeredAdapter;
@@ -149,7 +149,7 @@ public class AdsListsActivity extends AppCompatActivity {
                 makeMatch();
                 break;
             case R.id.action_edit:
-                editItem();
+
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -184,9 +184,6 @@ public class AdsListsActivity extends AppCompatActivity {
         });
     }
 
-    private void editItem() {
-
-    }
 
     private boolean isCategoryWanted (String categoryTitle) {
         boolean finded = false;
@@ -213,9 +210,6 @@ public class AdsListsActivity extends AppCompatActivity {
     }
 
     private boolean isMatch (Product offeredProd, Product posMatchProd) {
-        //FALTA IMPLEMENTAR
-        //return true;
-
         //rate permision
         int rateVariable = 10;
 
@@ -224,9 +218,9 @@ public class AdsListsActivity extends AppCompatActivity {
         else return false;
     }
 
+
     //Agafa de la BD els mathces candidats i els guarda al map auxCandidateMatches
     private void getCandidateMatches (String categoria) {
-
 
         final DatabaseResponse callback = new DatabaseResponse() {
             @Override
