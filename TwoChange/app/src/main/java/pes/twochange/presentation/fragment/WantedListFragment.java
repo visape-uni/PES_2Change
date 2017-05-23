@@ -13,8 +13,8 @@ import android.widget.ProgressBar;
 import java.util.ArrayList;
 
 import pes.twochange.R;
-import pes.twochange.domain.model.Ad;
-import pes.twochange.presentation.adapter.RecyclerViewAdAdapter;
+import pes.twochange.domain.model.Product;
+import pes.twochange.presentation.adapter.RecyclerViewWantedAdapter;
 import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
 import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
@@ -23,10 +23,10 @@ import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
  * Activities that contain this fragment must implement the
  * {@link OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AdListFragment#newInstance} factory method to
+ * Use the {@link WantedListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AdListFragment extends Fragment {
+public class WantedListFragment extends Fragment {
 
 
     private OnFragmentInteractionListener activity;
@@ -34,12 +34,12 @@ public class AdListFragment extends Fragment {
     private ProgressBar progressBar;
     private LinearLayoutManager layoutManager;
 
-    public AdListFragment() {
+    public WantedListFragment() {
         // Required empty public constructor
     }
 
-    public static AdListFragment newInstance() {
-        return new AdListFragment();
+    public static WantedListFragment newInstance() {
+        return new WantedListFragment();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class AdListFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        activity.getOfferedList(this, false);
+        activity.getWantedList(this, false);
         return view;
     }
 
@@ -79,7 +79,7 @@ public class AdListFragment extends Fragment {
         activity = null;
     }
 
-    private RecyclerViewAdAdapter adapter;
+    private RecyclerViewWantedAdapter adapter;
 
     public void notifyDataSetChanged() {
         if (adapter != null) {
@@ -87,8 +87,8 @@ public class AdListFragment extends Fragment {
         }
     }
 
-    public void responseAds(ArrayList<Ad> ads) {
-        adapter = new RecyclerViewAdAdapter(ads, activity, activity, getContext());
+    public void displayWantedProducts(ArrayList<Product> products) {
+        adapter = new RecyclerViewWantedAdapter(products, activity, activity);
         progressBar.setVisibility(View.GONE);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
@@ -101,7 +101,7 @@ public class AdListFragment extends Fragment {
     public interface OnFragmentInteractionListener extends OnRecyclerViewItemClickListener,
             OnRecyclerViewItemLongClickListener {
 
-        void getOfferedList(AdListFragment response, boolean force);
+        void getWantedList(WantedListFragment response, boolean force);
 
     }
 

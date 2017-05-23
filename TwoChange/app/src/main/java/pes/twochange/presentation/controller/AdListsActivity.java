@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
@@ -17,13 +18,15 @@ import pes.twochange.domain.model.Product;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.fragment.AdListFragment;
+import pes.twochange.presentation.fragment.WantedListFragment;
 
 public class AdListsActivity extends BaseActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener,
-        AdListFragment.OnFragmentInteractionListener, AdTheme.ErrorResponse, AdTheme.ListResponse, AdTheme.WantedResponse {
+        AdListFragment.OnFragmentInteractionListener, AdTheme.ErrorResponse, AdTheme.ListResponse,
+        AdTheme.WantedResponse, WantedListFragment.OnFragmentInteractionListener {
 
     private String username;
-    private AdListFragment fragment;
+    private Fragment fragment;
 
     private final String[] TAGS = {
             "wanted", "offered", "single", "create"
@@ -75,6 +78,9 @@ public class AdListsActivity extends BaseActivity implements
 
         switch (newFragment) {
             case WANTED:
+                fragment = WantedListFragment.newInstance();
+                break;
+
             case OFFERED:
                 fragment = AdListFragment.newInstance();
                 break;
@@ -88,13 +94,11 @@ public class AdListsActivity extends BaseActivity implements
                 break;
 
             default:
-                // an error, just restart the activity flow
                 displayFragment(WANTED, itemList, -1);
                 return;
         }
 
         currentFragment = newFragment;
-        fragment = AdListFragment.newInstance();
         addFragment(R.id.content, fragment, TAGS[newFragment]);
     }
 
@@ -111,7 +115,7 @@ public class AdListsActivity extends BaseActivity implements
         navigation.setOnNavigationItemSelectedListener(this);
 
         currentFragment = WANTED;
-        fragment = AdListFragment.newInstance();
+        fragment = WantedListFragment.newInstance();
         addFragment(R.id.content, fragment, TAGS[WANTED]);
 
         toolbar.setTitle(R.string.ad_list_title);
@@ -141,7 +145,7 @@ public class AdListsActivity extends BaseActivity implements
                                         TAGS[WANTED],
                                         wantedProducts.get(position).getKey()
                                 );
-                                getProductList(fragment, true);
+                                getWantedList((WantedListFragment) fragment, true);
                             }
                         }
                 )
@@ -159,47 +163,45 @@ public class AdListsActivity extends BaseActivity implements
     }
 
     @Override
-    public void getProductList(final AdListFragment response, boolean force) {
-        String title = TAGS[currentFragment];
-        if (currentFragment == WANTED) {
-            if (wantedProducts != null && !force) {
-                response.responseProducts(wantedProducts);
-            } else {
-                AdTheme.getInstance().getWantedList(
-                        username,
-                        this,
-                        this
-                );
-            }
+    public void getOfferedList(final AdListFragment response, boolean force) {
+        if (offeredAds != null && !force) {
+            response.responseAds(offeredAds);
         } else {
-            if (offeredAds != null && !force) {
-                response.responseAds(offeredAds);
-            } else {
-                AdTheme.getInstance().getOfferedList(
-                        username,
-                        this,
-                        this
-                );
-            }
+            AdTheme.getInstance().getOfferedList(
+                    username,
+                    this,
+                    this
+            );
+        }
+    }
+
+    @Override
+    public void listResponse(ArrayList<Ad> ads) {
+        this.offeredAds = ads;
+        getOfferedList((AdListFragment) fragment, false);
+    }
+
+    @Override
+    public void wantedListResponse(ArrayList<Product> products) {
+        this.wantedProducts = products;
+        getWantedList((WantedListFragment) fragment, false);
+    }
+
+    @Override
+    public void getWantedList(WantedListFragment response, boolean force) {
+        if (wantedProducts != null && !force) {
+            response.displayWantedProducts(wantedProducts);
+        } else {
+            AdTheme.getInstance().getWantedList(
+                    username,
+                    this,
+                    this
+            );
         }
     }
 
     @Override
     public void error(String error) {
 
-    }
-
-    @Override
-    public void listResponse(ArrayList<Ad> ads) {
-        this.offeredAds = ads;
-        fragment.responseAds(ads);
-        //fragment.notifyDataSetChanged();
-    }
-
-    @Override
-    public void wantedListResponse(ArrayList<Product> products) {
-        this.wantedProducts = products;
-        fragment.responseProducts(products);
-//        fragment.notifyDataSetChanged();
     }
 }

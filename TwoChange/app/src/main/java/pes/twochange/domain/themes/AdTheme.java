@@ -1,7 +1,5 @@
 package pes.twochange.domain.themes;
 
-import android.util.Log;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -106,7 +104,10 @@ public class AdTheme {
                     public void success(DataSnapshot dataSnapshot) {
                         ArrayList<Ad> ads = new ArrayList<>();
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            ads.add(ds.getValue(Ad.class));
+                            Ad ad = ds.getValue(Ad.class);
+                            ad.setId(ds.getKey());
+                            ads.add(ad);
+
                         }
                         response.listResponse(ads);
                     }
