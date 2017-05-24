@@ -24,7 +24,6 @@ public class Match {
 
     private state state;
 
-    private static DatabaseReference mFirebaseMatches = FirebaseDatabase.getInstance().getReference().child("matches");
 
     //CONSTRUCTOR
     public Match(String usernameSender, String usernameReciver, String productKeySender, String productKeyReciver) {
@@ -79,11 +78,4 @@ public class Match {
         this.state = state;
     }
 
-    //OTHER METHODS
-    public void save() {
-        //usernameSender = nom del usuari que ha iniciat el match
-        //productKeyReciver = key del producte del usuari que NO ha iniciat del match
-        DatabaseReference newMatchRef = mFirebaseMatches.child(usernameSender).child(productKeyReciver);
-        newMatchRef.setValue(this);
-    }
 }

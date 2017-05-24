@@ -42,7 +42,8 @@ public class AdsListsActivity extends AppCompatActivity {
 
     private DatabaseReference mFirebaseWantedList;
     private DatabaseReference mFirebaseOfferedList;
-    private DatabaseReference mFirebaseCategories;
+    private DatabaseReference mFirebaseAds;
+    private DatabaseReference mFirebaseMatches;
     private String currentUsername = "";
     private static final String TAG = "AdsListsActivitiy";
 
@@ -52,7 +53,8 @@ public class AdsListsActivity extends AppCompatActivity {
     private ListView wantedList;
     private ListView offeredList;
 
-    private Map<String,Product> auxCandidateMatches = new HashMap<String, Product>();
+    private Map<String,Ad> auxCandidateMatches = new HashMap<String, Ad>();
+    private Map<String,Match> myMatches = new HashMap<String, Match>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +72,10 @@ public class AdsListsActivity extends AppCompatActivity {
         //Referencia al chat
         mFirebaseWantedList = mFirebaseDatabase.getReference().child("lists").child(currentUsername).child("wanted");
         mFirebaseOfferedList = mFirebaseDatabase.getReference().child("lists").child(currentUsername).child("offered");
-        mFirebaseCategories = mFirebaseDatabase.getReference().child("categories");
+        mFirebaseAds = mFirebaseDatabase.getReference().child("ads");
+        mFirebaseMatches = mFirebaseDatabase.getReference().child("matches").child(currentUsername);
+
+        getMyMatches();
 
         //delete from wanted list
         final ListView lv = (ListView) findViewById(R.id.wanted_list_ad);
@@ -146,7 +151,7 @@ public class AdsListsActivity extends AppCompatActivity {
                 addItemToWanted();
                 break;
             case R.id.action_match:
-                makeMatch();
+                makeMatches();
                 break;
             case R.id.action_edit:
 
@@ -195,20 +200,6 @@ public class AdsListsActivity extends AppCompatActivity {
         return finded;
     }
 
-    private void makeMatch() {
-
-        //Count matches
-        int numMatches = 0;
-
-        Toast.makeText(AdsListsActivity.this, "Matchig has started, we will notificate you when it finish.", Toast.LENGTH_LONG).show();
-
-        for (int i = 0; i < wantedList.getCount(); ++i) {
-            String categoria = wantedAdapter.getItem(i).getName();
-            //Buscar matches candidatos para esta categoria
-            getCandidateMatches(categoria);
-        }
-    }
-
     private boolean isMatch (Product offeredProd, Product posMatchProd) {
         //rate permision
         int rateVariable = 10;
@@ -218,21 +209,19 @@ public class AdsListsActivity extends AppCompatActivity {
         else return false;
     }
 
+    //Fa el match amb els anuncis de la BD i els guarda a la BD com a matches
+    private void makeMatches () {
 
-    //Agafa de la BD els mathces candidats i els guarda al map auxCandidateMatches
-    private void getCandidateMatches (String categoria) {
+        Toast.makeText(AdsListsActivity.this, "Matchig has started, we will notificate you when it finish.", Toast.LENGTH_LONG).show();
 
         final DatabaseResponse callback = new DatabaseResponse() {
             @Override
             public void success(DataSnapshot dataSnapshot) {
                 for (DataSnapshot d: dataSnapshot.getChildren()) {
-                    //Si no es un match descartat afegir als candidates
-                    //if(){}
-                    auxCandidateMatches.put(d.getKey().toString(), d.getValue(Product.class));
-                    Log.d(TAG, d.getValue().toString());
+                    if (isCategoryWanted(d.getValue(Ad.class).getCategory())) {
+                        auxCandidateMatches.put(d.getKey().toString(), d.getValue(Ad.class));
+                    }
                 }
-
-                int numMatches = 0;
 
                 for (int i = 0; i < offeredList.getCount(); ++i) {
 
@@ -241,24 +230,29 @@ public class AdsListsActivity extends AppCompatActivity {
                     Product auxProduct = offeredAdapter.getItem(i);
                     //RECORRER TODOS LOS MATCHES POSIBLES
                     while (it.hasNext()) {
-                        Map.Entry<String, Product> pair = (Map.Entry)it.next();
+                        Map.Entry<String, Ad> pair = (Map.Entry)it.next();
 
                         //Posible match
-                        Product posMatch = new Product(pair.getValue().getName(), pair.getKey().toString(), pair.getValue().getUsername(), pair.getValue().getRating());
+                        Product posMatch = new Product(pair.getValue().getTitle(), pair.getKey().toString(), pair.getValue().getUserName(), pair.getValue().getRating());
 
                         //SI es match, AÑADIR posMatch A LOS MATCHES DE LA BD
-                        if (!(posMatch.getUsername().equals(currentUsername))&&(isMatch(auxProduct, posMatch))) {
+                        Log.d (TAG, posMatch.getKey().concat(pair.getKey()) + " -> " + String.valueOf(isMatched(posMatch.getKey().concat(pair.getKey()))));
+
+                        if (!(posMatch.getUsername().equals(currentUsername))&&!(isMatched(posMatch.getKey().concat(pair.getKey())))&&(isMatch(auxProduct, posMatch))) {
 
                             //Key del producto del usuario sender con el que se quiere hacer el match
                             String productKeySender = offeredAdapter.getItem(i).getKey();
 
                             //crear match y guardarlo en la BD
                             Match match = new Match(currentUsername, posMatch.getUsername(), productKeySender, posMatch.getKey());
-                            match.save();
+                            mFirebaseMatches.child(match.getProductKeySender().concat(match.getProductKeyReciver())).setValue(match);
+                            myMatches.put(match.getProductKeySender().concat(match.getProductKeyReciver()),match);
                         }
                         //it.remove();
                     }
                 }
+
+                //NOTIFICAR QUE MATCH ACABADO
 
             }
             @Override
@@ -271,12 +265,9 @@ public class AdsListsActivity extends AppCompatActivity {
             }
         };
 
-        DatabaseReference mRefMyCat = mFirebaseCategories.child(categoria);
-
-        mRefMyCat.addListenerForSingleValueEvent(new ValueEventListener() {
+        mFirebaseAds.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "ENTRAS?");
                 if (dataSnapshot == null) {
                     callback.empty();
                 } else {
@@ -289,6 +280,51 @@ public class AdsListsActivity extends AppCompatActivity {
                 callback.failure(databaseError.toString());
             }
         });
+    }
+
+
+    //Agafa de la BD els matches de l'usuari i els guarda al map "myMatches"
+    private void getMyMatches () {
+
+        final DatabaseResponse callback = new DatabaseResponse() {
+            @Override
+            public void success(DataSnapshot dataSnapshot) {
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
+                    if (isCategoryWanted(d.getValue(Ad.class).getCategory())) {
+                        myMatches.put(d.getKey().toString(), d.getValue(Match.class));
+                    }
+                }
+            }
+            @Override
+            public void empty() {
+                Log.d(TAG, "EMPTY");
+            }
+            @Override
+            public void failure(String message) {
+                Log.d(TAG, "Something went wrong: " + message);
+            }
+        };
+
+        mFirebaseMatches.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot == null) {
+                    callback.empty();
+                } else {
+                    callback.success(dataSnapshot);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //TRACTAR ERROR
+                callback.failure(databaseError.toString());
+            }
+        });
+    }
+
+    private boolean isMatched(String key) {
+        Log.d(TAG, key);
+        return (myMatches.containsKey(key));
     }
 
     private void showWanted() {
