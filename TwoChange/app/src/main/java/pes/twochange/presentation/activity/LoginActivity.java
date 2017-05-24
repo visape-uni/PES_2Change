@@ -78,10 +78,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     private void loginWithEmail() {
+        // view (fragment)
         EditText emailField = (EditText) findViewById(R.id.mailField);
         EditText passwordField = (EditText) findViewById(R.id.passwordField);
         email = emailField.getText().toString().trim();
         password = passwordField.getText().toString().trim();
+
         if (email.isEmpty()) {
             Toast.makeText(getApplicationContext(), "You must fill in both fields to log in", Toast.LENGTH_LONG).show();
         } else if (!email.contains("@")) {
@@ -89,6 +91,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         } else if (password.isEmpty()) {
             Toast.makeText(getApplicationContext(), "You must fill in both fields to log in", Toast.LENGTH_LONG).show();
         } else {
+            // activity
+            // try catch, exception = empty email, invalid email (@), empty password
             authTheme.login(email, password);
         }
     }
