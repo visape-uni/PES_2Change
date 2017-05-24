@@ -1,13 +1,19 @@
 package pes.twochange.domain.themes;
 
-import android.util.Log;
-
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import pes.twochange.domain.callback.AdResponse;
 import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Image;
 import pes.twochange.domain.model.Product;
 import pes.twochange.services.DatabaseResponse;
 import pes.twochange.services.Firebase;
@@ -26,10 +32,119 @@ public class AdTheme {
     private static final String REFERENCE = "lists";
     private static String user;
 
+    private static final String ADS_CHILD = "ads";
+
     public static AdTheme getInstance() {
         return ourInstance;
     }
 
+
+    public void save(final Ad ad, final AdResponse callback) {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+
+        DatabaseReference adsRef = db.child(ADS_CHILD);
+        DatabaseReference offeredListRef = db.child("lists");
+
+        DatabaseReference newAdRef = adsRef.push();
+        ad.setId(newAdRef.getKey());
+
+        DatabaseReference newOffered = offeredListRef.child(ad.getUserName()).child("offered").child(newAdRef.getKey());
+        newOffered.setValue(new Product(ad.getTitle(), newAdRef.getKey(), ad.getUserName()));
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef =
+                storage.getReferenceFromUrl("gs://change-64bd0.appspot.com").child("ads").child(ad.getId()).child("images");
+
+        List<String> imageIds = new ArrayList<>();
+        for (Image image : ad.getImages()) {
+            if (image != null) {
+                image.save(storageRef);
+                imageIds.add(image.getId() + image.getFormat().getExtension());
+            }
+        }
+
+        DatabaseReference.CompletionListener listener = new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError == null) callback.onSuccess(ad);
+                else callback.onFailure(databaseError.getMessage());
+            }
+        };
+
+        newAdRef.setValue(ad, listener);
+        newAdRef.child("images").setValue(imageIds);
+    }
+
+    public void update(final Ad ad, final AdResponse callback) {
+        DatabaseReference.CompletionListener listener = new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError == null) callback.onSuccess(ad);
+                else callback.onFailure(databaseError.getMessage());
+            }
+        };
+
+        FirebaseDatabase.getInstance().getReference()
+                .child(ADS_CHILD)
+                .child(ad.getId())
+                .setValue(this, listener);
+    }
+
+    public void delete(final Ad ad, final AdResponse callback) {
+        DatabaseReference.CompletionListener listener = new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError == null) callback.onSuccess(ad);
+                else callback.onFailure(databaseError.getMessage());
+            }
+        };
+
+        FirebaseDatabase.getInstance().getReference()
+                .child(ADS_CHILD)
+                .child(ad.getId())
+                .removeValue(listener);
+    }
+
+    public void findById(String id, final AdResponse callback) {
+        ValueEventListener listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Ad ad = dataSnapshot.getValue(Ad.class);
+                ad.setId(dataSnapshot.getKey());
+                callback.onSuccess(ad);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.onFailure(databaseError.getMessage());
+            }
+        };
+
+        FirebaseDatabase.getInstance().getReference()
+                .child(ADS_CHILD)
+                .child(id)
+                .addListenerForSingleValueEvent(listener);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /* ------------------
+        WANTED / OFFERED
+       ------------------ */
     public void remove(String username, String list, String key) {
         FirebaseDatabase.getInstance()
                 .getReference()

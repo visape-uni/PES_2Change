@@ -26,20 +26,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.IOException;
 
 import pes.twochange.R;
+import pes.twochange.domain.callback.AdResponse;
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Image;
 import pes.twochange.domain.model.Profile;
+import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 
@@ -59,7 +56,6 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 400;
     public static final int REQUEST_CAMERA = 401;
 
-    private TextView ratingLbl;
     private EditText titleTxt, descriptionTxt, yearTxt, priceTxt;
     private Spinner stateSpn, adTypeSpn, adCategorySpn;
     private ImageButton addImageBtn1, addImageBtn2, addImageBtn3, addImageBtn4;
@@ -67,12 +63,14 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
 
     private Ad ad;
 
-    private boolean isEdition = true;
+    private boolean isEdition;
     private boolean hasCameraPermission = false;
     private boolean hasExternalStoragePermission = false;
-    private View selectedImageButton = null;
 
+    private View selectedImageButton = null;
     private ProgressDialog pDialog;
+
+    private AdTheme adTheme = AdTheme.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +87,9 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         }
         */
 
-        itemDetails = (LinearLayout) findViewById(R.id.itemDetailsLayout);
+        ad = new Ad();
 
-        ratingLbl = (TextView) findViewById(R.id.ratingLbl);
+        itemDetails = (LinearLayout) findViewById(R.id.itemDetailsLayout);
 
         titleTxt = (EditText) findViewById(R.id.titleTxt);
         descriptionTxt = (EditText) findViewById(R.id.descriptionTxt);
@@ -124,18 +122,16 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
             if (isEdition && adId == null)
                 throw new IllegalStateException("PostAdActivity called for edition but no Ad provided");
             else if (isEdition) {
-                Ad.findById(adId, new ValueEventListener() {
+                adTheme.findById(adId, new AdResponse() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.i(LOG_TAG, "LOADED AD");
-                        ad = dataSnapshot.getValue(Ad.class);
+                    public void onSuccess(Ad ad) {
                         titleTxt.setText(ad.getTitle());
                         descriptionTxt.setText(ad.getDescription());
                         pDialog.dismiss();
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onFailure(String error) {
                         pDialog.dismiss();
                     }
                 });
@@ -143,6 +139,9 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 ad = new Ad();
                 pDialog.dismiss();
             }
+        } else {
+            ad = new Ad();
+            pDialog.dismiss();
         }
 
         if (isEdition) {
@@ -248,7 +247,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         requestPermissions();
     }
 
-    public void publish(View v) {
+    public void publish(final View v) {
         ad.setTitle(titleTxt.getText().toString().toUpperCase());
         ad.setDescription(descriptionTxt.getText().toString());
 
@@ -262,20 +261,32 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         }
 
 
-        try {
-            if (isEdition) {
-                ad.update();
-                Snackbar.make(v, "Ad successfully saved!", Snackbar.LENGTH_LONG).show();
+        if (isEdition) {
+            adTheme.update(ad, new AdResponse() {
+                @Override
+                public void onSuccess(Ad ad) {
+                    Snackbar.make(v, "Ad successfully updated!", Snackbar.LENGTH_LONG).show();
+                }
 
-            } else {
-                ad.save();
-                Snackbar.make(v, "Your ad has been published!", Snackbar.LENGTH_LONG).show();
-            }
-            finish();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Snackbar.make(v, "There was an error publishing the ad. Please try again.", Snackbar.LENGTH_LONG).show();
+                @Override
+                public void onFailure(String error) {
+                    Snackbar.make(v, "There was an error updating the ad. Please try again.", Snackbar.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            adTheme.save(ad, new AdResponse() {
+                @Override
+                public void onSuccess(Ad ad) {
+                    Snackbar.make(v, "Your ad has been published!", Snackbar.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    Snackbar.make(v, "There was an error publishing the ad. Please try again.", Snackbar.LENGTH_LONG).show();
+                }
+            });
         }
+        finish();
     }
 
     @Override

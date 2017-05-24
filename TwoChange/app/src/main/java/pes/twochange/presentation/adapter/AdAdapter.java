@@ -353,11 +353,6 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
     }
 
     public void update(Ad ad) {
-        /*for (Ad a : ads)
-            if (a.getId().equals(ad.getId())) {
-                ads.set(ads.indexOf(a), ad);
-                notifyDataSetChanged();
-            }*/
         ads.set(ads.indexOf(ad), ad);
         notifyDataSetChanged();
     }
