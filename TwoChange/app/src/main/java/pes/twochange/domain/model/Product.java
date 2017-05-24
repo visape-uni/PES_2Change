@@ -16,6 +16,7 @@ public class Product {
     private String name;
     private String key;
     private String username;
+    private String category;
     private int rating;
 
     private static DatabaseReference mFirebaseAds = FirebaseDatabase.getInstance().getReference().child("ads");
@@ -23,10 +24,11 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String key, String username, int rating) {
+    public Product(String name, String key, String username, String category, int rating) {
         this.name = name;
         this.key = key;
         this.username = username;
+        this.category = category;
         this.rating = rating;
     }
 
@@ -52,6 +54,14 @@ public class Product {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getCategory () {
+        return this.category;
+    }
+
+    public void setCategory (String category) {
+        this.category = category;
     }
 
     public int getRating() {

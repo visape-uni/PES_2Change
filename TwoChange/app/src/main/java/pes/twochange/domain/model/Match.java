@@ -21,16 +21,18 @@ public class Match {
     private String usernameReciver;
     private String productKeySender;
     private String productKeyReciver;
+    private String categoryProductReciver;
 
     private state state;
 
 
     //CONSTRUCTOR
-    public Match(String usernameSender, String usernameReciver, String productKeySender, String productKeyReciver) {
+    public Match(String usernameSender, String usernameReciver, String productKeySender, String productKeyReciver, String categoryProductReciver) {
         this.usernameSender = usernameSender;
         this.usernameReciver = usernameReciver;
         this.productKeySender = productKeySender;
         this.productKeyReciver = productKeyReciver;
+        this.categoryProductReciver = categoryProductReciver;
         this.state = state.UNDEFINED;
     }
 
@@ -76,6 +78,14 @@ public class Match {
 
     public void setState(Match.state state) {
         this.state = state;
+    }
+
+    public String getCategoryProductReciver () {
+        return categoryProductReciver;
+    }
+
+    public void setCategoryProductReciver (String categoryProductReciver) {
+        this.categoryProductReciver = categoryProductReciver;
     }
 
 }

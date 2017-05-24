@@ -178,7 +178,7 @@ public class AdsListsActivity extends AppCompatActivity {
                         DatabaseReference newProduct = mFirebaseWantedList.push();
 
                         //no username y rating = -1 (no rate)
-                        newProduct.setValue(new Product(categoryTitle, newProduct.getKey(), null, -1));
+                        newProduct.setValue(new Product(categoryTitle, newProduct.getKey(), null, null, -1));
                     } else {
                         Toast.makeText(AdsListsActivity.this, categoryTitle + " was already in the list.", Toast.LENGTH_SHORT);
                     }
@@ -223,28 +223,29 @@ public class AdsListsActivity extends AppCompatActivity {
                     }
                 }
 
-                for (int i = 0; i < offeredList.getCount(); ++i) {
+                for (int i = 0; i < offeredAdapter.getCount(); ++i) {
 
                     Iterator it = auxCandidateMatches.entrySet().iterator();
-                    //Offered product to compare match
-                    Product auxProduct = offeredAdapter.getItem(i);
+
+
                     //RECORRER TODOS LOS MATCHES POSIBLES
                     while (it.hasNext()) {
                         Map.Entry<String, Ad> pair = (Map.Entry)it.next();
 
-                        //Posible match
-                        Product posMatch = new Product(pair.getValue().getTitle(), pair.getKey().toString(), pair.getValue().getUserName(), pair.getValue().getRating());
+                        //Posible match product
+                        Product posMatch = new Product(pair.getValue().getTitle(), pair.getKey().toString(), pair.getValue().getUserName(), pair.getValue().getCategory(), pair.getValue().getRating());
+
+                        //Offered product to compare match
+                        Product auxProduct = offeredAdapter.getItem(i);
+
+                        //Key del producto del usuario sender con el que se quiere hacer el match
+                        String productKeySender = auxProduct.getKey();
 
                         //SI es match, AÑADIR posMatch A LOS MATCHES DE LA BD
-                        Log.d (TAG, posMatch.getKey().concat(pair.getKey()) + " -> " + String.valueOf(isMatched(posMatch.getKey().concat(pair.getKey()))));
-
-                        if (!(posMatch.getUsername().equals(currentUsername))&&!(isMatched(posMatch.getKey().concat(pair.getKey())))&&(isMatch(auxProduct, posMatch))) {
-
-                            //Key del producto del usuario sender con el que se quiere hacer el match
-                            String productKeySender = offeredAdapter.getItem(i).getKey();
+                        if (!(posMatch.getUsername().equals(currentUsername))&&!(isMatched(productKeySender.concat(posMatch.getKey())))&&(isMatch(auxProduct, posMatch))) {
 
                             //crear match y guardarlo en la BD
-                            Match match = new Match(currentUsername, posMatch.getUsername(), productKeySender, posMatch.getKey());
+                            Match match = new Match(currentUsername, posMatch.getUsername(), productKeySender, posMatch.getKey(), posMatch.getCategory());
                             mFirebaseMatches.child(match.getProductKeySender().concat(match.getProductKeyReciver())).setValue(match);
                             myMatches.put(match.getProductKeySender().concat(match.getProductKeyReciver()),match);
                         }
@@ -282,7 +283,6 @@ public class AdsListsActivity extends AppCompatActivity {
         });
     }
 
-
     //Agafa de la BD els matches de l'usuari i els guarda al map "myMatches"
     private void getMyMatches () {
 
@@ -290,7 +290,7 @@ public class AdsListsActivity extends AppCompatActivity {
             @Override
             public void success(DataSnapshot dataSnapshot) {
                 for (DataSnapshot d: dataSnapshot.getChildren()) {
-                    if (isCategoryWanted(d.getValue(Ad.class).getCategory())) {
+                    if (isCategoryWanted(d.getValue(Match.class).getCategoryProductReciver())) {
                         myMatches.put(d.getKey().toString(), d.getValue(Match.class));
                     }
                 }
@@ -323,7 +323,6 @@ public class AdsListsActivity extends AppCompatActivity {
     }
 
     private boolean isMatched(String key) {
-        Log.d(TAG, key);
         return (myMatches.containsKey(key));
     }
 
