@@ -75,7 +75,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void setUpProfile() {
         // TODO imagen de perfil & image view
-        fullNameTextView.setText(profile.obtenirFullName().toUpperCase());
+        fullNameTextView.setText(profile.fullName().toUpperCase());
         usernameTextView.setText(username);
 
         if (profile.getPhoneNumber() != null) {

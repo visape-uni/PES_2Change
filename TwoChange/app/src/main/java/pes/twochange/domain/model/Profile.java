@@ -184,7 +184,7 @@ public class Profile {
                 '}';
     }
 
-    public String obtenirFullName() {
+    public String fullName() {
         return name + " " + surname;
     }
 }
