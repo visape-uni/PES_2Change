@@ -152,4 +152,8 @@ public class Image {
         ref = ref.child(id + format.getExtension());
         ref.putFile(getUri());
     }
+
+    public String getFirebaseName() {
+        return getId() + getFormat().getExtension();
+    }
 }

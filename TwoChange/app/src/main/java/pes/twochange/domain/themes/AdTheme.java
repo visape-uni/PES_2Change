@@ -5,8 +5,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +15,7 @@ import pes.twochange.domain.model.Image;
 import pes.twochange.domain.model.Product;
 import pes.twochange.services.DatabaseResponse;
 import pes.twochange.services.Firebase;
+import pes.twochange.services.ImageManager;
 
 public class AdTheme {
     //Attributes
@@ -49,17 +48,14 @@ public class AdTheme {
         ad.setId(newAdRef.getKey());
 
         DatabaseReference newOffered = offeredListRef.child(ad.getUserName()).child("offered").child(newAdRef.getKey());
-        newOffered.setValue(new Product(ad.getTitle(), newAdRef.getKey(), ad.getUserName()));
-
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef =
-                storage.getReferenceFromUrl("gs://change-64bd0.appspot.com").child("ads").child(ad.getId()).child("images");
+        newOffered.setValue(new Product(ad.getTitle(), newAdRef.getKey(), ad.getUserName(), ad.getCategory(), ad.getRating()));
 
         List<String> imageIds = new ArrayList<>();
+        ImageManager imageManager = ImageManager.getInstance();
         for (Image image : ad.getImages()) {
             if (image != null) {
-                image.save(storageRef);
-                imageIds.add(image.getId() + image.getFormat().getExtension());
+                String completePath = ad.getImagesPath() + image.getFirebaseName();
+                imageManager.storeImage(completePath, image.getUri());
             }
         }
 

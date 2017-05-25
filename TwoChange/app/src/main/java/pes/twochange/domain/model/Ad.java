@@ -168,6 +168,10 @@ public class Ad extends Model {
         this.category = category;
     }
 
+    @Exclude public String getImagesPath() {
+        return "ads/" + getId() + "/images/";
+    }
+
     /*
          ----------------------
         | OTHER PUBLIC METHODS |

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -12,7 +11,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -74,7 +72,7 @@ public class ImageManager {
         void onFailure(String errorMessage);
     }
 
-    public void storeImage(String completePath, Bitmap bitmap, final UploadResponse response) {
+    public void storeImage(String completePath, Bitmap bitmap) {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference imageReference = storageReference.child(completePath);
 
@@ -82,29 +80,13 @@ public class ImageManager {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        UploadTask uploadTask = imageReference.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                response.onFailure(e.getMessage());
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Uri downloadUri = taskSnapshot.getDownloadUrl();
-                if (downloadUri != null) {
-                    response.onSuccess(downloadUri.toString());
-                } else {
-                    response.onSuccess(null);
-                }
-            }
-        });
-
+        imageReference.putBytes(data);
     }
 
-    public interface UploadResponse {
-        void onSuccess(@Nullable  String url);
-        void onFailure(String errorMessage);
+    public void storeImage(String completePath, Uri fileUri) {
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference imageReference = storageReference.child(completePath);
+        imageReference.putFile(fileUri);
     }
 
 }
