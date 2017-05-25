@@ -185,6 +185,11 @@ public class AdListsActivity extends BaseActivity implements
     }
 
     @Override
+    public void match() {
+
+    }
+
+    @Override
     public void error(String error) {
 
     }
