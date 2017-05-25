@@ -122,6 +122,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .commit();
     }
 
+    protected void replaceFragment(int contentResId, Fragment fragment) {
+        fragmentManager.beginTransaction()
+                .replace(contentResId, fragment)
+                .commit();
+    }
+
     @Override
     public void setContentView(int layoutResID) {
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_layout);
