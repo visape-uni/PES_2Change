@@ -124,7 +124,8 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
             else if (isEdition) {
                 adTheme.findById(adId, new AdResponse() {
                     @Override
-                    public void onSuccess(Ad ad) {
+                    public void onSuccess(Ad newAd) {
+                        ad = newAd;
                         titleTxt.setText(ad.getTitle());
                         descriptionTxt.setText(ad.getDescription());
                         pDialog.dismiss();
@@ -207,7 +208,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                         ContentUris.parseId(selectedImage.getUri());
                     } catch (NumberFormatException e) { //  /path/to/image.jpg
                         //selectedImage.setUri(Uri.parse(selectedImage.getUri().toString()));
-                        selectedImage.setUri(Uri.parse(CAMERA_SAVE_LOCATION.toString() + "/20170415_175859-1148825809.jpg"));
+                        //selectedImage.setUri(Uri.parse(CAMERA_SAVE_LOCATION.toString() + "/20170415_175859-1148825809.jpg"));
                     }
 
                     Bitmap thumbnail =

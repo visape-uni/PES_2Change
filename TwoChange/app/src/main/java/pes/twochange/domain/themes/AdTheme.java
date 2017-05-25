@@ -87,7 +87,7 @@ public class AdTheme {
         FirebaseDatabase.getInstance().getReference()
                 .child(ADS_CHILD)
                 .child(ad.getId())
-                .setValue(this, listener);
+                .setValue(ad, listener);
     }
 
     public void delete(final Ad ad, final AdResponse callback) {
@@ -125,20 +125,6 @@ public class AdTheme {
                 .child(id)
                 .addListenerForSingleValueEvent(listener);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

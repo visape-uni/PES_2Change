@@ -63,10 +63,10 @@ public class AdList2Activity extends AppCompatActivity {
             public void onClick(View v) {
                 AdAdapter.AdViewHolder avh = (AdAdapter.AdViewHolder) recView.getChildViewHolder(v);
 
-                //Intent adIntent = new Intent(v.getContext(), AdActivity.class);
-                Intent adIntent = new Intent(v.getContext(), PostAdActivity.class);
+                Intent adIntent = new Intent(v.getContext(), AdActivity.class);
+                //Intent adIntent = new Intent(v.getContext(), PostAdActivity.class);
                 adIntent.putExtra("adId", avh.getAd().getId());
-                adIntent.putExtra("edition", true);
+                //adIntent.putExtra("edition", true);
                 startActivity(adIntent);
             }
         });
