@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -34,24 +35,24 @@ public class MatchTheme {
         return ourInstance;
     }
 
-
-    public void makeMatches (final String currentUsername, final FirebaseListAdapter<Product> offeredAdapter, final FirebaseListAdapter<Product> wantedAdapter, final Map<String,Match> myMatches) {
+    public void makeMatches (final String currentUsername, final ArrayList<Ad> offeredProd, final ArrayList<Product> wantedProd) {
 
         //Referencia als matches del user
         final DatabaseReference mFirebaseMatches = FirebaseDatabase.getInstance().getReference().child("matches").child(currentUsername);
         DatabaseReference mFirebaseAds = FirebaseDatabase.getInstance().getReference().child("ads");
+        final Map<String,Match> myMatches = new HashMap<>();
 
 
         final DatabaseResponse callback = new DatabaseResponse() {
             @Override
             public void success(DataSnapshot dataSnapshot) {
                 for (DataSnapshot d: dataSnapshot.getChildren()) {
-                    if (isCategoryWanted(d.getValue(Ad.class).getCategory(), wantedAdapter)) {
+                    if (isCategoryWanted(d.getValue(Ad.class).getCategory(), wantedProd)) {
                         auxCandidateMatches.put(d.getKey().toString(), d.getValue(Ad.class));
                     }
                 }
 
-                for (int i = 0; i < offeredAdapter.getCount(); ++i) {
+                for (int i = 0; i < offeredProd.size(); ++i) {
                     Iterator it = auxCandidateMatches.entrySet().iterator();
 
                     //RECORRER TODOS LOS MATCHES POSIBLES
@@ -62,7 +63,9 @@ public class MatchTheme {
                         Product posMatch = new Product(pair.getValue().getTitle(), pair.getKey().toString(), pair.getValue().getUserName(), pair.getValue().getCategory(), pair.getValue().getRating());
 
                         //Offered product to compare match
-                        Product auxProduct = offeredAdapter.getItem(i);
+                        Ad auxAd = offeredProd.get(i);
+
+                        Product auxProduct = new Product(auxAd.getTitle(), auxAd.getId(), auxAd.getUserName(), auxAd.getCategory(), auxAd.getRating());
 
                         //Key del producto del usuario sender con el que se quiere hacer el match
                         String productKeySender = auxProduct.getKey();
@@ -108,11 +111,50 @@ public class MatchTheme {
         });
     }
 
-    private boolean isCategoryWanted (String categoryTitle, FirebaseListAdapter<Product> wantedAdapter) {
+    /*public Map<String,Match> getMyMatches (String currentUsername, final Map<String,Match> myMatches) {
+
+        DatabaseReference mFirebaseMatches = FirebaseDatabase.getInstance().getReference().child("matches").child(currentUsername);
+
+        final DatabaseResponse callback = new DatabaseResponse() {
+            @Override
+            public void success(DataSnapshot dataSnapshot) {
+                for (DataSnapshot d: dataSnapshot.getChildren()) {
+                    myMatches.put(d.getKey().toString(), d.getValue(Match.class));
+                }
+            }
+            @Override
+            public void empty() {
+                Log.d(TAG, "EMPTY");
+            }
+            @Override
+            public void failure(String message) {
+                Log.d(TAG, "Something went wrong: " + message);
+            }
+        };
+
+        mFirebaseMatches.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot == null) {
+                    callback.empty();
+                } else {
+                    callback.success(dataSnapshot);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //TRACTAR ERROR
+                callback.failure(databaseError.toString());
+            }
+        });
+
+    }*/
+
+    private boolean isCategoryWanted (String categoryTitle, ArrayList<Product> wantedProd) {
         boolean finded = false;
         int i = 0;
-        while ((!finded) && (i < wantedAdapter.getCount())) {
-            if (wantedAdapter.getItem(i).getName().equals(categoryTitle)) finded = true;
+        while ((!finded) && (i < wantedProd.size())) {
+            if (wantedProd.get(i).getName().equals(categoryTitle)) finded = true;
             ++i;
         }
         return finded;

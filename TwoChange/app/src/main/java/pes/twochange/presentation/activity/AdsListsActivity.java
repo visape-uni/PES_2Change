@@ -156,7 +156,7 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
                 addItemToWanted();
                 break;
             case R.id.action_match:
-                MatchTheme.getInstance().makeMatches(currentUsername, offeredAdapter, wantedAdapter, myMatches);
+                makeMatches();
                 break;
             case R.id.action_edit:
 

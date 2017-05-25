@@ -15,6 +15,7 @@ import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Product;
 import pes.twochange.domain.themes.AdTheme;
+import pes.twochange.domain.themes.MatchTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.fragment.AdListFragment;
 
@@ -186,7 +187,7 @@ public class AdListsActivity extends BaseActivity implements
 
     @Override
     public void match() {
-
+        MatchTheme.getInstance().makeMatches(username, offeredAds, wantedProducts);
     }
 
     @Override
