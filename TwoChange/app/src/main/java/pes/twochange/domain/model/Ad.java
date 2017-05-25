@@ -190,6 +190,7 @@ public class Ad extends Model {
         setRating(auxRating < 0 ? 0 : auxRating);
     }
 
+
     @Exclude public StorageReference getStorageReference() {
         return FirebaseStorage.getInstance().getReferenceFromUrl("gs://change-64bd0.appspot.com").child("ads").child(getId());
     }

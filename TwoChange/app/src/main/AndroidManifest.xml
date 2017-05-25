@@ -55,6 +55,7 @@
         <activity android:name=".presentation.controller.OptionsActivity" />
         <activity android:name=".presentation.controller.AdListsActivity" />
 
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.twochange.fileprovider"
@@ -75,6 +76,7 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
     </application>
 
 </manifest>

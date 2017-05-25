@@ -21,19 +21,22 @@ public class Match {
     private String usernameReciver;
     private String productKeySender;
     private String productKeyReciver;
+    private String categoryProductReciver;
 
     private state state;
 
-    private static DatabaseReference mFirebaseMatches = FirebaseDatabase.getInstance().getReference().child("matches");
 
     //CONSTRUCTOR
-    public Match(String usernameSender, String usernameReciver, String productKeySender, String productKeyReciver) {
+    public Match(String usernameSender, String usernameReciver, String productKeySender, String productKeyReciver, String categoryProductReciver) {
         this.usernameSender = usernameSender;
         this.usernameReciver = usernameReciver;
         this.productKeySender = productKeySender;
         this.productKeyReciver = productKeyReciver;
+        this.categoryProductReciver = categoryProductReciver;
         this.state = state.UNDEFINED;
     }
+
+    public Match() {}
 
     //GETTERS y SETTERS
 
@@ -77,11 +80,12 @@ public class Match {
         this.state = state;
     }
 
-    //OTHER METHODS
-    public void save() {
-        //usernameSender = nom del usuari que ha iniciat el match
-        //productKeyReciver = key del producte del usuari que NO ha iniciat del match
-        DatabaseReference newMatchRef = mFirebaseMatches.child(usernameSender).child(productKeyReciver);
-        newMatchRef.setValue(this);
+    public String getCategoryProductReciver () {
+        return categoryProductReciver;
     }
+
+    public void setCategoryProductReciver (String categoryProductReciver) {
+        this.categoryProductReciver = categoryProductReciver;
+    }
+
 }
