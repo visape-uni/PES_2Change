@@ -167,5 +167,7 @@
     <string name="remove_wanted_title">Remove wanted item</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="search">Search product</string>
+    <string name="search_hint">Search product</string>
 
 </resources>
