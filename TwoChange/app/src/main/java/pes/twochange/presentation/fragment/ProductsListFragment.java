@@ -23,21 +23,30 @@ import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
 
 public class ProductsListFragment extends Fragment implements TextWatcher {
 
+    private static final String ARG_PARAM1 = "search_enabled";
+    private boolean searchEnabled;
+
     private OnFragmentInteractionListener activity;
     private RecyclerView recyclerView;
     private EditText editText;
 
     public ProductsListFragment() {
-        // Required empty public constructor
     }
 
-    public static ProductsListFragment newInstance() {
-        return new ProductsListFragment();
+    public static ProductsListFragment newInstance(boolean param1) {
+        ProductsListFragment fragment = new ProductsListFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_PARAM1, param1);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            searchEnabled = getArguments().getBoolean(ARG_PARAM1);
+        }
     }
 
     @Override
@@ -47,8 +56,11 @@ public class ProductsListFragment extends Fragment implements TextWatcher {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
         editText = (EditText) view.findViewById(R.id.search_edit_text);
-        editText.addTextChangedListener(this);
-
+        if (searchEnabled) {
+            editText.addTextChangedListener(this);
+        } else {
+            editText.setVisibility(View.GONE);
+        }
         return view;
     }
 

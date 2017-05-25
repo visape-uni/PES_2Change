@@ -21,7 +21,7 @@ public class ExploreActivity extends BaseActivity implements ProductsListFragmen
 
         toolbar.setTitle(R.string.explore);
 
-        fragment = ProductsListFragment.newInstance();
+        fragment = ProductsListFragment.newInstance(true);
 
         replaceFragment(R.id.explore_frame, fragment);
 
