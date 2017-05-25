@@ -1,12 +1,8 @@
 package pes.twochange.domain.model;
 
-import android.support.annotation.NonNull;
-
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -61,7 +57,6 @@ public class Ad extends Model {
     private static final String OUT_OF_BOUNDS_MESSAGE = "Image index must be between 0 and " + MAX_IMAGES;
     private static DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("ads");
     private static DatabaseReference mFirebaseOfferedList = FirebaseDatabase.getInstance().getReference().child("lists");
-    private static DatabaseReference mFirebaseCategory = FirebaseDatabase.getInstance().getReference().child("categories");
 
     private Profile user;
     private String userName;
@@ -195,50 +190,6 @@ public class Ad extends Model {
         setRating(auxRating < 0 ? 0 : auxRating);
     }
 
-    public void save() {
-        DatabaseReference newAdRef = db.push();
-        setId(newAdRef.getKey());
-        newAdRef.setValue(this);
-
-        DatabaseReference newOffered = mFirebaseOfferedList.child(this.getUserName()).child("offered").child(newAdRef.getKey());
-        newOffered.setValue(new Product(this.getTitle(), newAdRef.getKey(), this.getUserName(), this.category, this.rating));
-
-
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef =
-                storage.getReferenceFromUrl("gs://change-64bd0.appspot.com").child("ads").child(getId()).child("images");
-
-        List<String> imageIds = new ArrayList<>();
-        for (Image image : images) {
-            if (image != null) {
-                image.save(storageRef);
-                imageIds.add(image.getId() + image.getFormat().getExtension());
-            }
-        }
-
-        newAdRef.child("images").setValue(imageIds);
-    }
-
-    public void update() {
-        db.child(getId()).setValue(this);
-    }
-
-    public void delete() {
-        db.child(getId()).removeValue(new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-
-            }
-        });
-    }
-
-    public void delete(DatabaseReference.CompletionListener listener) {
-        db.child(getId()).removeValue(listener);
-    }
-
-    public static void findById(String id, @NonNull ValueEventListener listener) {
-        db.child(id).addListenerForSingleValueEvent(listener);
-    }
 
     @Exclude public StorageReference getStorageReference() {
         return FirebaseStorage.getInstance().getReferenceFromUrl("gs://change-64bd0.appspot.com").child("ads").child(getId());

@@ -33,10 +33,22 @@
         <activity android:name=".presentation.activity.MainMenuActivity" />
         <activity android:name=".presentation.activity.SearchActivity" />
         <activity android:name=".presentation.activity.RecyclerChatActivity" />
-        <activity android:name=".presentation.activity.PostAdActivity" />
+        <activity android:name=".presentation.activity.PostAdActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".presentation.activity.EditProfileActivity" />
         <activity android:name=".presentation.activity.LoginActivity" />
-        <activity android:name=".presentation.activity.AdList2Activity" />
+        <activity android:name=".presentation.activity.AdList2Activity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".presentation.activity.AdsListsActivity"/>
         <activity android:name=".presentation.controller.ExploreActivity" />
         <activity android:name=".presentation.activity.AdActivity" />
