@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.fragment.ProductsListFragment;
 
 public class ExploreActivity extends BaseActivity implements ProductsListFragment.OnFragmentInteractionListener {
@@ -45,9 +46,23 @@ public class ExploreActivity extends BaseActivity implements ProductsListFragmen
         // Download all the products from Firebase without importing any Firebase library neither
         // class here. This is the presentation layer, Firebase is data layer. You have to give the
         // data through a Theme/Controller/etc.
-        if (fragment != null && fragment instanceof ProductsListFragment) {
-            ((ProductsListFragment) fragment).display(productsList);
-        }
+        AdTheme.getInstance().getAllProducts(
+                new AdTheme.ListResponse() {
+                    @Override
+                    public void listResponse(ArrayList<Ad> productItems) {
+                        productsList = productItems;
+                        if (fragment != null && fragment instanceof ProductsListFragment) {
+                            ((ProductsListFragment) fragment).display(productsList);
+                        }
+                    }
+                },
+                new AdTheme.ErrorResponse() {
+                    @Override
+                    public void error(String error) {
+
+                    }
+                }
+        );
     }
 
 
@@ -55,13 +70,24 @@ public class ExploreActivity extends BaseActivity implements ProductsListFragmen
 
     @Override
     public void searchProducts(String query) {
-        // TODO
-        // Descarga productos que contenga $query de Firebase
-        //
-        // TODO
-        // Download product that contain $query from Firebase
-        if (fragment != null && fragment instanceof ProductsListFragment) {
-            ((ProductsListFragment) fragment).display(searchResultList);
+        if (productsList != null && productsList.size() > 0) {
+            searchResultList = new ArrayList<>();
+            String upperCaseQuery = query.toUpperCase();
+            for (Ad product : productsList) {
+                String upperCaseTitle = product.getTitle().toUpperCase();
+                if (upperCaseTitle.contains(upperCaseQuery)) {
+                    searchResultList.add(product);
+                }
+            }
+            if (fragment != null && fragment instanceof ProductsListFragment) {
+                ((ProductsListFragment) fragment).display(searchResultList);
+            }
+        } else {
+            // TODO
+            // Descarga productos que contenga $query de Firebase
+            //
+            // TODO
+            // Download product that contain $query from Firebase
         }
     }
 

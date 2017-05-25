@@ -28,7 +28,7 @@ public class ProductsListFragment extends Fragment implements TextWatcher {
 
     private OnFragmentInteractionListener activity;
     private RecyclerView recyclerView;
-    private EditText editText;
+    private RecyclerViewProductAdapter adapter;
 
     public ProductsListFragment() {
     }
@@ -55,12 +55,21 @@ public class ProductsListFragment extends Fragment implements TextWatcher {
         View view = inflater.inflate(R.layout.fragment_products_list, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
-        editText = (EditText) view.findViewById(R.id.search_edit_text);
+        adapter = new RecyclerViewProductAdapter(getContext(),
+                new ArrayList<Ad>(), activity);
+        GridLayoutManager manager = new GridLayoutManager(getContext(), 2,
+                LinearLayoutManager.VERTICAL, false);
+//        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setAdapter(adapter);
+
+        EditText editText = (EditText) view.findViewById(R.id.search_edit_text);
         if (searchEnabled) {
             editText.addTextChangedListener(this);
         } else {
             editText.setVisibility(View.GONE);
         }
+        activity.loadProductList();
         return view;
     }
 
@@ -81,14 +90,9 @@ public class ProductsListFragment extends Fragment implements TextWatcher {
         activity = null;
     }
 
-
-
     public void display(ArrayList<Ad> products) {
-        RecyclerViewProductAdapter adapter = new RecyclerViewProductAdapter(getContext(), products,
-                activity);
-        GridLayoutManager manager = new GridLayoutManager(getContext(), 2,
-                LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
+        adapter.setProductArrayList(products);
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
     }
 

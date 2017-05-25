@@ -52,7 +52,7 @@ public class AdTheme {
 
         List<String> imageIds = new ArrayList<>();
         ImageManager imageManager = ImageManager.getInstance();
-        for (Image image : ad.getImages()) {
+        for (Image image : ad.getImagesFile()) {
             if (image != null) {
                 String completePath = ad.getImagesPath() + image.getFirebaseName();
                 imageManager.storeImage(completePath, image.getUri());
@@ -204,6 +204,38 @@ public class AdTheme {
                         ArrayList<Ad> ads = new ArrayList<>();
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
                             ads.add(ds.getValue(Ad.class));
+                        }
+                        response.listResponse(ads);
+                    }
+
+                    @Override
+                    public void empty() {
+                        response.listResponse(new ArrayList<Ad>());
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        error.error(message);
+                    }
+                }
+        ).list();
+    }
+
+    public void getAllProducts(final ListResponse response, final ErrorResponse error) {
+        Firebase.getInstance().get(
+                "ads",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        ArrayList<Ad> ads = new ArrayList<>();
+                        for (DataSnapshot dsAd : dataSnapshot.getChildren()) {
+                            Ad snapshotAd = dsAd.getValue(Ad.class);
+                            ArrayList<String> images = new ArrayList<>();
+                            for (DataSnapshot dsImage : dsAd.child("images").getChildren()) {
+                                images.add(dsImage.getValue(String.class));
+                            }
+                            snapshotAd.setImages(images);
+                            ads.add(snapshotAd);
                         }
                         response.listResponse(ads);
                     }

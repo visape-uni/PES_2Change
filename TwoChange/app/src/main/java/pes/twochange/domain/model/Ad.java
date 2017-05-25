@@ -66,9 +66,11 @@ public class Ad extends Model {
     private int rating;
     private String category;
 
-    private List<Image> images;
+    private List<Image> imagesFile;
 
     private List<String> wants;
+
+    private ArrayList<String> images;
 
 
     /*
@@ -78,11 +80,11 @@ public class Ad extends Model {
      */
     public Ad() {
         rating = 0;
-        images = new ArrayList<>(MAX_IMAGES);
+        imagesFile = new ArrayList<>(MAX_IMAGES);
         wants = new ArrayList<>();
 
         for (int i = 0; i < MAX_IMAGES; ++i) {
-            images.add(i, null);
+            imagesFile.add(i, null);
         }
     }
 
@@ -120,24 +122,24 @@ public class Ad extends Model {
         this.description = description;
     }
 
-    @Exclude public List<Image> getImages() {
-        return images;
+    @Exclude public List<Image> getImagesFile() {
+        return imagesFile;
     }
     public void setImageAt(int index, Image image) {
         if (index < 0 || index > MAX_IMAGES - 1) throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-        images.set(index, image);
+        imagesFile.set(index, image);
     }
     public void removeImageAt(int index) {
         if (index < 0 || index > MAX_IMAGES - 1) throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-        images.set(index, null);
+        imagesFile.set(index, null);
     }
     public Image getImageAt(int index) {
         if (index < 0 || index > MAX_IMAGES - 1) throw new IndexOutOfBoundsException(OUT_OF_BOUNDS_MESSAGE);
-        return images.get(index);
+        return imagesFile.get(index);
     }
     public void addImage(Image image) {
-        for (int i = 0; i < images.size(); ++i) {
-            if (images.get(i) == null) {
+        for (int i = 0; i < imagesFile.size(); ++i) {
+            if (imagesFile.get(i) == null) {
                 setImageAt(i, image);
                 break;
             }
@@ -169,14 +171,22 @@ public class Ad extends Model {
     }
 
     @Exclude public String getImagesPath() {
-        return "ads/" + getId() + "/images/";
+        return "ads/" + getId() + "/imagesFile/";
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
     }
 
     /*
-         ----------------------
-        | OTHER PUBLIC METHODS |
-         ----------------------
-     */
+             ----------------------
+            | OTHER PUBLIC METHODS |
+             ----------------------
+         */
     public void rate(ProductState state, Integer year, Integer price) {
         int auxRating = 100;
         auxRating -= state.getPenalty();
