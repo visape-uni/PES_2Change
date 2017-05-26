@@ -10,12 +10,9 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import pes.twochange.R;
 import pes.twochange.domain.themes.AuthTheme;
 import pes.twochange.presentation.Config;
-import pes.twochange.presentation.activity.EditProfileActivity;
-import pes.twochange.presentation.activity.LoginActivity;
 
 public class SplashActivity extends AppCompatActivity implements Animation.AnimationListener, AuthTheme.Response {
 
@@ -64,7 +61,11 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        translateAnimation.setAnimationListener(null);
+                        Intent i = new Intent(getApplicationContext(), AuthActivity.class);
+                        i.putExtra("startPoint", "LOGIN");
+                        startActivity(i);
+                        finish();
                     }
 
                     @Override
@@ -93,9 +94,11 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
 
     @Override
     public void profile() {
-        Intent intent = new Intent(getApplicationContext(), EditProfileActivity.class);
-        intent.putExtra("editing", false);
-        startActivity(intent);
+        translateAnimation.setAnimationListener(null);
+        Intent i = new Intent(getApplicationContext(), AuthActivity.class);
+        i.putExtra("startPoint", "PROFILE");
+        startActivity(i);
+        finish();
     }
 
     @Override

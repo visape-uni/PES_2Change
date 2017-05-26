@@ -35,7 +35,6 @@
         <activity android:name=".presentation.activity.RecyclerChatActivity" />
         <activity android:name=".presentation.activity.PostAdActivity" />
         <activity android:name=".presentation.activity.EditProfileActivity" />
-        <activity android:name=".presentation.activity.LoginActivity" />
         <activity android:name=".presentation.activity.AdList2Activity" />
         <activity android:name=".presentation.activity.AdsListsActivity" />
         <activity android:name=".presentation.controller.ExploreActivity" />

@@ -16,7 +16,6 @@ import android.widget.FrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 import pes.twochange.R;
-import pes.twochange.presentation.activity.LoginActivity;
 import pes.twochange.presentation.activity.ProfileActivity;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -78,7 +77,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 case R.id.logout:
                     FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                    Intent i = new Intent(getApplicationContext(), AuthActivity.class);
+                    i.putExtra("startPoint", "LOGIN");
+                    startActivity(i);
                     finish();
                     break;
             }
