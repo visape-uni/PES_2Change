@@ -187,7 +187,7 @@ public class AdListsActivity extends BaseActivity implements
 
     @Override
     public void match() {
-        MatchTheme.getInstance().makeMatches(username, wantedProducts);
+        //MatchTheme.getInstance().makeMatches(username, wantedProducts, myProducts);
     }
 
     @Override
