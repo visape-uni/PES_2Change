@@ -34,7 +34,6 @@ import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Match;
 import pes.twochange.domain.model.Product;
-import pes.twochange.domain.themes.MatchTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.services.DatabaseResponse;
 

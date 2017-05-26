@@ -1,9 +1,7 @@
 package pes.twochange.domain.themes;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,7 +16,6 @@ import java.util.Map;
 import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Match;
 import pes.twochange.domain.model.Product;
-import pes.twochange.presentation.Config;
 import pes.twochange.services.DatabaseResponse;
 
 /**
@@ -35,19 +32,20 @@ public class MatchTheme {
         return ourInstance;
     }
 
-    public void makeMatches (final String currentUsername, final ArrayList<Ad> offeredProd, final ArrayList<Product> wantedProd) {
+    public void makeMatches (final String currentUsername, final ArrayList<Product> wantedProd, final Map<String, Match> myMatches) {
 
         //Referencia als matches del user
         final DatabaseReference mFirebaseMatches = FirebaseDatabase.getInstance().getReference().child("matches").child(currentUsername);
         DatabaseReference mFirebaseAds = FirebaseDatabase.getInstance().getReference().child("ads");
-        final Map<String,Match> myMatches = new HashMap<>();
-
+        //final Map<String,Match> myMatches = new HashMap<>();
+        final ArrayList<Ad> offeredProd = new ArrayList<>();
 
         final DatabaseResponse callback = new DatabaseResponse() {
             @Override
             public void success(DataSnapshot dataSnapshot) {
                 for (DataSnapshot d: dataSnapshot.getChildren()) {
-                    if (isCategoryWanted(d.getValue(Ad.class).getCategory(), wantedProd)) {
+                    if (d.getValue(Ad.class).getUserName().equals(currentUsername)) offeredProd.add(d.getValue(Ad.class));
+                    else if (isCategoryWanted(d.getValue(Ad.class).getCategory(), wantedProd)) {
                         auxCandidateMatches.put(d.getKey().toString(), d.getValue(Ad.class));
                     }
                 }
@@ -71,7 +69,7 @@ public class MatchTheme {
                         String productKeySender = auxProduct.getKey();
 
                         //SI es match, AÑADIR posMatch A LOS MATCHES DE LA BD
-                        if (!(posMatch.getUsername().equals(currentUsername))&&!(isMatched(productKeySender.concat(posMatch.getKey()), myMatches))&&(isMatch(auxProduct, posMatch))) {
+                        if (!(isMatched(productKeySender.concat(posMatch.getKey()), myMatches))&&(isMatch(auxProduct, posMatch))) {
 
                             //crear match y guardarlo en la BD
                             Match match = new Match(currentUsername, posMatch.getUsername(), productKeySender, posMatch.getKey(), posMatch.getCategory());
