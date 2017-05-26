@@ -1,7 +1,6 @@
 package pes.twochange.presentation.activity;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -68,7 +67,6 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     private boolean hasExternalStoragePermission = false;
 
     private View selectedImageButton = null;
-    private ProgressDialog pDialog;
 
     private AdTheme adTheme = AdTheme.getInstance();
 
@@ -105,53 +103,39 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         addImageBtn3 = (ImageButton) findViewById(R.id.addImageBtn3);
         addImageBtn4 = (ImageButton) findViewById(R.id.addImageBtn4);
 
-
-        pDialog = new ProgressDialog(PostAdActivity.this);
-        pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pDialog.setMessage("Loading...");
-        pDialog.setCancelable(false);
-        pDialog.setMax(100);
-
-
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
             isEdition = extras.getBoolean("edition", false);
             String adId = extras.getString("adId", null);
 
-            if (isEdition && adId == null)
-                throw new IllegalStateException("PostAdActivity called for edition but no Ad provided");
-            else if (isEdition) {
-                adTheme.findById(adId, new AdResponse() {
-                    @Override
-                    public void onSuccess(Ad newAd) {
-                        ad = newAd;
-                        titleTxt.setText(ad.getTitle());
-                        descriptionTxt.setText(ad.getDescription());
-                        pDialog.dismiss();
-                    }
+            if (isEdition) {
+                if (adId == null)
+                    throw new IllegalStateException("PostAdActivity called for edition but no adId provided");
+                else {
+                    adTheme.findById(adId, new AdResponse() {
+                        @Override
+                        public void onSuccess(Ad newAd) {
+                            ad = newAd;
+                            titleTxt.setText(ad.getTitle());
+                            descriptionTxt.setText(ad.getDescription());
+                        }
 
-                    @Override
-                    public void onFailure(String error) {
-                        pDialog.dismiss();
-                    }
-                });
-            } else {
+                        @Override
+                        public void onFailure(String error) {
+                            Snackbar.make(titleTxt, "There was a problem loading the ad", Snackbar.LENGTH_LONG).show();
+                        }
+                    });
+
+                    itemDetails.setVisibility(View.GONE);
+                    adCategorySpn.setVisibility(View.GONE);
+                    adTypeSpn.setVisibility(View.GONE);
+
+                    findViewById(R.id.addImgLayout).setVisibility(View.GONE);
+                    findViewById(R.id.addImagesLbl).setVisibility(View.GONE);
+                }
+            } else
                 ad = new Ad();
-                pDialog.dismiss();
-            }
-        } else {
-            ad = new Ad();
-            pDialog.dismiss();
-        }
-
-        if (isEdition) {
-            itemDetails.setVisibility(View.GONE);
-            adCategorySpn.setVisibility(View.GONE);
-            adTypeSpn.setVisibility(View.GONE);
-
-            findViewById(R.id.addImgLayout).setVisibility(View.GONE);
-            findViewById(R.id.addImagesLbl).setVisibility(View.GONE);
         } else {
             ProfileResponse profileResponse = new ProfileResponse() {
                 @Override
@@ -161,32 +145,42 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
 
                 @Override
                 public void failure(String s) {
-                    // Nada
+                    Snackbar.make(titleTxt, "There is no active user to link this ad to", Snackbar.LENGTH_LONG)
+                            .addCallback(new Snackbar.Callback(){
+                                @Override
+                                public void onDismissed(Snackbar snackbar, int event) {
+                                    super.onDismissed(snackbar, event);
+                                    finish();
+                                }
+                            }).show();
                 }
             };
+
             SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
             final String currentUsername = sharedPreferences.getString("username", null);
             ProfileTheme.getInstance().get(currentUsername, profileResponse);
+
+            adTypeSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (position == 1) {
+                        itemDetails.setVisibility(View.GONE);
+                    }
+                    else {
+
+                        adCategorySpn.setVisibility(View.VISIBLE);
+                        itemDetails.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
+            ad = new Ad();
         }
-
-        adTypeSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 1) {
-                    itemDetails.setVisibility(View.GONE);
-                }
-                else {
-
-                    adCategorySpn.setVisibility(View.VISIBLE);
-                    itemDetails.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     @Override
@@ -232,14 +226,6 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                     }
                     break;
             }
-        } else if (resultCode == RESULT_CANCELED) {
-            switch (requestCode) {
-                case IMAGE_PICK_CODE_1:
-                case IMAGE_PICK_CODE_2:
-                case IMAGE_PICK_CODE_3:
-                case IMAGE_PICK_CODE_4:
-                    break;
-            }
         }
     }
 
@@ -252,21 +238,21 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         ad.setTitle(titleTxt.getText().toString().toUpperCase());
         ad.setDescription(descriptionTxt.getText().toString());
 
-        if (!isEdition) {
-            Integer year = yearTxt.getText().length() == 0 ? null : Integer.valueOf(yearTxt.getText().toString());
-            Integer price = priceTxt.getText().length() == 0 ? null : Integer.valueOf(priceTxt.getText().toString());
-            Ad.ProductState state = Ad.ProductState.from(stateSpn.getSelectedItem().toString());
-
-            ad.rate(state, year, price);
-            ad.setCategory(adCategorySpn.getSelectedItem().toString());
-        }
-
+        final Snackbar.Callback successCallback = new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+                super.onDismissed(snackbar, event);
+                finish();
+            }
+        };
 
         if (isEdition) {
             adTheme.update(ad, new AdResponse() {
                 @Override
                 public void onSuccess(Ad ad) {
-                    Snackbar.make(v, "Ad successfully updated!", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(v, "Ad successfully updated!", Snackbar.LENGTH_SHORT)
+                            .addCallback(successCallback)
+                            .show();
                 }
 
                 @Override
@@ -275,10 +261,19 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 }
             });
         } else {
+            Integer year = yearTxt.getText().length() == 0 ? null : Integer.valueOf(yearTxt.getText().toString());
+            Integer price = priceTxt.getText().length() == 0 ? null : Integer.valueOf(priceTxt.getText().toString());
+            Ad.ProductState state = Ad.ProductState.from(stateSpn.getSelectedItem().toString());
+
+            ad.rate(state, year, price);
+            ad.setCategory(adCategorySpn.getSelectedItem().toString());
+
             adTheme.save(ad, new AdResponse() {
                 @Override
                 public void onSuccess(Ad ad) {
-                    Snackbar.make(v, "Your ad has been published!", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(v, "Your ad has been published!", Snackbar.LENGTH_SHORT)
+                            .addCallback(successCallback)
+                            .show();
                 }
 
                 @Override
@@ -287,7 +282,6 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 }
             });
         }
-        finish();
     }
 
     @Override
@@ -328,28 +322,25 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         if (android.os.Build.VERSION.SDK_INT >= 23) {
             int permissionCheck;
 
-            permissionCheck = ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.CAMERA);
-            if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+            permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+            hasCameraPermission = permissionCheck == PackageManager.PERMISSION_GRANTED;
+            if (!hasCameraPermission)
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.CAMERA},
                         REQUEST_CAMERA);
-            } else hasCameraPermission = true;
 
-            permissionCheck = ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+            permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            hasExternalStoragePermission = permissionCheck == PackageManager.PERMISSION_GRANTED;
+            if (!hasExternalStoragePermission)
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUEST_WRITE_EXTERNAL_STORAGE);
-            } else hasExternalStoragePermission = true;
 
-            if (hasCameraPermission && hasExternalStoragePermission) {
+            if (hasCameraPermission && hasExternalStoragePermission)
                 showImagePickDialog();
-            }
-        } else {
+
+        } else
             showImagePickDialog();
-        }
     }
 
     @Override
@@ -374,9 +365,8 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                     Log.i(LOG_TAG, "Created directory: " + CAMERA_SAVE_LOCATION.toString());
             }
 
-            if (hasCameraPermission && hasExternalStoragePermission) {
+            if (hasCameraPermission && hasExternalStoragePermission)
                 showImagePickDialog();
-            }
         }
     }
 
