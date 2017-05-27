@@ -4,9 +4,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import pes.twochange.domain.callback.AdResponse;
@@ -52,7 +54,7 @@ public class AdTheme {
 
         List<String> imageIds = new ArrayList<>();
         ImageManager imageManager = ImageManager.getInstance();
-        for (Image image : ad.getImages()) {
+        for (Image image : ad.getImagesFile()) {
             if (image != null) {
                 String completePath = ad.getImagesPath() + image.getFirebaseName();
                 imageManager.storeImage(completePath, image.getUri());
@@ -206,6 +208,32 @@ public class AdTheme {
                             ads.add(ds.getValue(Ad.class));
                         }
                         response.listResponse(ads);
+                    }
+
+                    @Override
+                    public void empty() {
+                        response.listResponse(new ArrayList<Ad>());
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        error.error(message);
+                    }
+                }
+        ).list();
+    }
+
+    public void getAllProducts(final ListResponse response, final ErrorResponse error) {
+        Firebase.getInstance().get(
+                "ads",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        GenericTypeIndicator<HashMap<String, Ad>> typeIndicator =
+                                new GenericTypeIndicator<HashMap<String, Ad>>() {};
+                        ArrayList<Ad> adArrayList =
+                                new ArrayList<> (dataSnapshot.getValue(typeIndicator).values());
+                        response.listResponse(adArrayList);
                     }
 
                     @Override

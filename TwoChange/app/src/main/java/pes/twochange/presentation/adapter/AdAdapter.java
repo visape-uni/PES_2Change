@@ -59,7 +59,7 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
             @Override
             protected Boolean doInBackground(Void... params) {
                 // If we already downloaded the image previously
-                for (Image i : ad.getImages()) {
+                for (Image i : ad.getImagesFile()) {
                     if (i != null && i.getUri() != null) {
                         try {
                             this.bitmap = i.toBitmap();
