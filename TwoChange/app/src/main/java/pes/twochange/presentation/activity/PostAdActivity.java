@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,7 +16,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -27,7 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import java.io.File;
-import java.io.IOException;
 
 import pes.twochange.R;
 import pes.twochange.domain.callback.AdResponse;
@@ -77,13 +76,12 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*  Not happening yet because of problems with camera.
         if (!CAMERA_SAVE_LOCATION.exists()) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_WRITE_EXTERNAL_STORAGE);
         }
-        */
+
 
         ad = new Ad();
 
@@ -184,7 +182,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    protected void onActivityResult(final int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
@@ -193,38 +191,66 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 case IMAGE_PICK_CODE_3:
                 case IMAGE_PICK_CODE_4:
                     Image selectedImage = ad.getImageAt(requestCode);
-                    if (selectedImage == null) {
+                    if (intent != null) { // From gallery
                         selectedImage = new Image(this, intent.getData());
                         ad.setImageAt(requestCode, selectedImage);
-                    }
-
-                    try {
                         ContentUris.parseId(selectedImage.getUri());
-                    } catch (NumberFormatException e) { //  /path/to/image.jpg
-                        //selectedImage.setUri(Uri.parse(selectedImage.getUri().toString()));
-                        //selectedImage.setUri(Uri.parse(CAMERA_SAVE_LOCATION.toString() + "/20170415_175859-1148825809.jpg"));
-                    }
 
-                    Bitmap thumbnail =
-                        MediaStore.Images.Thumbnails.getThumbnail
-                            (
-                                getContentResolver(), ContentUris.parseId(selectedImage.getUri()),
-                                MediaStore.Images.Thumbnails.MICRO_KIND, null
-                            );
+                        // ----
+                        Bitmap thumbnail =
+                                MediaStore.Images.Thumbnails.getThumbnail
+                                        (
+                                                getContentResolver(), ContentUris.parseId(selectedImage.getUri()),
+                                                MediaStore.Images.Thumbnails.MICRO_KIND, null
+                                        );
 
-                    ImageButton button = null;
-                    switch (requestCode) {
-                        case IMAGE_PICK_CODE_1: button = addImageBtn1; break;
-                        case IMAGE_PICK_CODE_2: button = addImageBtn2; break;
-                        case IMAGE_PICK_CODE_3: button = addImageBtn3; break;
-                        case IMAGE_PICK_CODE_4: button = addImageBtn4; break;
-                    }
+                        ImageButton button = null;
+                        switch (requestCode) {
+                            case IMAGE_PICK_CODE_1: button = addImageBtn1; break;
+                            case IMAGE_PICK_CODE_2: button = addImageBtn2; break;
+                            case IMAGE_PICK_CODE_3: button = addImageBtn3; break;
+                            case IMAGE_PICK_CODE_4: button = addImageBtn4; break;
+                        }
 
-                    if (button != null) {
-                        button.setImageBitmap(thumbnail);
-                        button.setColorFilter(Color.argb(0, 0, 0, 0));
+                        if (button != null) {
+                            button.setImageBitmap(thumbnail);
+                            button.setColorFilter(Color.argb(0, 0, 0, 0));
+                        }
+                        // ---
+
+                    } else { // From camera
+                        final Image finalSelectedImage = selectedImage;
+                        String[] toScan = {finalSelectedImage.getUri().getPath()};
+                        MediaScannerConnection.scanFile(getApplicationContext(), toScan, null,
+                                new MediaScannerConnection.OnScanCompletedListener() {
+                                    @Override
+                                    public void onScanCompleted(String path, Uri uri) {
+                                        finalSelectedImage.setUri(uri);
+
+                                        // ---
+                                        Bitmap thumbnail =
+                                                MediaStore.Images.Thumbnails.getThumbnail
+                                                        (
+                                                                getContentResolver(), ContentUris.parseId(finalSelectedImage.getUri()),
+                                                                MediaStore.Images.Thumbnails.MICRO_KIND, null
+                                                        );
+
+                                        ImageButton button = null;
+                                        switch (requestCode) {
+                                            case IMAGE_PICK_CODE_1: button = addImageBtn1; break;
+                                            case IMAGE_PICK_CODE_2: button = addImageBtn2; break;
+                                            case IMAGE_PICK_CODE_3: button = addImageBtn3; break;
+                                            case IMAGE_PICK_CODE_4: button = addImageBtn4; break;
+                                        }
+
+                                        if (button != null) {
+                                            button.setImageBitmap(thumbnail);
+                                            button.setColorFilter(Color.argb(0, 0, 0, 0));
+                                        }
+                                        // ---
+                                    }
+                                });
                     }
-                    break;
             }
         }
     }
@@ -293,29 +319,31 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 break;
             case CAMERA:
-                try {
-                    File photo = File.createTempFile(Image.generateName(), ".jpg", CAMERA_SAVE_LOCATION);
-                    Uri photoURI = FileProvider.getUriForFile(this,
+                //try {
+                    File photo = new File(CAMERA_SAVE_LOCATION, Image.generateName() + ".jpg");
+                    //File photo = File.createTempFile(Image.generateName(), ".jpg", CAMERA_SAVE_LOCATION);
+                    /*Uri photoURI = FileProvider.getUriForFile(this,
                             "com.twochange.fileprovider",
-                            photo);
+                            photo);*/
+                    Uri photoURI = Uri.fromFile(photo);
 
                     ad.setImageAt(imageButtonTag, new Image(this, photoURI));
 
                     pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     pickImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                } catch (IOException e) {
+                /*} catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
                 break;
         }
-        int code = -1;
+        /*int code = -1;
         switch (imageButtonTag) {
             case 0: code = IMAGE_PICK_CODE_1; break;
             case 1: code = IMAGE_PICK_CODE_2; break;
             case 2: code = IMAGE_PICK_CODE_3; break;
             case 3: code = IMAGE_PICK_CODE_4; break;
-        }
-        startActivityForResult(pickImage, code);
+        }*/
+        startActivityForResult(pickImage, imageButtonTag);
     }
 
     private void requestPermissions() {

@@ -103,16 +103,21 @@ public class Image {
     public void setUri(Uri uri) {
         this.uri = uri;
 
-        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-        Cursor cursor = context.getContentResolver().query(uri, filePathColumn, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String filePath = cursor.getString(columnIndex);
-            format = Format.fromExtension(filePath.substring(filePath.lastIndexOf(".")));
-            cursor.close();
-        } else {
+        try {
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            Cursor cursor = context.getContentResolver().query(uri, filePathColumn, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String filePath = cursor.getString(columnIndex);
+                format = Format.fromExtension(filePath.substring(filePath.lastIndexOf(".")));
+                cursor.close();
+            } else {
+                format = null;
+            }
+        } catch (Exception e) {
             format = null;
         }
+
 
         /*
         try {
