@@ -9,9 +9,10 @@ import java.util.ArrayList;
 import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.themes.AdTheme;
-import pes.twochange.presentation.fragment.ProductsListFragment;
+import pes.twochange.presentation.fragment.SearchProductsListFragment;
 
-public class ExploreActivity extends BaseActivity implements ProductsListFragment.OnFragmentInteractionListener {
+public class ExploreActivity extends BaseActivity
+        implements SearchProductsListFragment.OnFragmentInteractionListener {
 
     private Fragment fragment;
 
@@ -22,7 +23,7 @@ public class ExploreActivity extends BaseActivity implements ProductsListFragmen
 
         toolbar.setTitle(R.string.explore);
 
-        fragment = ProductsListFragment.newInstance(true);
+        fragment = SearchProductsListFragment.newInstance();
 
         replaceFragment(R.id.explore_frame, fragment);
 
@@ -51,8 +52,8 @@ public class ExploreActivity extends BaseActivity implements ProductsListFragmen
                     @Override
                     public void listResponse(ArrayList<Ad> productItems) {
                         productsList = productItems;
-                        if (fragment != null && fragment instanceof ProductsListFragment) {
-                            ((ProductsListFragment) fragment).display(productsList);
+                        if (fragment != null && fragment instanceof SearchProductsListFragment) {
+                            ((SearchProductsListFragment) fragment).display(productsList);
                         }
                     }
                 },
@@ -81,8 +82,8 @@ public class ExploreActivity extends BaseActivity implements ProductsListFragmen
                     searchResultList.add(product);
                 }
             }
-            if (fragment != null && fragment instanceof ProductsListFragment) {
-                ((ProductsListFragment) fragment).display(searchResultList);
+            if (fragment != null && fragment instanceof SearchProductsListFragment) {
+                ((SearchProductsListFragment) fragment).display(searchResultList);
             }
         } else {
             // TODO

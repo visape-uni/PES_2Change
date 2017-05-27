@@ -4,9 +4,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import pes.twochange.domain.callback.AdResponse;
@@ -227,17 +229,11 @@ public class AdTheme {
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
-                        ArrayList<Ad> ads = new ArrayList<>();
-                        for (DataSnapshot dsAd : dataSnapshot.getChildren()) {
-                            Ad snapshotAd = dsAd.getValue(Ad.class);
-                            ArrayList<String> images = new ArrayList<>();
-                            for (DataSnapshot dsImage : dsAd.child("images").getChildren()) {
-                                images.add(dsImage.getValue(String.class));
-                            }
-                            snapshotAd.setImages(images);
-                            ads.add(snapshotAd);
-                        }
-                        response.listResponse(ads);
+                        GenericTypeIndicator<HashMap<String, Ad>> typeIndicator =
+                                new GenericTypeIndicator<HashMap<String, Ad>>() {};
+                        ArrayList<Ad> adArrayList =
+                                new ArrayList<> (dataSnapshot.getValue(typeIndicator).values());
+                        response.listResponse(adArrayList);
                     }
 
                     @Override

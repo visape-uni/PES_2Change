@@ -175,7 +175,7 @@ public class Ad extends Model {
     }
 
     public ArrayList<String> getImages() {
-        return images;
+        return (images != null) ? images : new ArrayList<String>();
     }
 
     public void setImages(ArrayList<String> images) {
