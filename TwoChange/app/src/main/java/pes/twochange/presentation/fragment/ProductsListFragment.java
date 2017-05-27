@@ -3,7 +3,6 @@ package pes.twochange.presentation.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -57,9 +56,7 @@ public class ProductsListFragment extends Fragment implements TextWatcher {
         recyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
         adapter = new RecyclerViewProductAdapter(getContext(),
                 new ArrayList<Ad>(), activity);
-        GridLayoutManager manager = new GridLayoutManager(getContext(), 2,
-                LinearLayoutManager.VERTICAL, false);
-//        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
 

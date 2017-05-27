@@ -75,7 +75,9 @@ public class ExploreActivity extends BaseActivity implements ProductsListFragmen
             String upperCaseQuery = query.toUpperCase();
             for (Ad product : productsList) {
                 String upperCaseTitle = product.getTitle().toUpperCase();
-                if (upperCaseTitle.contains(upperCaseQuery)) {
+                String upperCaseDescription = product.getDescription().toUpperCase();
+                if (upperCaseTitle.contains(upperCaseQuery) ||
+                        upperCaseDescription.contains(upperCaseQuery)) {
                     searchResultList.add(product);
                 }
             }

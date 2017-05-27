@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
@@ -53,7 +54,8 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
             holder.imageView.setImageResource(R.mipmap.placeholder);
         }
         holder.titleTextView.setText(product.getTitle());
-//        holder.ratingTextView.setText(String.format(Locale.FRANCE, "%d", product.getRating()));
+        holder.ratingTextView.setText(String.format(Locale.FRANCE, "%d", product.getRating()));
+        holder.categoryTextView.setText(product.getCategory());
     }
 
     @Override
@@ -66,13 +68,15 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
         View itemView;
         TextView titleTextView;
         TextView ratingTextView;
+        TextView categoryTextView;
         ImageView imageView;
 
         public ProductHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
             this.titleTextView = (TextView) itemView.findViewById(R.id.product_item_title);
-//            this.ratingTextView = (TextView) itemView.findViewById(R.id.product_item_rating);
+            this.ratingTextView = (TextView) itemView.findViewById(R.id.product_item_rating);
+            this.categoryTextView = (TextView) itemView.findViewById(R.id.product_item_category);
             this.imageView = (ImageView) itemView.findViewById(R.id.product_item_image);
         }
     }
