@@ -53,7 +53,7 @@
         <activity android:name=".presentation.controller.ExploreActivity" />
         <activity android:name=".presentation.activity.AdActivity" />
         <activity android:name=".presentation.controller.OptionsActivity" />
-        <activity android:name=".presentation.controller.AdListsActivity" />
+        <activity android:name=".presentation.controller.ListsActivity" />
 
 
         <provider

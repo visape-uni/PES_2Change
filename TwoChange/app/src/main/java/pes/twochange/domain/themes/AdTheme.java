@@ -129,12 +129,12 @@ public class AdTheme {
     /* ------------------
         WANTED / OFFERED
        ------------------ */
-    public void remove(String username, String list, String key) {
+    public void remove(String username, String key) {
         FirebaseDatabase.getInstance()
                 .getReference()
-                .child(REFERENCE)
+                .child("lists")
                 .child(username)
-                .child(list)
+                .child("wanted")
                 .child(key)
                 .removeValue();
     }
@@ -171,43 +171,17 @@ public class AdTheme {
         ).with("title", productName);
     }
 
-    public void getWantedList(String username, final WantedResponse response, final ErrorResponse error) {
+    public void getWantedList(String username, final ListResponse response, final ErrorResponse error) {
         Firebase.getInstance().get(
                 "lists/" + username + "/wanted",
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
-                        ArrayList<Product> products = new ArrayList<>();
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            products.add(ds.getValue(Product.class));
-                        }
-                        response.wantedListResponse(products);
-                    }
-
-                    @Override
-                    public void empty() {
-                        response.wantedListResponse(new ArrayList<Product>());
-                    }
-
-                    @Override
-                    public void failure(String message) {
-                        error.error(message);
-                    }
-                }
-        ).list();
-    }
-
-    public void getOfferedList(String username, final ListResponse response, final ErrorResponse error) {
-        Firebase.getInstance().get(
-                "lists/" + username + "/offered",
-                new DatabaseResponse() {
-                    @Override
-                    public void success(DataSnapshot dataSnapshot) {
-                        ArrayList<Ad> ads = new ArrayList<>();
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            ads.add(ds.getValue(Ad.class));
-                        }
-                        response.listResponse(ads);
+                        GenericTypeIndicator<HashMap<String, Ad>> typeIndicator =
+                                new GenericTypeIndicator<HashMap<String, Ad>>() {};
+                        ArrayList<Ad> adArrayList =
+                                new ArrayList<> (dataSnapshot.getValue(typeIndicator).values());
+                        response.listResponse(adArrayList);
                     }
 
                     @Override
@@ -221,6 +195,23 @@ public class AdTheme {
                     }
                 }
         ).list();
+    }
+
+    public void getOfferedList(final String username, final ListResponse response, final ErrorResponse error) {
+        getAllProducts(
+                new ListResponse() {
+                    @Override
+                    public void listResponse(ArrayList<Ad> productItems) {
+                        ArrayList<Ad> offered = new ArrayList<Ad>();
+                        for (Ad product: productItems) {
+                            if (product.getUserName().equals(username)) {
+                                offered.add(product);
+                            }
+                        }
+                        response.listResponse(offered);
+                    }
+                }, error
+        );
     }
 
     public void getAllProducts(final ListResponse response, final ErrorResponse error) {

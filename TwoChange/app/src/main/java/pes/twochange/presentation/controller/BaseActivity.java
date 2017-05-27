@@ -47,7 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     break;
 
                 case R.id.ad:
-                    startActivity(new Intent(getApplicationContext(), AdListsActivity.class));
+                    startActivity(new Intent(getApplicationContext(), ListsActivity.class));
                     break;
 
                 case R.id.chat:
@@ -127,6 +127,13 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .replace(contentResId, fragment)
                 .commit();
     }
+
+    protected void displayFragment(int contentResId, Fragment fragment) {
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        replaceFragment(contentResId, fragment);
+    }
+
+
 
     @Override
     public void setContentView(int layoutResID) {

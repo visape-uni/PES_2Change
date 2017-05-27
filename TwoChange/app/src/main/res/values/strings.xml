@@ -169,5 +169,6 @@
     <string name="no">No</string>
     <string name="search">Search product</string>
     <string name="search_hint">Search product</string>
+    <string name="matches">Matches</string>
 
 </resources>
