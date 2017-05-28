@@ -2,7 +2,6 @@ package pes.twochange.presentation.controller;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 
@@ -99,8 +98,4 @@ public class ExploreActivity extends BaseActivity
 
     }
 
-    @Override
-    public Toolbar getToolbar() {
-        return toolbar;
-    }
 }

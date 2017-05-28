@@ -11,4 +11,9 @@
         android:title="@string/offered" />
     <!--??? ICON-->
 
+    <item
+        android:id="@+id/navigation_matches"
+        android:title="@string/matches" />
+    <!--??? ICON-->
+
 </menu>
