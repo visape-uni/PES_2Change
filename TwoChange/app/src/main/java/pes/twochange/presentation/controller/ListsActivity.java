@@ -160,36 +160,45 @@ public class ListsActivity extends BaseActivity implements
     public void loadProductList() {
         switch (currentList) {
             case WANTED:
-                AdTheme.getInstance().getWantedList(
-                        username,
-                        new AdTheme.ListResponse() {
-                            @Override
-                            public void listResponse(ArrayList<Ad> productItems) {
-                                if (fragment instanceof WantedProductsListFragment) {
-                                    ((WantedProductsListFragment) fragment).display(productItems);
+                if (wantedProducts != null) {
+                    if (fragment instanceof WantedProductsListFragment) {
+                        ((WantedProductsListFragment) fragment).display(wantedProducts);
+                    }
+                } else {
+                    AdTheme.getInstance().getWantedList(
+                            username,
+                            new AdTheme.ListResponse() {
+                                @Override
+                                public void listResponse(ArrayList<Ad> productItems) {
+                                    wantedProducts = productItems;
+                                    loadProductList();
                                 }
-                            }
-                        }, this
-                );
+                            }, this
+                    );
+                }
                 break;
 
             case OFFERED:
-                AdTheme.getInstance().getAllProducts(
-                        new AdTheme.ListResponse() {
-                            @Override
-                            public void listResponse(ArrayList<Ad> productItems) {
-                                ArrayList<Ad> offeredProducts = new ArrayList<>();
-                                for (Ad product : productItems) {
-                                    if (product.getUserName().equals(username)) {
-                                        offeredProducts.add(product);
+                if (offeredProducts != null) {
+                    if (fragment instanceof ProductsListFragment) {
+                        ((ProductsListFragment) fragment).display(offeredProducts);
+                    }
+                } else {
+                    AdTheme.getInstance().getAllProducts(
+                            new AdTheme.ListResponse() {
+                                @Override
+                                public void listResponse(ArrayList<Ad> productItems) {
+                                    offeredProducts = new ArrayList<>();
+                                    for (Ad product : productItems) {
+                                        if (product.getUserName().equals(username)) {
+                                            offeredProducts.add(product);
+                                        }
                                     }
+                                    loadProductList();
                                 }
-                                if (fragment instanceof ProductsListFragment) {
-                                    ((ProductsListFragment) fragment).display(offeredProducts);
-                                }
-                            }
-                        }, this
-                );
+                            }, this
+                    );
+                }
                 break;
 
             case MATCHES:
