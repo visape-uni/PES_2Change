@@ -21,7 +21,7 @@ import pes.twochange.presentation.activity.ProfileActivity;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private final static int[] MENU_IDs = { R.id.explore, R.id.ad, R.id.chat, R.id.profile, R.id.settings,
+    private final static int[] MENU_IDs = { R.id.explore, R.id.lists, R.id.chat, R.id.profile, R.id.settings,
             R.id.help, R.id.about, R.id.logout };
 
 //    protected final static String FRAGMENT_EXTRA = "fragment-extra-int";
@@ -46,7 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
                     break;
 
-                case R.id.ad:
+                case R.id.lists:
                     startActivity(new Intent(getApplicationContext(), ListsActivity.class));
                     break;
 

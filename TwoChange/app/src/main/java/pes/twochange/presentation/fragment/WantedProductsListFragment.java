@@ -13,10 +13,10 @@ import pes.twochange.domain.model.Ad;
 import pes.twochange.presentation.adapter.RecyclerViewWantedAdapter;
 import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
-public class WantedProductsListFragment extends ProductsListFragment {
+public class WantedProductsListFragment extends AddProductsListFragment {
 
     private OnFragmentInteractionListener activity;
-    protected RecyclerViewWantedAdapter adapter;
+    private RecyclerViewWantedAdapter wantedAdapter;
 
     public WantedProductsListFragment() {
     }
@@ -28,10 +28,10 @@ public class WantedProductsListFragment extends ProductsListFragment {
     @Override
     protected void buildRecyclerView(@NonNull View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
-        adapter = new RecyclerViewWantedAdapter(new ArrayList<Ad>(), activity, activity);
+        wantedAdapter = new RecyclerViewWantedAdapter(new ArrayList<Ad>(), activity, activity);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(wantedAdapter);
         activity.loadProductList();
     }
 
@@ -50,6 +50,16 @@ public class WantedProductsListFragment extends ProductsListFragment {
     public void onDetach() {
         super.onDetach();
         activity = null;
+    }
+
+    @Override
+    public void display(ArrayList<Ad> products) {
+        if (products.size() == 0) {
+            // TODO empty "error"
+        }
+//        wantedAdapter.setProductArrayList(products);
+//        wantedAdapter.notifyDataSetChanged();
+//        recyclerView.setAdapter(wantedAdapter);
     }
 
     public interface OnFragmentInteractionListener

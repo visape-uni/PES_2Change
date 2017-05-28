@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -33,7 +32,8 @@ public class RecyclerViewWantedAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public RecyclerViewWantedAdapter.ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_item_row, null);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_item_row,
+                null);
         return new RecyclerViewWantedAdapter.ProductHolder(itemView);
     }
 
@@ -57,7 +57,6 @@ public class RecyclerViewWantedAdapter extends RecyclerView.Adapter<RecyclerView
                 }
         );
         Ad product = products.get(position);
-        holder.image.setVisibility(View.GONE);
         holder.title.setText(product.getTitle());
     }
 
@@ -66,16 +65,18 @@ public class RecyclerViewWantedAdapter extends RecyclerView.Adapter<RecyclerView
         return (products != null) ? products.size() : 0;
     }
 
+    public void setProductArrayList(ArrayList<Ad> products) {
+        this.products = products;
+    }
+
     public class ProductHolder extends RecyclerView.ViewHolder {
 
         protected View itemView;
-        protected ImageView image;
         protected TextView title;
 
         protected ProductHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
-            this.image = (ImageView) itemView.findViewById(R.id.product_item_row_image);
             this.title = (TextView) itemView.findViewById(R.id.product_item_row_title);
         }
     }

@@ -1,10 +1,12 @@
 package pes.twochange.presentation.controller;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -18,8 +20,9 @@ import pes.twochange.presentation.fragment.ProductsListFragment;
 import pes.twochange.presentation.fragment.WantedProductsListFragment;
 
 public class ListsActivity extends BaseActivity implements
-        BottomNavigationView.OnNavigationItemSelectedListener,
-        AddProductsListFragment.OnFragmentInteractionListener, AdTheme.ErrorResponse {
+        BottomNavigationView.OnNavigationItemSelectedListener, AdTheme.ErrorResponse,
+        AddProductsListFragment.OnFragmentInteractionListener,
+        WantedProductsListFragment.OnFragmentInteractionListener {
 
     private static final String SINGLE = "single_product_view";
     private String username;
@@ -32,6 +35,29 @@ public class ListsActivity extends BaseActivity implements
     private static final int MATCHES = R.id.navigation_matches;
 
     private int currentFragment;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_ad_lists);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+        username = sharedPreferences.getString("username", null);
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(this);
+
+        currentFragment = WANTED;
+        fragment = WantedProductsListFragment.newInstance();
+        displayFragment(R.id.content, WantedProductsListFragment.newInstance());
+
+        toolbar.setTitle(R.string.ad_list_title);
+    }
+
+    @Override
+    protected int currentMenuItemIndex() {
+        return AD_ACTIVITY;
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -54,39 +80,81 @@ public class ListsActivity extends BaseActivity implements
     }
 
     @Override
-    protected int currentMenuItemIndex() {
-        return AD_ACTIVITY;
-    }
-
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ad_lists);
-
-        SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
-        username = sharedPreferences.getString("username", null);
-
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(this);
-
-        currentFragment = WANTED;
-        fragment = WantedProductsListFragment.newInstance();
-        displayFragment(R.id.content, WantedProductsListFragment.newInstance());
-
-        toolbar.setTitle(R.string.ad_list_title);
-    }
-
-    @Override
     public void onRecyclerViewItemClickListener(int position) {
+        switch (currentList) {
+            case WANTED:
+                break;
 
+            case OFFERED:
+                break;
+
+            case MATCHES:
+                break;
+        }
+    }
+
+    @Override
+    public boolean onRecyclerViewItemLongClickListener(final int position) {
+        switch (currentList) {
+            case WANTED:
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.remove_wanted_title)
+                        .setMessage("Do you really want to remove \"" +
+                                wantedProducts.get(position).getTitle() + "\" from your wanted list?")
+                        .setPositiveButton(
+                                R.string.yes,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        AdTheme.getInstance().remove(
+                                                username,
+                                                wantedProducts.get(position).getId()
+                                        );
+                                        loadProductList();
+                                    }
+                                }
+                        )
+                        .setNegativeButton(
+                                R.string.no,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                }
+                        )
+                        .show();
+                break;
+
+            case OFFERED:
+                break;
+
+            case MATCHES:
+                break;
+        }
+        return true;
     }
 
     @Override
     public void addProduct() {
+        switch (currentList) {
+            case WANTED:
 
+                break;
+
+            case OFFERED:
+                // TODO ad product
+                break;
+
+            case MATCHES:
+                // TODO calculate matches
+                break;
+        }
     }
+
+    private ArrayList<Ad> wantedProducts;
+    private ArrayList<Ad> offeredProducts;
+    private ArrayList<Ad> matchProducts;
 
     @Override
     public void loadProductList() {
@@ -97,7 +165,9 @@ public class ListsActivity extends BaseActivity implements
                         new AdTheme.ListResponse() {
                             @Override
                             public void listResponse(ArrayList<Ad> productItems) {
-                                display(productItems);
+                                if (fragment instanceof WantedProductsListFragment) {
+                                    ((WantedProductsListFragment) fragment).display(productItems);
+                                }
                             }
                         }, this
                 );
@@ -114,7 +184,9 @@ public class ListsActivity extends BaseActivity implements
                                         offeredProducts.add(product);
                                     }
                                 }
-                                display(offeredProducts);
+                                if (fragment instanceof ProductsListFragment) {
+                                    ((ProductsListFragment) fragment).display(offeredProducts);
+                                }
                             }
                         }, this
                 );
@@ -126,46 +198,9 @@ public class ListsActivity extends BaseActivity implements
         }
     }
 
-    private void display(ArrayList<Ad> items) {
-        if (fragment instanceof ProductsListFragment) {
-            ((ProductsListFragment) fragment).display(items);
-        }
-    }
-
     @Override
     public void error(String error) {
 
     }
 
-
-//    @Override
-//    public boolean onRecyclerViewItemLongClickListener(final int position) {
-//        new AlertDialog.Builder(this)
-//                .setTitle(R.string.remove_wanted_title)
-//                .setMessage("Do you really want to remove \"" + wantedProducts.get(position).getName()
-//                                + "\" from your wanted list?")
-//                .setPositiveButton(
-//                        R.string.yes,
-//                        new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                AdTheme.getInstance().remove(
-//                                        username,
-//                                        wantedProducts.get(position).getKey()
-//                                );
-//                            }
-//                        }
-//                )
-//                .setNegativeButton(
-//                        R.string.no,
-//                        new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                dialog.cancel();
-//                            }
-//                        }
-//                )
-//                .show();
-//        return true;
-//    }
 }

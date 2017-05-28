@@ -19,9 +19,9 @@ import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
 
 public class ProductsListFragment extends Fragment {
 
-    private OnFragmentInteractionListener activity;
     protected RecyclerView recyclerView;
-    protected RecyclerViewProductAdapter adapter;
+    private OnFragmentInteractionListener activity;
+    private RecyclerViewProductAdapter productAdapter;
 
     public ProductsListFragment() {
     }
@@ -40,11 +40,10 @@ public class ProductsListFragment extends Fragment {
 
     protected void buildRecyclerView(@NonNull View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
-        adapter = new RecyclerViewProductAdapter(getContext(),
-                new ArrayList<Ad>(), activity);
+        productAdapter = new RecyclerViewProductAdapter(getContext(), new ArrayList<Ad>(), activity);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(productAdapter);
         activity.loadProductList();
     }
 
@@ -66,9 +65,12 @@ public class ProductsListFragment extends Fragment {
     }
 
     public void display(ArrayList<Ad> products) {
-        adapter.setProductArrayList(products);
-        adapter.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter);
+        if (products.size() == 0) {
+            // TODO empty "error"
+        }
+        productAdapter.setProductArrayList(products);
+        productAdapter.notifyDataSetChanged();
+        recyclerView.setAdapter(productAdapter);
     }
 
     public interface OnFragmentInteractionListener  extends OnRecyclerViewItemClickListener {

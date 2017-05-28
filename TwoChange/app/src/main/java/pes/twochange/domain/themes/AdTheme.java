@@ -177,10 +177,13 @@ public class AdTheme {
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
+                        ArrayList<Ad> adArrayList = new ArrayList<>();
                         GenericTypeIndicator<HashMap<String, Ad>> typeIndicator =
                                 new GenericTypeIndicator<HashMap<String, Ad>>() {};
-                        ArrayList<Ad> adArrayList =
-                                new ArrayList<> (dataSnapshot.getValue(typeIndicator).values());
+                        HashMap<String, Ad> firebase = dataSnapshot.getValue(typeIndicator);
+                        if (firebase != null) {
+                            adArrayList = new ArrayList<>(firebase.values());
+                        }
                         response.listResponse(adArrayList);
                     }
 
@@ -220,10 +223,13 @@ public class AdTheme {
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
+                        ArrayList<Ad> adArrayList = new ArrayList<>();
                         GenericTypeIndicator<HashMap<String, Ad>> typeIndicator =
                                 new GenericTypeIndicator<HashMap<String, Ad>>() {};
-                        ArrayList<Ad> adArrayList =
-                                new ArrayList<> (dataSnapshot.getValue(typeIndicator).values());
+                        HashMap<String, Ad> firebase = dataSnapshot.getValue(typeIndicator);
+                        if (firebase != null) {
+                            adArrayList = new ArrayList<>(firebase.values());
+                        }
                         response.listResponse(adArrayList);
                     }
 
