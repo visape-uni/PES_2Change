@@ -53,7 +53,7 @@ public class ListsActivity extends BaseActivity implements
 
         currentFragment = WANTED;
         fragment = WantedProductsListFragment.newInstance();
-        displayFragment(R.id.content, WantedProductsListFragment.newInstance());
+        displayFragment(R.id.content, WantedProductsListFragment.newInstance(), "wanted");
 
         toolbar.setTitle(R.string.ad_list_title);
     }
@@ -68,11 +68,11 @@ public class ListsActivity extends BaseActivity implements
         currentList = item.getItemId();
         switch (item.getItemId()) {
             case R.id.navigation_wanted:
-                displayFragment(R.id.content, WantedProductsListFragment.newInstance());
+                displayFragment(R.id.content, WantedProductsListFragment.newInstance(), "wanted");
                 break;
 
             case R.id.navigation_offered:
-                displayFragment(R.id.content, AddProductsListFragment.newInstance());
+                displayFragment(R.id.content, AddProductsListFragment.newInstance(), "offered");
                 break;
 
             case R.id.navigation_matches:
@@ -159,7 +159,7 @@ public class ListsActivity extends BaseActivity implements
                 fragment = NewProductFragment.newInstance();
                 toolbar.setVisibility(View.GONE);
                 navigation.setVisibility(View.GONE);
-                addFragment(R.id.content, fragment, "new product");
+                addFragment(R.id.content, fragment, "new_product");
                 break;
 
             case MATCHES:
@@ -236,6 +236,7 @@ public class ListsActivity extends BaseActivity implements
     @Override
     public void close() {
         fragmentManager.popBackStack();
+        fragment = fragmentManager.findFragmentByTag("offered");
         toolbar.setVisibility(View.VISIBLE);
         navigation.setVisibility(View.VISIBLE);
     }

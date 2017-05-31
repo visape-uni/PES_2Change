@@ -24,7 +24,7 @@ public class ExploreActivity extends BaseActivity
 
         fragment = SearchProductsListFragment.newInstance();
 
-        replaceFragment(R.id.explore_frame, fragment);
+        replaceFragment(R.id.explore_frame, fragment, "main_list");
 
     }
 
