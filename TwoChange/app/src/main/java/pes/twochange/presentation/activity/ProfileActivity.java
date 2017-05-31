@@ -19,6 +19,7 @@ import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.ProfileTheme;
+import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.services.Firebase;
 
@@ -68,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         blockButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                SettingsTheme.getInstance(username).blockUser(profile.getUsername());
             }
         });
 

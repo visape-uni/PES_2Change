@@ -1,14 +1,22 @@
 package pes.twochange.domain.themes;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.LauncherApps;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import pes.twochange.domain.model.Profile;
 import pes.twochange.presentation.Config;
+import pes.twochange.services.DatabaseResponse;
+import pes.twochange.services.Firebase;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -16,25 +24,68 @@ public class SettingsTheme {
     private static SettingsTheme instance = new SettingsTheme();
     private Profile myProfile;
     private String myusername;
-    private SharedPreferences sharedPreferences;
     private static DatabaseReference db = FirebaseDatabase.getInstance().getReferenceFromUrl("https://change-64bd0.firebaseio.com/").child("users_blocked");
 
-    public void getSharedPreferences(SharedPreferences sharedPreferences){
-        this.sharedPreferences = sharedPreferences;
+    public static SettingsTheme getInstance() {return instance;}
+
+    public static SettingsTheme getInstance(Profile profile, String username) {
+        instance.myProfile = profile;
+        instance.myusername = username;
+        return instance;
     }
 
-    public void blockUser(String userblocked){
-        //SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
-        final String currentUsername = sharedPreferences.getString("username", null);
-        String blocked = db.child(currentUsername).child(userblocked).toString();
-        if(blocked == null) {
-            DatabaseReference newBlockedRef = db.push();
-            newBlockedRef.setValue(userblocked);
-            Log.d("bloqueado",userblocked);
-        }
-        else {
+    public static SettingsTheme getInstance(String username) {
+        instance.myusername = username;
+        return instance;
+    }
 
-        }
+    public void blockUser(final String userblocked){
+        DatabaseReference blocked = db.child(myusername).getRef();
+        blocked.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.child(userblocked).exists()) {
+                    dataSnapshot.child(userblocked).getRef().removeValue();
+                    //Log.d("bloqueo","desbloqueado "+userblocked);
+                }
+                else {
+                    DatabaseReference newBlockedRef = db;
+                    newBlockedRef.child(myusername).child(userblocked).setValue("");
+                   // Log.d("bloqueo","bloqueado "+userblocked);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+    public void userIsBlocked(final String userblocked, final BlockedResponse callback) {
+        DatabaseReference blocked = db.child(myusername).getRef();
+
+        blocked.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                callback.isBlocked( dataSnapshot.child(userblocked).exists(), userblocked);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public interface BlockedResponse {
+        void isBlocked(boolean blocked, String userblocked);
     }
 
 }

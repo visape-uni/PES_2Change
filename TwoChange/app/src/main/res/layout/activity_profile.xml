@@ -139,14 +139,13 @@
 
     <Button
         android:id="@+id/block_button"
-        android:text="Block"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:background="@color/colorAccent"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="30dp"
-        />
+        android:layout_marginTop="70dp"
+        android:background="@color/colorAccent"
+        android:text="Block"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
 
 </LinearLayout>
