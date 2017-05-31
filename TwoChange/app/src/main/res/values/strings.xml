@@ -41,7 +41,6 @@
         <item>Toys</item>
         <item>Books</item>
         <item>Others</item>
-        <item>Others</item>
     </string-array>
 
     <string name="title_activity_chat">ChatActivity</string>
