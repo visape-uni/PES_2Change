@@ -121,6 +121,18 @@ public class ProfileTheme implements ModelAdapter<Profile> {
         void failure(String message);
     }
 
+    public void rate(float rate) {
+        if (profile.getRate() < 0) {
+            profile.setRate(0);
+        }
+        float actualRate = profile.getRate()*profile.getNumRates();
+        profile.incNumRates();
+        profile.setRate((actualRate+rate)/profile.getNumRates());
+
+        //actualitzar el profile
+        update();
+    }
+
 
 
     public void get(final String username, final ProfileResponse profileResponse) {
