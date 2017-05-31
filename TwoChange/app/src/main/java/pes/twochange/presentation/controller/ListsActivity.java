@@ -8,6 +8,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -16,13 +17,15 @@ import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.fragment.AddProductsListFragment;
+import pes.twochange.presentation.fragment.NewProductFragment;
 import pes.twochange.presentation.fragment.ProductsListFragment;
 import pes.twochange.presentation.fragment.WantedProductsListFragment;
 
 public class ListsActivity extends BaseActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener, AdTheme.ErrorResponse,
         AddProductsListFragment.OnFragmentInteractionListener,
-        WantedProductsListFragment.OnFragmentInteractionListener {
+        WantedProductsListFragment.OnFragmentInteractionListener,
+        NewProductFragment.OnFragmentInteractionListener {
 
     private static final String SINGLE = "single_product_view";
     private String username;
@@ -35,6 +38,7 @@ public class ListsActivity extends BaseActivity implements
     private static final int MATCHES = R.id.navigation_matches;
 
     private int currentFragment;
+    private BottomNavigationView navigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +48,7 @@ public class ListsActivity extends BaseActivity implements
         SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         username = sharedPreferences.getString("username", null);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
         currentFragment = WANTED;
@@ -90,6 +94,15 @@ public class ListsActivity extends BaseActivity implements
 
             case MATCHES:
                 break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fragment instanceof NewProductFragment) {
+            close();
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -143,7 +156,10 @@ public class ListsActivity extends BaseActivity implements
                 break;
 
             case OFFERED:
-                // TODO ad product
+                fragment = NewProductFragment.newInstance();
+                toolbar.setVisibility(View.GONE);
+                navigation.setVisibility(View.GONE);
+                addFragment(R.id.content, fragment, "new product");
                 break;
 
             case MATCHES:
@@ -212,4 +228,20 @@ public class ListsActivity extends BaseActivity implements
 
     }
 
+    @Override
+    public void addImage() {
+
+    }
+
+    @Override
+    public void close() {
+        fragmentManager.popBackStack();
+        toolbar.setVisibility(View.VISIBLE);
+        navigation.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void postProduct(String name, String description, String category) {
+
+    }
 }

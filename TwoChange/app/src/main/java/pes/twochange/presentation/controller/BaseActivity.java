@@ -115,6 +115,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
     }
 
+    // adds the given fragment to the front of the fragment stack
     protected void addFragment(int contentResId, Fragment fragment, String tag) {
         fragmentManager.beginTransaction()
                 .add(contentResId, fragment)
@@ -122,12 +123,14 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .commit();
     }
 
+    // replaces the front fragment with the given fragment
     protected void replaceFragment(int contentResId, Fragment fragment) {
         fragmentManager.beginTransaction()
                 .replace(contentResId, fragment)
                 .commit();
     }
 
+    // deletes all the fragments of the stack and displays the given one
     protected void displayFragment(int contentResId, Fragment fragment) {
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         replaceFragment(contentResId, fragment);

@@ -8,7 +8,8 @@
     <color name="BlueColoredButton">#1d7389</color>
     <color name="black">#000</color>
     <color name="white">#fff</color>
-    <color name="crema">#f0f4c3</color>
+    <color name="cream">#f0f4c3</color>
+    <color name="label_divider">#757575</color>
 
     <color name="green_50">#E8F5E9</color>
     <color name="green_100">#C8E6C9</color>
