@@ -65,7 +65,6 @@ public class ExploreActivity extends BaseActivity
         );
     }
 
-
     private ArrayList<Ad> searchResultList = new ArrayList<>();
 
     @Override
@@ -83,6 +82,48 @@ public class ExploreActivity extends BaseActivity
             }
             if (fragment != null && fragment instanceof SearchProductsListFragment) {
                 ((SearchProductsListFragment) fragment).display(searchResultList);
+            }
+        } else {
+            // TODO
+            // Descarga productos que contenga $query de Firebase
+            //
+            // TODO
+            // Download product that contain $query from Firebase
+        }
+    }
+
+    private ArrayList<Ad> categoryResultList = new ArrayList<>();
+
+    private void categoryFilter(String category) {
+        if (productsList != null && productsList.size() > 0) {
+            categoryResultList = new ArrayList<>();
+            for (Ad product : productsList) {
+                String prodCategory = product.getCategory();
+                if (category.equals(prodCategory)) categoryResultList.add(product);
+            }
+            if (fragment != null && fragment instanceof SearchProductsListFragment) {
+                ((SearchProductsListFragment) fragment).display(categoryResultList);
+            }
+        } else {
+            // TODO
+            // Descarga productos que contenga $query de Firebase
+            //
+            // TODO
+            // Download product that contain $query from Firebase
+        }
+    }
+
+    private ArrayList<Ad> rateResultList = new ArrayList<>();
+
+    private void rateFilter(int min, int max) {
+        if (productsList != null && productsList.size() > 0) {
+            rateResultList = new ArrayList<>();
+            for (Ad product : productsList) {
+                int prodRate = product.getRating();
+                if ((prodRate >= min) && (prodRate <= max)) rateResultList.add(product);
+            }
+            if (fragment != null && fragment instanceof SearchProductsListFragment) {
+                ((SearchProductsListFragment) fragment).display(rateResultList);
             }
         } else {
             // TODO
