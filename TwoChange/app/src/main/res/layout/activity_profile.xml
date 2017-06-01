@@ -13,14 +13,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
                 android:orientation="vertical"
-                app:cardCornerRadius="10dp">
+                app:cardElevation="1.5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -54,88 +55,110 @@
                         android:textStyle="bold" />
 
                     <RatingBar
-                        android:id="@+id/ratingBar"
-                        android:layout_width="match_parent"
+                        android:id="@+id/userRatingBar"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
                         android:numStars="5" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
+
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
                 android:orientation="vertical"
-                app:cardCornerRadius="10dp">
+                app:cardElevation="1.5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <LinearLayout
+                        android:id="@+id/offeredTab"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:id="@+id/offeredTab"
-                        android:orientation="vertical"
                         android:clickable="true"
                         android:onClick="onClick"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp">
+                        android:orientation="vertical"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp">
+
                         <TextView
+                            android:id="@+id/offeredNum"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/offeredNum"
                             android:text="0"
-                            android:textAlignment="center"/>
+                            android:textAlignment="center" />
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="@string/offered"
-                            android:textAlignment="center"/>
+                            android:textAlignment="center" />
                     </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/light_grey" />
+
                     <LinearLayout
+                        android:id="@+id/wantedTab"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:id="@+id/wantedTab"
-                        android:orientation="vertical"
                         android:clickable="true"
                         android:onClick="onClick"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp">
+                        android:orientation="vertical"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp">
+
                         <TextView
+                            android:id="@+id/wantedNum"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/wantedNum"
                             android:text="0"
-                            android:textAlignment="center"/>
+                            android:textAlignment="center" />
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="@string/wanted"
-                            android:textAlignment="center"/>
+                            android:textAlignment="center" />
                     </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/light_grey" />
+
                     <LinearLayout
+                        android:id="@+id/ratesTab"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:id="@+id/ratesTab"
-                        android:orientation="vertical"
                         android:clickable="true"
                         android:onClick="onClick"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp">
+                        android:orientation="vertical"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp">
+
                         <TextView
+                            android:id="@+id/ratesNum"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/ratesNum"
                             android:text="0"
-                            android:textAlignment="center"/>
+                            android:textAlignment="center" />
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="@string/rates"
-                            android:textAlignment="center"/>
+                            android:textAlignment="center" />
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
