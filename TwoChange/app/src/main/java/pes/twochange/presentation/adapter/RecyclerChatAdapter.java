@@ -3,6 +3,7 @@ package pes.twochange.presentation.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
+import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.activity.ChatActivity;
 
 /**
@@ -35,7 +37,7 @@ public class RecyclerChatAdapter extends RecyclerView.Adapter<RecyclerChatAdapte
     private String user;
 
 
-    public RecyclerChatAdapter(Context context, ArrayList<String> users, String user) {
+    public RecyclerChatAdapter(Context context, ArrayList<String> users, final String user) {
         inflater=LayoutInflater.from(context);
         usersChat = users;
         this.context = context;
@@ -47,13 +49,26 @@ public class RecyclerChatAdapter extends RecyclerView.Adapter<RecyclerChatAdapte
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<String> useraux = new ArrayList<>();
+                final ArrayList<String> useraux = new ArrayList<>();
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
                     String userReciver = ds.getKey().toString();
-                    useraux.add(userReciver);
+
+                    //Callback a arreglar
+                    SettingsTheme.getInstance(user).userIsBlocked(userReciver, new SettingsTheme.BlockedResponse() {
+                        @Override
+                        public void isBlocked(boolean blocked,String userblock) {
+                        //si el usuario está bloqueado, no aparecerá en la lista de chats
+                            if(!blocked) {
+                                useraux.add(userblock);
+                                notifyDataSetChanged();
+                            }
+
+                        }
+                    });
+
                 }
+
                 usersChat = useraux;
-                notifyDataSetChanged();
             }
 
             @Override
@@ -61,7 +76,6 @@ public class RecyclerChatAdapter extends RecyclerView.Adapter<RecyclerChatAdapte
 
             }
         };
-
         mFirebaseChats.addValueEventListener(valueEventListener);
 
     }
@@ -80,7 +94,7 @@ public class RecyclerChatAdapter extends RecyclerView.Adapter<RecyclerChatAdapte
 
     @Override
     public void onBindViewHolder (MyViewHolder holder, final int position){
-        String current = usersChat.get(position);
+        final String current = usersChat.get(position);
         holder.view.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -89,6 +103,7 @@ public class RecyclerChatAdapter extends RecyclerView.Adapter<RecyclerChatAdapte
                         Chat chat = new Chat(user,usersChat.get(position));
                         chatIntent.putExtra("chat",chat);
                         context.startActivity(chatIntent);
+
                     }
                 }
         );
