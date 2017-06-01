@@ -49,12 +49,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.activity.AdsListsActivity"/>
+        <activity android:name=".presentation.activity.AdsListsActivity" />
         <activity android:name=".presentation.controller.ExploreActivity" />
         <activity android:name=".presentation.activity.AdActivity" />
         <activity android:name=".presentation.controller.OptionsActivity" />
         <activity android:name=".presentation.controller.ListsActivity" />
-
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -77,6 +76,10 @@
             </intent-filter>
         </service>
 
+        <activity
+            android:name=".presentation.controller.ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

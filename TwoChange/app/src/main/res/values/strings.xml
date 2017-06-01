@@ -169,5 +169,7 @@
     <string name="search">Search product</string>
     <string name="search_hint">Search product</string>
     <string name="matches">Matches</string>
+    <string name="rates">Rates</string>
+    <string name="title_activity_profile">ProfileActivity</string>
 
 </resources>
