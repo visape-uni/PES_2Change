@@ -18,6 +18,7 @@ import pes.twochange.domain.model.Product;
 import pes.twochange.services.DatabaseResponse;
 import pes.twochange.services.Firebase;
 import pes.twochange.services.ImageManager;
+import pes.twochange.services.ModelAdapterFactory;
 
 public class AdTheme {
     //Attributes
@@ -33,6 +34,7 @@ public class AdTheme {
     private static final String REFERENCE = "lists";
     private static String user;
 
+    private static final String PRODUCTS_REFERENCE_NAME = "products";
     private static final String ADS_CHILD = "ads";
 
     public static AdTheme getInstance() {
@@ -124,7 +126,10 @@ public class AdTheme {
                 .addListenerForSingleValueEvent(listener);
     }
 
-
+    public void save(final Product product) {
+        Firebase.getInstance().insert(PRODUCTS_REFERENCE_NAME,
+                new ModelAdapterFactory<Product>().build(Product.class, product));
+    }
 
     /* ------------------
         WANTED / OFFERED

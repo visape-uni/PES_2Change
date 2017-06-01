@@ -1,7 +1,7 @@
 package pes.twochange.domain.model;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by Victor on 01/05/2017.
@@ -9,30 +9,45 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class Product {
     private String name;
-    private String key;
+    private String description;
+    private String id;
     private String username;
     private String category;
     private int rating;
-
-    private static DatabaseReference mFirebaseAds = FirebaseDatabase.getInstance().getReference().child("ads");
+    private ArrayList<String> images;
 
     public Product() {
     }
 
-    public Product(String name, String key, String username, String category, int rating) {
+    public Product(String name, String description, String id, String username, String category) {
         this.name = name;
-        this.key = key;
+        this.description = description;
+        this.id = id;
+        this.username = username;
+        this.category = category;
+    }
+
+    public Product(String name, String description, String username, String category) {
+        this.name = name;
+        this.description = description;
+        this.username = username;
+        this.category = category;
+    }
+
+    public Product(String name, String id, String username, String category, int rating) {
+        this.name = name;
+        this.id = id;
         this.username = username;
         this.category = category;
         this.rating = rating;
     }
 
-    public String getKey() {
-        return key;
+    public String getId() {
+        return id;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -65,5 +80,74 @@ public class Product {
 
     public void setRating (int rating) {
         this.rating = rating;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
+    }
+
+    public enum Status {
+        NEW(0),
+        ALMOST_NEW(5),
+        GOOD(10),
+        BAD(15),
+        BROKEN(30);
+
+        private int penalty;
+
+        Status(int penalty) {
+            this.penalty = penalty;
+        }
+
+        public static Status from(String s) {
+            String state = s.split("-")[0].trim();
+            switch (state) {
+                case "New":
+                    return NEW;
+                case "Almost new":
+                    return ALMOST_NEW;
+                case "Good":
+                    return GOOD;
+                case "Regular":
+                    return BAD;
+                case "Broken":
+                    return BROKEN;
+                default:
+                    return null;
+            }
+        }
+
+        public int getPenalty() {
+            return penalty;
+        }
+    }
+
+    public void rate(Status status, Integer year, Integer price) {
+        int auxRating = 100;
+        auxRating -= status.getPenalty();
+
+        if (year != null) {
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            auxRating -= currentYear - year;
+        }
+
+        if (price != null) {
+            int pricePoints = price / 500;    // 1 point each 500 €/$/?
+            auxRating += pricePoints;
+        }
+
+        setRating(auxRating < 0 ? 0 : auxRating);
     }
 }

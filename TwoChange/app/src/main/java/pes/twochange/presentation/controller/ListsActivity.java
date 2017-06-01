@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Product;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.fragment.AddProductsListFragment;
@@ -228,6 +229,8 @@ public class ListsActivity extends BaseActivity implements
 
     }
 
+    private ArrayList<String> images;
+
     @Override
     public void addImage() {
 
@@ -242,7 +245,14 @@ public class ListsActivity extends BaseActivity implements
     }
 
     @Override
-    public void postProduct(String name, String description, String category) {
+    public void postProduct(Product product) {
+        product.setImages(images);
+        AdTheme.getInstance().save(product);
 
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 }

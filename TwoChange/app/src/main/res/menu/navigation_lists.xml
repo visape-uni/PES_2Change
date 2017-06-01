@@ -3,17 +3,17 @@
 
     <item
         android:id="@+id/navigation_wanted"
-        android:title="@string/wanted" />
+        android:name="@string/wanted" />
     <!--HEART ICON-->
 
     <item
         android:id="@+id/navigation_offered"
-        android:title="@string/offered" />
+        android:name="@string/offered" />
     <!--??? ICON-->
 
     <item
         android:id="@+id/navigation_matches"
-        android:title="@string/matches" />
+        android:name="@string/matches" />
     <!--??? ICON-->
 
 </menu>

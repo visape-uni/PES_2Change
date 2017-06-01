@@ -241,13 +241,13 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
                         Product auxProduct = offeredAdapter.getItem(i);
 
                         //Key del producto del usuario sender con el que se quiere hacer el match
-                        String productKeySender = auxProduct.getKey();
+                        String productKeySender = auxProduct.getId();
 
                         //SI es match, AÑADIR posMatch A LOS MATCHES DE LA BD
-                        if (!(posMatch.getUsername().equals(currentUsername))&&!(isMatched(productKeySender.concat(posMatch.getKey())))&&(isMatch(auxProduct, posMatch))) {
+                        if (!(posMatch.getUsername().equals(currentUsername))&&!(isMatched(productKeySender.concat(posMatch.getId())))&&(isMatch(auxProduct, posMatch))) {
 
                             //crear match y guardarlo en la BD
-                            Match match = new Match(currentUsername, posMatch.getUsername(), productKeySender, posMatch.getKey(), posMatch.getCategory());
+                            Match match = new Match(currentUsername, posMatch.getUsername(), productKeySender, posMatch.getId(), posMatch.getCategory());
                             mFirebaseMatches.child(match.getProductKeySender().concat(match.getProductKeyReciver())).setValue(match);
                             myMatches.put(match.getProductKeySender().concat(match.getProductKeyReciver()),match);
                         }
@@ -339,7 +339,7 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
                 productKey = (TextView) v.findViewById(R.id.product_key);
 
                 productTitle.setText(model.getName());
-                productKey.setText(model.getKey());
+                productKey.setText(model.getId());
             }
         };
 
@@ -358,14 +358,14 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
                 productKey = (TextView) v.findViewById(R.id.product_key);
 
                 productTitle.setText(model.getName());
-                productKey.setText(model.getKey());
+                productKey.setText(model.getId());
 
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
                         Intent adIntent = new Intent(v.getContext(),AdActivity.class);
-                        adIntent.putExtra("adId", model.getKey());
+                        adIntent.putExtra("adId", model.getId());
                         v.getContext().startActivity(adIntent);
                     }
                 });
