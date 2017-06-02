@@ -2,6 +2,7 @@ package pes.twochange.presentation.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -22,7 +23,7 @@ import java.util.Locale;
 import pes.twochange.R;
 import pes.twochange.domain.model.Product;
 import pes.twochange.presentation.adapter.RecyclerViewImagesAdapter;
-import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
+import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
 public class NewProductFragment extends Fragment implements View.OnClickListener {
 
@@ -33,6 +34,7 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
     private ArrayAdapter<CharSequence> stateAdapter;
     private ArrayAdapter<String> yearAdapter;
     private EditText priceTextView;
+    private RecyclerView imagesList;
 
     public NewProductFragment() {
         // Required empty public constructor
@@ -53,7 +55,7 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
         Spinner stateSpinner = (Spinner) view.findViewById(R.id.state_spinner);
         Spinner yearSpinner = (Spinner) view.findViewById(R.id.year_spinner);
         priceTextView = (EditText) view.findViewById(R.id.products_price);
-        RecyclerView imagesList = (RecyclerView) view.findViewById(R.id.images_list);
+        imagesList = (RecyclerView) view.findViewById(R.id.images_list);
         ImageView addImageButton = (ImageView) view.findViewById(R.id.add_image_button);
         TextView postButton = (TextView) view.findViewById(R.id.post_product_button);
 
@@ -72,11 +74,7 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
         yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         yearSpinner.setAdapter(yearAdapter);
 
-        RecyclerViewImagesAdapter adapter = new RecyclerViewImagesAdapter(getActivity());
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),
-                LinearLayoutManager.HORIZONTAL, false);
-        imagesList.setLayoutManager(layoutManager);
-        imagesList.setAdapter(adapter);
+        display(new ArrayList<Uri>());
 
         closeButton.setOnClickListener(this);
         addImageButton.setOnClickListener(this);
@@ -128,22 +126,30 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
                 String state = stateAdapter.toString().trim();
                 Integer year = Integer.valueOf(yearAdapter.toString());
                 Integer price = Integer.valueOf(priceTextView.getText().toString().trim());
-                Product product = new Product(
-                        name,
-                        description,
-                        activity.getUsername(),
-                        category
-                );
+                Product product = new Product(name, description, category);
                 product.rate(Product.Status.from(state), year, price);
-
+                activity.postProduct(product);
         }
+    }
+
+    public void display(ArrayList<Uri> uris) {
+        if (uris.size() == 0) {
+            // TODO empty "error"
+        }
+        RecyclerViewImagesAdapter adapter = new RecyclerViewImagesAdapter(getActivity(), activity);
+        adapter.setUris(uris);
+        adapter.notifyDataSetChanged();
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.HORIZONTAL, false);
+        imagesList.setLayoutManager(layoutManager);
+        imagesList.setAdapter(adapter);
     }
 
     private void alertError(int title, int message) {
         new AlertDialog.Builder(getActivity())
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(
+                .setNeutralButton(
                         R.string.ok,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -154,10 +160,9 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
                 .show();
     }
 
-    public interface OnFragmentInteractionListener extends OnRecyclerViewItemClickListener {
+    public interface OnFragmentInteractionListener extends OnRecyclerViewItemLongClickListener {
         void addImage();
         void close();
         void postProduct(Product product);
-        String getUsername();
     }
 }

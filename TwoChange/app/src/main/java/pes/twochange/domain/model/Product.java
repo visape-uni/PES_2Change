@@ -1,7 +1,9 @@
 package pes.twochange.domain.model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by Victor on 01/05/2017.
@@ -19,18 +21,9 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String description, String id, String username, String category) {
+    public Product(String name, String description, String category) {
         this.name = name;
         this.description = description;
-        this.id = id;
-        this.username = username;
-        this.category = category;
-    }
-
-    public Product(String name, String description, String username, String category) {
-        this.name = name;
-        this.description = description;
-        this.username = username;
         this.category = category;
     }
 
@@ -98,6 +91,10 @@ public class Product {
         this.images = images;
     }
 
+    public static String generateImageName() {
+        return new SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.US).format(Calendar.getInstance().getTime());
+    }
+
     public enum Status {
         NEW(0),
         ALMOST_NEW(5),
@@ -144,7 +141,7 @@ public class Product {
         }
 
         if (price != null) {
-            int pricePoints = price / 500;    // 1 point each 500 €/$/?
+            int pricePoints = price / 50;    // 1 point each 50 €/$/?
             auxRating += pricePoints;
         }
 
