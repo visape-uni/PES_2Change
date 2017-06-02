@@ -15,9 +15,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -25,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import pes.twochange.R;
+import pes.twochange.domain.callback.AdResponse;
 import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.adapter.AdAdapter;
@@ -77,31 +75,14 @@ public class AdList2Activity extends AppCompatActivity {
                     REQUEST_WRITE_EXTERNAL_STORAGE);
         }
 
-        db.orderByKey().addChildEventListener(new ChildEventListener() {
+        adTheme.getFirst(20, new AdResponse() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                final Ad ad = dataSnapshot.getValue(Ad.class);
+            public void onSuccess(Ad ad) {
                 adapter.add(ad);
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                adapter.update(dataSnapshot.getValue(Ad.class));
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onFailure(String error) {
 
             }
         });

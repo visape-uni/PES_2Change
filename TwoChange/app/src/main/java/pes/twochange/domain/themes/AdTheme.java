@@ -1,5 +1,6 @@
 package pes.twochange.domain.themes;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -124,6 +125,32 @@ public class AdTheme {
                 .addListenerForSingleValueEvent(listener);
     }
 
+    public void getFirst(int n, final AdResponse callback) {
+        FirebaseDatabase.getInstance().getReference()
+                .orderByKey()
+                .limitToFirst(n)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        final Ad ad = dataSnapshot.getValue(Ad.class);
+                        callback.onSuccess(ad);
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {}
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        callback.onFailure(databaseError.getMessage());
+                    }
+                });
+    }
 
 
     /* ------------------
