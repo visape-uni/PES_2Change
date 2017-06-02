@@ -38,7 +38,7 @@ public class WantedProductsListFragment extends AddProductsListFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof ProductsListFragment.OnFragmentInteractionListener) {
+        if (context instanceof WantedProductsListFragment.OnFragmentInteractionListener) {
             activity = (WantedProductsListFragment.OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
