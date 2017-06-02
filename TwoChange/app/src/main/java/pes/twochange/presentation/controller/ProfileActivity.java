@@ -1,5 +1,6 @@
 package pes.twochange.presentation.controller;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +11,7 @@ import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -19,10 +21,13 @@ import java.util.ArrayList;
 import pes.twochange.R;
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.domain.themes.ProfileTheme;
+import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.Config;
+import pes.twochange.presentation.activity.ChatActivity;
 import pes.twochange.presentation.fragment.WantedProductsListFragment;
 
 public class ProfileActivity extends BaseActivity implements AdTheme.ErrorResponse, WantedProductsListFragment.OnFragmentInteractionListener{
@@ -36,6 +41,14 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     private Profile profile;
     private Fragment fragment;
 
+    private ArrayList<Ad> wantedList;
+    private ArrayList<Ad> offeredList;
+
+    private static final int WANTED = R.id.navigation_wanted;
+    private static final int OFFERED = R.id.navigation_offered;
+
+    private int currentFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +59,10 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
 
         if (getIntent().getStringExtra("usernameProfile") == null) usernameProfile = currentUsername;
         else usernameProfile = getIntent().getStringExtra("usernameProfile");
+
+        /*fragment = WantedProductsListFragment.newInstance();
+        displayFragment(R.id.contentProfile, fragment);
+        currentFragment = WANTED;*/
 
         ProfileTheme.getInstance().get(
                 usernameProfile,
@@ -68,9 +85,9 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 new AdTheme.ListResponse() {
                     @Override
                     public void listResponse(ArrayList<Ad> wantedItems) {
-                        numWanted = wantedItems.size();
+                        wantedList = wantedItems;
+                        numWanted = wantedList.size();
                         setUpWanted();
-                        //TODO: si currentfragment es wanted mostrar llista de wanted
                     }
                 }, this
         );
@@ -80,16 +97,12 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 new AdTheme.ListResponse() {
                     @Override
                     public void listResponse(ArrayList<Ad> offeredItems) {
-                        numOffered = offeredItems.size();
+                        offeredList = offeredItems;
+                        numOffered = offeredList.size();
                         setUpOffered();
-                        //TODO: si currentfragment es offered mostrar llista de offered
                     }
                 }, this
         );
-
-        fragment = WantedProductsListFragment.newInstance();
-        displayFragment(R.id.content, fragment);
-
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -98,12 +111,74 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_editar_perfil:
+                //TODO: abrir activity editar perfil
+                return true;
+            case R.id.action_desactivar:
+                //TODO: desactivar notificaciones
+                return true;
+            case R.id.action_block:
+                //TODO: block user
+                SettingsTheme.getInstance(currentUsername).blockUser(profile.getUsername());
+                return true;
+            case R.id.action_open_chat:
+                //TODO: open chat
+                Intent chatIntent = new Intent(this,ChatActivity.class);
+                Chat chat = new Chat(currentUsername,profile.getUsername());
+                chatIntent.putExtra("chat",chat);
+                startActivity(chatIntent);
+                return true;
+            default:  return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void onClick(View view) {
+        switch (view.getId())
+        {
+            case R.id.offeredTab:
+                //TODO: fragment = OfferedProductsListFragment.newInstance();
+                //TODO: displayFragment(R.id.contentProfile, fragment);
+                currentFragment = OFFERED;
+                /*TODO: AdTheme.getInstance().getOfferedList(
+                usernameProfile,
+                        new AdTheme.ListResponse() {
+                            @Override
+                            public void listResponse(ArrayList<Ad> offeredItems) {
+                                offeredList = offeredItems;
+                                numOffered = offeredList.size();
+                                setUpOffered();
+                            }
+                        }, this
+                );*/
+                break;
+            case R.id.wantedTab:
+                fragment = WantedProductsListFragment.newInstance();
+                displayFragment(R.id.contentProfile, fragment);
+                currentFragment = WANTED;
+                AdTheme.getInstance().getWantedList(
+                        usernameProfile,
+                        new AdTheme.ListResponse() {
+                            @Override
+                            public void listResponse(ArrayList<Ad> wantedItems) {
+                                wantedList = wantedItems;
+                                numWanted = wantedList.size();
+                                setUpWanted();
+                            }
+                        }, this
+                );
+                break;
+        }
+    }
+
     protected int currentMenuItemIndex() {
         return PROFILE_ACTIVITY;
     }
 
     private void setUpProfile() {
-        // TODO imagen perfil
+        // TODO cargar imagen perfil
 
         TextView usernameTextView = (TextView) findViewById(R.id.usernameTxt);
         TextView nameTextView = (TextView) findViewById(R.id.nameTxt);
@@ -118,12 +193,14 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         TextView numWantedTextView = (TextView) findViewById(R.id.wantedNum);
 
         numWantedTextView.setText(String.valueOf(numWanted));
+        if (currentFragment == WANTED) ((WantedProductsListFragment) fragment).display(wantedList);
     }
 
     private void setUpOffered () {
         TextView numOfferedTextView = (TextView) findViewById(R.id.offeredNum);
 
         numOfferedTextView.setText(String.valueOf(numOffered));
+        //if (currentFragment == Offered)((OfferedProductsListFragment) fragment).display(offeredList);
     }
 
     @Override
@@ -145,33 +222,4 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     public void loadProductList() {
 
     }
-
-    /*private void setUpProfile() {
-        // TODO imagen de perfil & image view
-        fullNameTextView.setText(profile.fullName().toUpperCase());
-        usernameTextView.setText(username);
-
-        if (profile.getPhoneNumber() != null) {
-            phoneTextView.setText(profile.getPhoneNumber().getNumber());
-        } else {
-            phoneTextView.setText("No phone number provided");
-        }
-
-        if (profile.getAddress() != null) {
-            addressTextView.setText(profile.getAddress().toString());
-        } else {
-            addressTextView.setText("No address provided");
-        }
-
-        if (selfProfile) {
-            editProfileButton.setVisibility(View.VISIBLE);
-            editProfileButton.setOnClickListener(this);
-            blockButton.setVisibility(View.GONE);
-        } else {
-            chatButton.setVisibility(View.VISIBLE);
-            chatButton.setOnClickListener(this);
-            blockButton.setVisibility(View.VISIBLE);
-        }
-        loadingProgressBar.setVisibility(View.GONE);
-    }*/
 }

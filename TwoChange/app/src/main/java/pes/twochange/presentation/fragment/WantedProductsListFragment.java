@@ -13,7 +13,7 @@ import pes.twochange.domain.model.Ad;
 import pes.twochange.presentation.adapter.RecyclerViewWantedAdapter;
 import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
-public class WantedProductsListFragment extends AddProductsListFragment {
+public class WantedProductsListFragment extends ProductsListFragment {
 
     private OnFragmentInteractionListener activity;
     private RecyclerViewWantedAdapter wantedAdapter;
@@ -57,9 +57,9 @@ public class WantedProductsListFragment extends AddProductsListFragment {
         if (products.size() == 0) {
             // TODO empty "error"
         }
-//        wantedAdapter.setProductArrayList(products);
-//        wantedAdapter.notifyDataSetChanged();
-//        recyclerView.setAdapter(wantedAdapter);
+        wantedAdapter.setProductArrayList(products);
+        wantedAdapter.notifyDataSetChanged();
+        recyclerView.setAdapter(wantedAdapter);
     }
 
     public interface OnFragmentInteractionListener
