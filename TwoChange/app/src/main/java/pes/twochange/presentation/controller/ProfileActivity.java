@@ -4,24 +4,34 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import pes.twochange.R;
 import pes.twochange.domain.callback.ProfileResponse;
+import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Profile;
+import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 
-public class ProfileActivity extends BaseActivity {
+public class ProfileActivity extends BaseActivity implements AdTheme.ErrorResponse {
 
     private String usernameProfile;
     private String currentUsername;
 
+    private int numWanted;
+    private int numOffered;
+
     private Profile profile;
+    private Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +44,13 @@ public class ProfileActivity extends BaseActivity {
         /*usernameProfile = getIntent().getExtras().getString("usernameProfile");
 
 
-        if (currentUsername.equals(usernameProfile)) toolbar.setTitle("My profile"); //Mi perfil
+        if (currentUsername.equals(usernameProfile)) {
+        toolbar.setTitle("My profile"); //Mi perfil
+
         else toolbar.setTitle("User profile"); //Perfil de otro usuario
         */
         ProfileTheme.getInstance().get(
-                currentUsername /*usernameProfile*/,
+                currentUsername /*TODO usernameProfile*/,
                 new ProfileResponse() {
                     @Override
                     public void success(Profile p) {
@@ -52,6 +64,31 @@ public class ProfileActivity extends BaseActivity {
                     }
                 }
         );
+
+        AdTheme.getInstance().getWantedList(
+                currentUsername /*TODO usernameProfile*/,
+                new AdTheme.ListResponse() {
+                    @Override
+                    public void listResponse(ArrayList<Ad> wantedItems) {
+                        numWanted = wantedItems.size();
+                        setUpWanted();
+                        //TODO: si currentfragment es wanted mostrar llista de wanted
+                    }
+                }, this
+        );
+
+        AdTheme.getInstance().getOfferedList(
+                currentUsername /*TODO usernameProfile*/,
+                new AdTheme.ListResponse() {
+                    @Override
+                    public void listResponse(ArrayList<Ad> offeredItems) {
+                        numOffered = offeredItems.size();
+                        setUpOffered();
+                        //TODO: si currentfragment es offered mostrar llista de offered
+                    }
+                }, this
+        );
+
 
     }
 
@@ -69,6 +106,23 @@ public class ProfileActivity extends BaseActivity {
         usernameTextView.setText(profile.getUsername().toUpperCase());
         nameTextView.setText(profile.fullName());
         userRatingBar.setRating(profile.getRate());
+    }
+
+    private void setUpWanted () {
+        TextView numWantedTextView = (TextView) findViewById(R.id.wantedNum);
+
+        numWantedTextView.setText(String.valueOf(numWanted));
+    }
+
+    private void setUpOffered () {
+        TextView numOfferedTextView = (TextView) findViewById(R.id.offeredNum);
+
+        numOfferedTextView.setText(String.valueOf(numOffered));
+    }
+
+    @Override
+    public void error(String error) {
+        // TODO
     }
 
     /*private void setUpProfile() {
