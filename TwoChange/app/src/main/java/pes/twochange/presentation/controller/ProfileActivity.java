@@ -6,8 +6,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -21,8 +23,9 @@ import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
+import pes.twochange.presentation.fragment.WantedProductsListFragment;
 
-public class ProfileActivity extends BaseActivity implements AdTheme.ErrorResponse {
+public class ProfileActivity extends BaseActivity implements AdTheme.ErrorResponse, WantedProductsListFragment.OnFragmentInteractionListener{
 
     private String usernameProfile;
     private String currentUsername;
@@ -41,16 +44,11 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         currentUsername = sharedPreferences.getString("username", null);
 
-        /*usernameProfile = getIntent().getExtras().getString("usernameProfile");
+        if (getIntent().getStringExtra("usernameProfile") == null) usernameProfile = currentUsername;
+        else usernameProfile = getIntent().getStringExtra("usernameProfile");
 
-
-        if (currentUsername.equals(usernameProfile)) {
-        toolbar.setTitle("My profile"); //Mi perfil
-
-        else toolbar.setTitle("User profile"); //Perfil de otro usuario
-        */
         ProfileTheme.getInstance().get(
-                currentUsername /*TODO usernameProfile*/,
+                usernameProfile,
                 new ProfileResponse() {
                     @Override
                     public void success(Profile p) {
@@ -66,7 +64,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         );
 
         AdTheme.getInstance().getWantedList(
-                currentUsername /*TODO usernameProfile*/,
+                usernameProfile,
                 new AdTheme.ListResponse() {
                     @Override
                     public void listResponse(ArrayList<Ad> wantedItems) {
@@ -78,7 +76,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         );
 
         AdTheme.getInstance().getOfferedList(
-                currentUsername /*TODO usernameProfile*/,
+                usernameProfile,
                 new AdTheme.ListResponse() {
                     @Override
                     public void listResponse(ArrayList<Ad> offeredItems) {
@@ -89,7 +87,15 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 }, this
         );
 
+        fragment = WantedProductsListFragment.newInstance();
+        displayFragment(R.id.content, fragment);
 
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (usernameProfile.equals(currentUsername)) getMenuInflater().inflate(R.menu.menu_my_profile, menu);
+        else getMenuInflater().inflate(R.menu.menu_user_profile, menu);
+        return true;
     }
 
     protected int currentMenuItemIndex() {
@@ -123,6 +129,21 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     @Override
     public void error(String error) {
         // TODO
+    }
+
+    @Override
+    public void onRecyclerViewItemClickListener(int position) {
+
+    }
+
+    @Override
+    public boolean onRecyclerViewItemLongClickListener(int position) {
+        return false;
+    }
+
+    @Override
+    public void loadProductList() {
+
     }
 
     /*private void setUpProfile() {

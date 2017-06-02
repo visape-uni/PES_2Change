@@ -56,7 +56,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 case R.id.profile:
                     intent = new Intent(getApplicationContext(), pes.twochange.presentation.controller.ProfileActivity.class);
-                    //intent.putExtra("usernameProfile", /*TODO pasar nom del usuari que es vol veure el perfil*/);
                     startActivity(intent);
                     break;
 
