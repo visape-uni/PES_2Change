@@ -30,7 +30,6 @@ public class MatchesActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         currentUsername = sharedPreferences.getString("username", null);
 
-
         //Get reference to matches from DB
         mFirebaseMatchesRef = FirebaseDatabase.getInstance().getReference().child("matches").child(currentUsername);
 

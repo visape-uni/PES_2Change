@@ -6,8 +6,8 @@
             android:id="@+id/explore"
             android:title="@string/explore" />
         <item
-            android:id="@+id/ad"
-            android:title="@string/ads" />
+            android:id="@+id/lists"
+            android:title="@string/my_lists" />
         <item
             android:id="@+id/chat"
             android:title="@string/chat" />

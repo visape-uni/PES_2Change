@@ -1,6 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp">
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/product_item_image"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/placeholder"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:orientation="vertical"
+        android:layout_toEndOf="@id/product_item_image"
+        android:layout_toStartOf="@+id/product_item_rating"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
+
+        <TextView
+            android:id="@+id/product_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:gravity="bottom"
+            android:text="Mac Book 13 pulgadas 2012 i5 16GB de RAM"
+            android:textSize="18sp"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/product_item_category"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:gravity="center_vertical"
+            android:text="PC/Laptiop"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/product_item_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="72dp"
+        android:textSize="32sp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:text="90"
+        android:layout_alignParentEnd="true"/>
+
+
+</RelativeLayout>

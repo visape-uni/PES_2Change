@@ -1,5 +1,9 @@
 package pes.twochange.domain.model;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+
 public class Profile {
 
     private String username;
@@ -8,6 +12,9 @@ public class Profile {
     private String surname;
     private PhoneNumber phoneNumber;
     private Address address;
+    private float rate;
+    private int numRates;
+
 
     public Profile() {
     }
@@ -19,6 +26,8 @@ public class Profile {
         this.surname = surname;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.rate = -1; //user no rated
+        this.numRates = 0; //0 users rate this user
     }
 
     public String getUsername() {
@@ -67,6 +76,26 @@ public class Profile {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public float getRate() {
+        return this.rate;
+    }
+
+    public void setRate(float rate) {
+        this.rate = rate;
+    }
+
+    public int getNumRates () {
+        return this.numRates;
+    }
+
+    public void setNumRate(int numRates) {
+        this.numRates = numRates;
+    }
+
+    public void incNumRates () {
+        ++this.numRates;
     }
 
     public static class Address {
