@@ -54,7 +54,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 400;
     public static final int REQUEST_CAMERA = 401;
 
-    private EditText titleTxt, descriptionTxt, yearTxt, priceTxt;
+    private EditText titleTxt, descriptionTxt, priceTxt;
     private Spinner stateSpn, adTypeSpn, adCategorySpn;
     private ImageButton addImageBtn1, addImageBtn2, addImageBtn3, addImageBtn4;
     private LinearLayout itemDetails;
@@ -89,7 +89,6 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
 
         titleTxt = (EditText) findViewById(R.id.titleTxt);
         descriptionTxt = (EditText) findViewById(R.id.descriptionTxt);
-        yearTxt = (EditText) findViewById(R.id.yearTxt);
         priceTxt = (EditText) findViewById(R.id.priceTxt);
 
         stateSpn = (Spinner) findViewById(R.id.stateSpn);
@@ -287,11 +286,10 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 }
             });
         } else {
-            Integer year = yearTxt.getText().length() == 0 ? null : Integer.valueOf(yearTxt.getText().toString());
             Integer price = priceTxt.getText().length() == 0 ? null : Integer.valueOf(priceTxt.getText().toString());
             Ad.ProductState state = Ad.ProductState.from(stateSpn.getSelectedItem().toString());
 
-            ad.rate(state, year, price);
+            ad.rate(state, price);
             ad.setCategory(adCategorySpn.getSelectedItem().toString());
 
             adTheme.save(ad, new AdResponse() {

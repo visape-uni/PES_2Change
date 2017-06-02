@@ -5,7 +5,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -148,10 +147,7 @@ public class Ad extends Model {
         return rating;
     }
     public void setRating(int rating) {
-        if (rating > 100)
-            this.rating = 100;
-        else
-            this.rating = rating;
+        this.rating = rating > 100 ? 100 : rating;
     }
 
     public String getUserName() {
@@ -184,17 +180,12 @@ public class Ad extends Model {
             | OTHER PUBLIC METHODS |
              ----------------------
          */
-    public void rate(ProductState state, Integer year, Integer price) {
-        int auxRating = 100;
+    public void rate(ProductState state, Integer price) {
+        int auxRating = 50;
         auxRating -= state.getPenalty();
 
-        if (year != null) {
-            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-            auxRating -= currentYear - year;
-        }
-
         if (price != null) {
-            int pricePoints = price / 500;    // 1 point each 500 €/$/?
+            int pricePoints = price / 100;    // 1 point each 500 €/$/?
             auxRating += pricePoints;
         }
 
