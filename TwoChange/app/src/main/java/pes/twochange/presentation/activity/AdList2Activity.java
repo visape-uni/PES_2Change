@@ -15,9 +15,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -35,8 +32,7 @@ public class AdList2Activity extends AppCompatActivity {
     private static final File TMP_IMAGE_LOCATION =
             new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/2change/tmp");
 
-    private AdTheme adTheme;
-    private static DatabaseReference db = FirebaseDatabase.getInstance().getReferenceFromUrl("https://change-64bd0.firebaseio.com/").child("ads");
+    private AdTheme adTheme = AdTheme.getInstance();
 
     private RecyclerView recView;
 

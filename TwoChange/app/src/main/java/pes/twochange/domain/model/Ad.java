@@ -1,8 +1,6 @@
 package pes.twochange.domain.model;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -55,8 +53,6 @@ public class Ad extends Model {
 
     private static final int MAX_IMAGES = 4;
     private static final String OUT_OF_BOUNDS_MESSAGE = "Image index must be between 0 and " + MAX_IMAGES;
-    private static DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("ads");
-    private static DatabaseReference mFirebaseOfferedList = FirebaseDatabase.getInstance().getReference().child("lists");
 
     private Profile user;
     private String userName;
@@ -81,10 +77,12 @@ public class Ad extends Model {
     public Ad() {
         rating = 0;
         imagesFile = new ArrayList<>(MAX_IMAGES);
+        images = new ArrayList<>(MAX_IMAGES);
         wants = new ArrayList<>();
 
         for (int i = 0; i < MAX_IMAGES; ++i) {
             imagesFile.add(i, null);
+            images.add(i, null);
         }
     }
 
@@ -175,9 +173,8 @@ public class Ad extends Model {
     }
 
     public ArrayList<String> getImages() {
-        return (images != null) ? images : new ArrayList<String>();
+        return images;
     }
-
     public void setImages(ArrayList<String> images) {
         this.images = images;
     }
