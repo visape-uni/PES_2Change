@@ -220,7 +220,7 @@ public class ListsActivity extends BaseActivity implements
                         ((ProductsListFragment) fragment).display(offeredProducts);
                     }
                 } else {
-                    AdTheme.getInstance().getAllProducts(
+                    AdTheme.getInstance().getAllAds(
                             new AdTheme.ListResponse() {
                                 @Override
                                 public void listResponse(ArrayList<Ad> productItems) {

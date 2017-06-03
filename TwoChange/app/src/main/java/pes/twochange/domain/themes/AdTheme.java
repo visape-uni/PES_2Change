@@ -208,7 +208,7 @@ public class AdTheme {
     }
 
     public void getOfferedList(final String username, final ListResponse response, final ErrorResponse error) {
-        getAllProducts(
+        getAllAds(
                 new ListResponse() {
                     @Override
                     public void listResponse(ArrayList<Ad> productItems) {
@@ -224,7 +224,7 @@ public class AdTheme {
         );
     }
 
-    public void getAllProducts(final ListResponse response, final ErrorResponse error) {
+    public void getAllAds(final ListResponse response, final ErrorResponse error) {
         Firebase.getInstance().get(
                 "ads",
                 new DatabaseResponse() {
@@ -253,6 +253,34 @@ public class AdTheme {
         ).list();
     }
 
+    public void getAllProducts(final ProductListResponse response, final ErrorResponse error) {
+        Firebase.getInstance().get(
+                "products",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        ArrayList<Product> res = new ArrayList<>();
+                        for (DataSnapshot productData: dataSnapshot.getChildren()) {
+                            Product product = productData.getValue(Product.class);
+                            product.setId(productData.getKey());
+                            res.add(product);
+                        }
+                        response.listResponse(res);
+                    }
+
+                    @Override
+                    public void empty() {
+                        response.listResponse(new ArrayList<Product>());
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        error.error(message);
+                    }
+                }
+        ).list();
+    }
+
     public void storeImages(String path, ArrayList<String> images, ArrayList<Uri> imageUris) {
         int size = images.size() <= imageUris.size() ? images.size() : imageUris.size();
         for (int i = 0; i < size; i++) {
@@ -262,6 +290,10 @@ public class AdTheme {
 
     public interface ListResponse {
         void listResponse(ArrayList<Ad> productItems);
+    }
+
+    public interface ProductListResponse {
+        void listResponse(ArrayList<Product> productItems);
     }
 
     public interface WantedResponse {
