@@ -79,7 +79,7 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
             return ad;
         }
     }
-    
+
     private List<Ad> ads;
     private int deviceWidth;
     private Context context;

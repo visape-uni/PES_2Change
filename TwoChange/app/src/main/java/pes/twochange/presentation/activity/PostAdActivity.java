@@ -190,7 +190,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 case IMAGE_PICK_CODE_4:
                     Image selectedImage = ad.getImageAt(requestCode);
                     if (intent != null) { // From gallery
-                        selectedImage = new Image(this, intent.getData());
+                        selectedImage.setUri(intent.getData());
                         ad.setImageAt(requestCode, selectedImage);
                         setImageToButton(selectedImage, getButtonFromRequestCode(requestCode));
 
@@ -201,9 +201,18 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                                 new MediaScannerConnection.OnScanCompletedListener() {
                                     @Override
                                     public void onScanCompleted(String path, Uri uri) {
-                                        finalSelectedImage.setUri(uri);
-                                        ad.setImageAt(requestCode, finalSelectedImage);
-                                        setImageToButton(finalSelectedImage, getButtonFromRequestCode(requestCode));
+                                        if (uri != null) {
+                                            finalSelectedImage.setUri(uri);
+                                            //ad.setImageAt(requestCode, finalSelectedImage);
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    setImageToButton(finalSelectedImage, getButtonFromRequestCode(requestCode));
+                                                }
+                                            });
+                                        } else {
+                                            String s = "test";
+                                        }
                                     }
                                 });
                     }
@@ -215,7 +224,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         Bitmap thumbnail =
                 MediaStore.Images.Thumbnails.getThumbnail
                         (
-                                getContentResolver(), ContentUris.parseId(image.getUri()),
+                                getApplicationContext().getContentResolver(), ContentUris.parseId(image.getUri()),
                                 MediaStore.Images.Thumbnails.MICRO_KIND, null
                         );
 
@@ -298,21 +307,20 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 break;
             case CAMERA:
-                //try {
-                    File photo = new File(CAMERA_SAVE_LOCATION, Image.generateName() + ".jpg");
-                    //File photo = File.createTempFile(Image.generateName(), ".jpg", CAMERA_SAVE_LOCATION);
-                    /*Uri photoURI = FileProvider.getUriForFile(this,
-                            "com.twochange.fileprovider",
-                            photo);*/
-                    Uri photoURI = Uri.fromFile(photo);
+                Image image = new Image(this, Image.generateName());
+                image.setFormat(Image.Format.JPEG);
+                File photo = new File(CAMERA_SAVE_LOCATION, image.getFirebaseName());
+                //File photo = File.createTempFile(Image.generateName(), ".jpg", CAMERA_SAVE_LOCATION);
+                /*Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.twochange.fileprovider",
+                        photo);*/
+                Uri photoURI = Uri.fromFile(photo);
+                image.setUri(photoURI);
 
-                    ad.setImageAt(imageButtonTag, new Image(this, photoURI));
+                ad.setImageAt(imageButtonTag, image);
 
-                    pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    pickImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                /*} catch (IOException e) {
-                    e.printStackTrace();
-                }*/
+                pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                pickImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 break;
         }
         startActivityForResult(pickImage, imageButtonTag);
