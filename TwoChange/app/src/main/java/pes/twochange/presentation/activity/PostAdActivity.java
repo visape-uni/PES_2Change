@@ -164,7 +164,6 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                         itemDetails.setVisibility(View.GONE);
                     }
                     else {
-
                         adCategorySpn.setVisibility(View.VISIBLE);
                         itemDetails.setVisibility(View.VISIBLE);
                     }
@@ -193,29 +192,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                     if (intent != null) { // From gallery
                         selectedImage = new Image(this, intent.getData());
                         ad.setImageAt(requestCode, selectedImage);
-                        ContentUris.parseId(selectedImage.getUri());
-
-                        // ----
-                        Bitmap thumbnail =
-                                MediaStore.Images.Thumbnails.getThumbnail
-                                        (
-                                                getContentResolver(), ContentUris.parseId(selectedImage.getUri()),
-                                                MediaStore.Images.Thumbnails.MICRO_KIND, null
-                                        );
-
-                        ImageButton button = null;
-                        switch (requestCode) {
-                            case IMAGE_PICK_CODE_1: button = addImageBtn1; break;
-                            case IMAGE_PICK_CODE_2: button = addImageBtn2; break;
-                            case IMAGE_PICK_CODE_3: button = addImageBtn3; break;
-                            case IMAGE_PICK_CODE_4: button = addImageBtn4; break;
-                        }
-
-                        if (button != null) {
-                            button.setImageBitmap(thumbnail);
-                            button.setColorFilter(Color.argb(0, 0, 0, 0));
-                        }
-                        // ---
+                        setImageToButton(selectedImage, getButtonFromRequestCode(requestCode));
 
                     } else { // From camera
                         final Image finalSelectedImage = selectedImage;
@@ -225,32 +202,36 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                                     @Override
                                     public void onScanCompleted(String path, Uri uri) {
                                         finalSelectedImage.setUri(uri);
-
-                                        // ---
-                                        Bitmap thumbnail =
-                                                MediaStore.Images.Thumbnails.getThumbnail
-                                                        (
-                                                                getContentResolver(), ContentUris.parseId(finalSelectedImage.getUri()),
-                                                                MediaStore.Images.Thumbnails.MICRO_KIND, null
-                                                        );
-
-                                        ImageButton button = null;
-                                        switch (requestCode) {
-                                            case IMAGE_PICK_CODE_1: button = addImageBtn1; break;
-                                            case IMAGE_PICK_CODE_2: button = addImageBtn2; break;
-                                            case IMAGE_PICK_CODE_3: button = addImageBtn3; break;
-                                            case IMAGE_PICK_CODE_4: button = addImageBtn4; break;
-                                        }
-
-                                        if (button != null) {
-                                            button.setImageBitmap(thumbnail);
-                                            button.setColorFilter(Color.argb(0, 0, 0, 0));
-                                        }
-                                        // ---
+                                        ad.setImageAt(requestCode, finalSelectedImage);
+                                        setImageToButton(finalSelectedImage, getButtonFromRequestCode(requestCode));
                                     }
                                 });
                     }
             }
+        }
+    }
+
+    private void setImageToButton(Image image, ImageButton button) {
+        Bitmap thumbnail =
+                MediaStore.Images.Thumbnails.getThumbnail
+                        (
+                                getContentResolver(), ContentUris.parseId(image.getUri()),
+                                MediaStore.Images.Thumbnails.MICRO_KIND, null
+                        );
+
+        if (button != null) {
+            button.setImageBitmap(thumbnail);
+            button.setColorFilter(Color.argb(0, 0, 0, 0));
+        }
+    }
+
+    private ImageButton getButtonFromRequestCode(int requestCode) {
+        switch (requestCode) {
+            case IMAGE_PICK_CODE_1: return addImageBtn1;
+            case IMAGE_PICK_CODE_2: return addImageBtn2;
+            case IMAGE_PICK_CODE_3: return addImageBtn3;
+            case IMAGE_PICK_CODE_4: return addImageBtn4;
+            default: return null;
         }
     }
 
@@ -334,13 +315,6 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 }*/
                 break;
         }
-        /*int code = -1;
-        switch (imageButtonTag) {
-            case 0: code = IMAGE_PICK_CODE_1; break;
-            case 1: code = IMAGE_PICK_CODE_2; break;
-            case 2: code = IMAGE_PICK_CODE_3; break;
-            case 3: code = IMAGE_PICK_CODE_4; break;
-        }*/
         startActivityForResult(pickImage, imageButtonTag);
     }
 

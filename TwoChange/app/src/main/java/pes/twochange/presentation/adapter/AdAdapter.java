@@ -2,6 +2,8 @@ package pes.twochange.presentation.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,6 +27,8 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
     public static class AdViewHolder extends RecyclerView.ViewHolder {
 
         private static final String TAG = "AdViewHolder";
+        private static Bitmap PLACEHOLDER = null;
+
 
         private TextView title, rating, description;
         private CardView card;
@@ -33,15 +37,17 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
         private Ad ad;
 
         private Context context;
-        private Activity activity;
         private static final ImageManager imageManager = ImageManager.getInstance();
 
 
-        public AdViewHolder(View itemView, int deviceWidth, Activity activity) {
+
+        public AdViewHolder(View itemView, int deviceWidth, Context context) {
             super(itemView);
 
-            this.context = activity.getApplicationContext();
-            this.activity = activity;
+            this.context = context.getApplicationContext();
+
+            if (PLACEHOLDER == null)
+                PLACEHOLDER = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_icon5);
 
             title = (TextView) itemView.findViewById(R.id.name);
             description = (TextView) itemView.findViewById(R.id.description);
@@ -62,18 +68,18 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
             rating.setText(String.format("%d/100", ad.getRating()));
             description.setText(ad.getDescription());
 
-            for (String path : ad.getImages())
-                if (path != null) {
-                    imageManager.putImageIntoView(path, context, image);
-                    break;
-                }
+            if (!ad.getImages().isEmpty()) {
+                String path = ad.getImagesPath() + ad.getImages().get(0);
+                imageManager.putImageIntoView(path, context, image);
+            } else
+                image.setImageBitmap(PLACEHOLDER);
         }
 
         public Ad getAd() {
             return ad;
         }
     }
-
+    
     private List<Ad> ads;
     private int deviceWidth;
     private Context context;

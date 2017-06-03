@@ -79,10 +79,8 @@ public class Ad extends Model {
         images = new ArrayList<>(MAX_IMAGES);
         wants = new ArrayList<>();
 
-        for (int i = 0; i < MAX_IMAGES; ++i) {
+        for (int i = 0; i < MAX_IMAGES; ++i)
             imagesFile.add(i, null);
-            images.add(i, null);
-        }
     }
 
     public Ad(Profile user, String title, String description) {
@@ -165,7 +163,7 @@ public class Ad extends Model {
     }
 
     @Exclude public String getImagesPath() {
-        return "ads/" + getId() + "/imagesFile/";
+        return "ads/" + getId() + "/images/";
     }
 
     public ArrayList<String> getImages() {

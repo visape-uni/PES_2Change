@@ -56,8 +56,11 @@ public class AdTheme {
         List<String> imageIds = new ArrayList<>();
         ImageManager imageManager = ImageManager.getInstance();
         for (Image image : ad.getImagesFile()) {
-            if (image != null) {
-                String completePath = ad.getImagesPath() + image.getFirebaseName();
+            if (image == null) {
+                String filename = image.getFirebaseName();
+                ad.getImages().add(filename);
+
+                String completePath = ad.getImagesPath() + filename;
                 imageManager.storeImage(completePath, image.getUri());
             }
         }
@@ -71,7 +74,6 @@ public class AdTheme {
         };
 
         newAdRef.setValue(ad, listener);
-        newAdRef.child("images").setValue(imageIds);
     }
 
     public void update(final Ad ad, final AdResponse callback) {
@@ -127,6 +129,7 @@ public class AdTheme {
 
     public void getFirst(int n, final AdResponse callback) {
         FirebaseDatabase.getInstance().getReference()
+                .child(ADS_CHILD)
                 .orderByKey()
                 .limitToFirst(n)
                 .addChildEventListener(new ChildEventListener() {
