@@ -56,7 +56,7 @@ public class AdTheme {
         List<String> imageIds = new ArrayList<>();
         ImageManager imageManager = ImageManager.getInstance();
         for (Image image : ad.getImagesFile()) {
-            if (image == null) {
+            if (image != null) {
                 String filename = image.getFirebaseName();
                 ad.getImages().add(filename);
 

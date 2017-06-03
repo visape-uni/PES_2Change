@@ -203,7 +203,6 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                                     public void onScanCompleted(String path, Uri uri) {
                                         if (uri != null) {
                                             finalSelectedImage.setUri(uri);
-                                            //ad.setImageAt(requestCode, finalSelectedImage);
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -302,11 +301,13 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     public void onImageSourceSelected(ImagePickDialog.ImageSource source, int imageButtonTag) {
         Intent pickImage = null;
         switch (source) {
-            case GALLERY:
+            case GALLERY: {
+                ad.setImageAt(imageButtonTag, new Image(this, Image.generateName()));
                 pickImage = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 break;
-            case CAMERA:
+            }
+            case CAMERA: {
                 Image image = new Image(this, Image.generateName());
                 image.setFormat(Image.Format.JPEG);
                 File photo = new File(CAMERA_SAVE_LOCATION, image.getFirebaseName());
@@ -322,6 +323,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 pickImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 break;
+            }
         }
         startActivityForResult(pickImage, imageButtonTag);
     }
