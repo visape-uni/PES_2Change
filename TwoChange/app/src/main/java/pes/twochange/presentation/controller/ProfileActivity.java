@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -213,19 +214,18 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         //if (currentFragment == Offered)((OfferedProductsListFragment) fragment).display(offeredList);
     }
 
-    public void update() {
-        ProfileTheme.getInstance().get(
-                usernameProfile,
+    public void update(Profile pro) {
+        ProfileTheme.getInstance(pro).updateProfile(
                 new ProfileResponse() {
                     @Override
                     public void success(Profile p) {
-                        profile = p;
                         setUpProfile();
+                        profile = p;
+                        Toast.makeText(ProfileActivity.this, "Profile updated successfully", Toast.LENGTH_LONG);
                     }
 
                     @Override
                     public void failure(String s) {
-                        // TODO Control d'errors
                     }
                 }
         );

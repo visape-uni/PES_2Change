@@ -217,7 +217,8 @@
         android:text="Save"
         android:layout_gravity="right"
         android:backgroundTint="@color/colorAccent"
-        style="@style/MessengerButton.White"/>
+        style="@style/MessengerButton.White"
+        android:layout_margin="10dp"/>
 
 
 </LinearLayout>

@@ -1,9 +1,9 @@
 package pes.twochange.presentation.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,18 +81,17 @@ public class EditProfileFragment extends Fragment {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProfileTheme.getInstance(profile).updateProfile(
-                        new ProfileResponse() {
-                            @Override
-                            public void success(Profile profile) {
-                                ProfileActivity activity = (ProfileActivity) getActivity();
-                                activity.update();
-                            }
-
-                            @Override
-                            public void failure(String s) {
-                            }
-                        });
+                profile.setName(nameEditText.getText().toString());
+                profile.setSurname(surnameEditText.getText().toString());
+                profile.setPhoneNumber(new Profile.PhoneNumber(null,phoneEditText.getText().toString()));
+                String address = addressEditText.getText().toString();
+                String zipCode = zicCodeEditText.getText().toString();
+                String city = cityEditText.getText().toString();
+                String state = stateEditText.getText().toString();
+                String country = countryEditText.getText().toString();
+                profile.setAddress(new Profile.Address(address, zipCode, city, state, country));
+                ProfileActivity activity = (ProfileActivity) getActivity();
+                activity.update(profile);
             }
         });
     }
