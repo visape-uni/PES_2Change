@@ -28,6 +28,7 @@ import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.activity.ChatActivity;
+import pes.twochange.presentation.fragment.EditProfileFragment;
 import pes.twochange.presentation.fragment.WantedProductsListFragment;
 
 public class ProfileActivity extends BaseActivity implements AdTheme.ErrorResponse, WantedProductsListFragment.OnFragmentInteractionListener{
@@ -44,8 +45,9 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     private ArrayList<Ad> wantedList;
     private ArrayList<Ad> offeredList;
 
-    private static final int WANTED = R.id.navigation_wanted;
-    private static final int OFFERED = R.id.navigation_offered;
+    private static final int WANTED = 1;
+    private static final int OFFERED = 2;
+    private static final int EDIT = 3;
 
     private int currentFragment;
 
@@ -116,6 +118,12 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         switch (item.getItemId()) {
             case R.id.action_editar_perfil:
                 //TODO: abrir activity editar perfil
+                Bundle bundle = new Bundle();
+                bundle.putString("usernameProfile", usernameProfile);
+                fragment = EditProfileFragment.newInstance();
+                fragment.setArguments(bundle);
+                displayFragment(R.id.contentProfile, fragment);
+                currentFragment = EDIT;
                 return true;
             case R.id.action_desactivar:
                 //TODO: desactivar notificaciones
@@ -187,6 +195,8 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         usernameTextView.setText(profile.getUsername().toUpperCase());
         nameTextView.setText(profile.fullName());
         userRatingBar.setRating(profile.getRate());
+
+        // TODO fer que nomes es pugui puntuar al user si no s'ha puntuat anteriorment
     }
 
     private void setUpWanted () {
@@ -201,6 +211,24 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
 
         numOfferedTextView.setText(String.valueOf(numOffered));
         //if (currentFragment == Offered)((OfferedProductsListFragment) fragment).display(offeredList);
+    }
+
+    public void update() {
+        ProfileTheme.getInstance().get(
+                usernameProfile,
+                new ProfileResponse() {
+                    @Override
+                    public void success(Profile p) {
+                        profile = p;
+                        setUpProfile();
+                    }
+
+                    @Override
+                    public void failure(String s) {
+                        // TODO Control d'errors
+                    }
+                }
+        );
     }
 
     @Override

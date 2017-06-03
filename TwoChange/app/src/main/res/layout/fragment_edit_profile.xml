@@ -21,45 +21,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_margin="5dp">
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:text="Username*" />
-                <EditText
-                    android:id="@+id/usernameEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAlignment="viewEnd"
-                    android:inputType="textPersonName"/>
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/light_grey" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
                     android:text="Name*" />
                 <EditText
                     android:id="@+id/nameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textAlignment="viewEnd"
-                    android:inputType="textPersonName"/>
+                    android:inputType="textPersonName"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
             <View
@@ -69,21 +45,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_margin="5dp">
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
                     android:text="Surname*" />
                 <EditText
                     android:id="@+id/SurnameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textAlignment="viewEnd"
-                    android:inputType="textPersonName"/>
+                    android:inputType="textPersonName"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
             <View
@@ -93,21 +69,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_margin="5dp">
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
                     android:text="Phone" />
                 <EditText
                     android:id="@+id/PhoneEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textAlignment="viewEnd"
-                    android:inputType="phone"/>
+                    android:inputType="phone"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
             <View
@@ -117,21 +93,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_margin="5dp">
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
                     android:text="Address" />
                 <EditText
                     android:id="@+id/AddressEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textAlignment="viewEnd"
-                    android:inputType="textPostalAddress"/>
+                    android:inputType="textPostalAddress"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
             <View
@@ -141,21 +117,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_margin="5dp">
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
                     android:text="Zip Code" />
                 <EditText
                     android:id="@+id/zipCodeEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textAlignment="viewEnd"
-                    android:inputType="number"/>
+                    android:inputType="number"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
             <View
@@ -165,21 +141,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_margin="5dp">
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
                     android:text="City" />
                 <EditText
                     android:id="@+id/CityEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textAlignment="viewEnd"
-                    android:inputType="textPersonName"/>
+                    android:inputType="textPersonName"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
             <View
@@ -189,21 +165,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_margin="5dp">
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
                     android:text="State" />
                 <EditText
                     android:id="@+id/stateEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textAlignment="viewEnd"
-                    android:inputType="textPersonName"/>
+                    android:inputType="textPersonName"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
             <View
@@ -213,21 +189,21 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_margin="5dp">
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
                     android:text="Country" />
                 <EditText
                     android:id="@+id/CountryEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textAlignment="viewEnd"
-                    android:inputType="textPersonName"/>
+                    android:inputType="textPersonName"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
         </LinearLayout>
@@ -235,6 +211,7 @@
     </android.support.v7.widget.CardView>
 
     <Button
+        android:id="@+id/saveBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
