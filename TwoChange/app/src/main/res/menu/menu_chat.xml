@@ -5,6 +5,6 @@
     <item
         android:id="@+id/action_photo"
         android:icon="@drawable/ic_action_photo"
-        android:title="@string/action_photo"
+        android:name="@string/action_photo"
         app:showAsAction="ifRoom" />
 </menu>

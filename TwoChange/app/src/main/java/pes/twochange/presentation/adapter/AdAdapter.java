@@ -147,7 +147,7 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                            if (!dataSnapshot.getKey().equals("images")) {
+                            if (!dataSnapshot.getId().equals("images")) {
                                 return;
                             }
 

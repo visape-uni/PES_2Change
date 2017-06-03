@@ -6,7 +6,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-import pes.twochange.domain.Utils;
 import pes.twochange.domain.model.ModelAdapter;
 
 public class Firebase {
@@ -38,8 +37,9 @@ public class Firebase {
 
     // Insert [name]. Then we return the new random ID. The model type is described in the model adapter
     public String insert(String name, ModelAdapter model) {
-        String id = Utils.randomID();
         DatabaseReference ref = db.getReference(name);
+        DatabaseReference newRef = ref.push();
+        String id = newRef.getKey();
         ref.child(id).setValue(model.object());
         return id;
     }

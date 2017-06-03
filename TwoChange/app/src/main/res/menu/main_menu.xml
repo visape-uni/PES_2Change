@@ -3,35 +3,43 @@
 
     <group>
         <item
+            android:title="@string/explore"
             android:id="@+id/explore"
-            android:title="@string/explore" />
+            android:name="@string/explore" />
         <item
+            android:title="@string/my_lists"
             android:id="@+id/lists"
-            android:title="@string/my_lists" />
+            android:name="@string/my_lists" />
         <item
+            android:title="@string/chat"
             android:id="@+id/chat"
-            android:title="@string/chat" />
+            android:name="@string/chat" />
         <item
+            android:title="@string/profile"
             android:id="@+id/profile"
-            android:title="@string/profile" />
+            android:name="@string/profile" />
     </group>
 
     <group>
         <item
+            android:title="@string/settings"
             android:id="@+id/settings"
-            android:title="@string/settings" />
+            android:name="@string/settings" />
         <item
+            android:title="@string/help"
             android:id="@+id/help"
-            android:title="@string/help" />
+            android:name="@string/help" />
         <item
+            android:title="@string/about"
             android:id="@+id/about"
-            android:title="@string/about" />
+            android:name="@string/about" />
     </group>
 
     <group>
         <item
+            android:title="@string/logout"
             android:id="@+id/logout"
-            android:title="@string/logout" />
+            android:name="@string/logout" />
     </group>
 
 </menu>
