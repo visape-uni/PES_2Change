@@ -296,7 +296,9 @@ public class ListsActivity extends BaseActivity implements
     public void postProduct(Product product) {
         product.setUsername(username);
         product.setImages(images);
-        AdTheme.getInstance().save(product);
+        String id = AdTheme.getInstance().save(product);
+        String path = String.format("product/%s/", id);
+        AdTheme.getInstance().storeImages(path, images, imageUris);
     }
 
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 400;
@@ -358,7 +360,7 @@ public class ListsActivity extends BaseActivity implements
             case GALLERY:
                 pickImage = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                images.add(name);
+                images.add(name + ".jpg");
                 requestCode = GALLERY_IMAGE_REQUEST;
                 break;
             case CAMERA:
@@ -366,7 +368,7 @@ public class ListsActivity extends BaseActivity implements
                     File photo = File.createTempFile(name, ".jpg", CAMERA_SAVE_LOCATION);
                     Uri photoURI = FileProvider.getUriForFile(this, "com.twochange.fileprovider",
                             photo);
-                    images.add(name);
+                    images.add(name + ".jpg");
                     imageUris.add(photoURI);
                     pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     pickImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -383,7 +385,6 @@ public class ListsActivity extends BaseActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         if (resultCode == RESULT_OK) {
-            Log.e(LOG_TAG, "RESULT OK" );
             if (requestCode == GALLERY_IMAGE_REQUEST) {
                 imageUris.add(intent.getData());
             }

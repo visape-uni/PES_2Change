@@ -181,5 +181,11 @@
     <string name="image_hint">Add some images of your product</string>
     <string name="ok">Ok</string>
     <string name="product_s_price">How much did it cost? (€)</string>
+    <string name="product_name_error_title">Empty name</string>
+    <string name="product_name_error_message">You should give a name to your product</string>
+    <string name="product_description_error_title">Empty description</string>
+    <string name="product_description_error_message">Describe your product so people know what are you offering</string>
+    <string name="product_price_error_title">Empty price</string>
+    <string name="product_price_error_message">Without any price we cannot calculate the rating of the product</string>
 
 </resources>

@@ -1,5 +1,7 @@
 package pes.twochange.domain.themes;
 
+import android.net.Uri;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -126,8 +128,8 @@ public class AdTheme {
                 .addListenerForSingleValueEvent(listener);
     }
 
-    public void save(final Product product) {
-        Firebase.getInstance().insert(PRODUCTS_REFERENCE_NAME,
+    public String save(final Product product) {
+        return Firebase.getInstance().insert(PRODUCTS_REFERENCE_NAME,
                 new ModelAdapterFactory<Product>().build(Product.class, product));
     }
 
@@ -249,6 +251,13 @@ public class AdTheme {
                     }
                 }
         ).list();
+    }
+
+    public void storeImages(String path, ArrayList<String> images, ArrayList<Uri> imageUris) {
+        int size = images.size() <= imageUris.size() ? images.size() : imageUris.size();
+        for (int i = 0; i < size; i++) {
+            ImageManager.getInstance().storeImage(path + images.get(i), imageUris.get(i));
+        }
     }
 
     public interface ListResponse {

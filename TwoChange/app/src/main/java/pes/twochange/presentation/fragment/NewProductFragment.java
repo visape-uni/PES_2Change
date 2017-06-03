@@ -30,11 +30,18 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
     private OnFragmentInteractionListener activity;
     private EditText nameTextView;
     private EditText descriptionTextView;
-    private ArrayAdapter<CharSequence> categoryAdapter;
-    private ArrayAdapter<CharSequence> stateAdapter;
-    private ArrayAdapter<String> yearAdapter;
+    private Spinner categorySpinner;
+    private Spinner statusSpinner;
+    private Spinner yearSpinner;
     private EditText priceTextView;
     private RecyclerView imagesList;
+
+    private String[] categoryArray;
+    private String[] statusArray;
+    private String[] yearArray;
+
+    private final static int FIRST_YEAR = 1970;
+    private final static int CURRENT_YEAR = 2018;
 
     public NewProductFragment() {
         // Required empty public constructor
@@ -51,26 +58,29 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
         ImageView closeButton = (ImageView) view.findViewById(R.id.close_button);
         nameTextView = (EditText) view.findViewById(R.id.products_name);
         descriptionTextView = (EditText) view.findViewById(R.id.products_description);
-        Spinner categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
-        Spinner stateSpinner = (Spinner) view.findViewById(R.id.state_spinner);
-        Spinner yearSpinner = (Spinner) view.findViewById(R.id.year_spinner);
+        categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
+        statusSpinner = (Spinner) view.findViewById(R.id.state_spinner);
+        yearSpinner = (Spinner) view.findViewById(R.id.year_spinner);
         priceTextView = (EditText) view.findViewById(R.id.products_price);
         imagesList = (RecyclerView) view.findViewById(R.id.images_list);
         ImageView addImageButton = (ImageView) view.findViewById(R.id.add_image_button);
         TextView postButton = (TextView) view.findViewById(R.id.post_product_button);
 
-        categoryAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.ad_category, android.R.layout.simple_spinner_item);
+        categoryArray = getResources().getStringArray(R.array.ad_category);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, categoryArray);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(categoryAdapter);
 
-        stateAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.product_states, android.R.layout.simple_spinner_item);
-        stateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        stateSpinner.setAdapter(stateAdapter);
+        statusArray = getResources().getStringArray(R.array.product_states);
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, statusArray);
+        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        statusSpinner.setAdapter(statusAdapter);
 
-        yearAdapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_spinner_item, getYearsArray());
+        yearArray = getYearsArray();
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, yearArray);
         yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         yearSpinner.setAdapter(yearAdapter);
 
@@ -94,10 +104,11 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private ArrayList<String> getYearsArray() {
-        ArrayList<String> res = new ArrayList<>();
-        for (int i = 1970; i < 2017; i++) {
-            res.add(String.format(Locale.FRANCE, "%d", i));
+    private String[] getYearsArray() {
+        int size = CURRENT_YEAR - FIRST_YEAR;
+        String[] res = new String[size];
+        for (int i = 0; i < size; i++) {
+            res[i] = (String.format(Locale.FRANCE, "%d", i + FIRST_YEAR));
         }
         return res;
     }
@@ -120,15 +131,28 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
                 break;
 
             case R.id.post_product_button:
-                String name = nameTextView.getText().toString().trim();
-                String description = nameTextView.getText().toString().trim();
-                String category = categoryAdapter.toString().trim();
-                String state = stateAdapter.toString().trim();
-                Integer year = Integer.valueOf(yearAdapter.toString());
-                Integer price = Integer.valueOf(priceTextView.getText().toString().trim());
-                Product product = new Product(name, description, category);
-                product.rate(Product.Status.from(state), year, price);
-                activity.postProduct(product);
+                if (nameTextView.getText() == null || nameTextView.getText().length() == 0) {
+                    alertError(R.string.product_name_error_title,
+                            R.string.product_name_error_message);
+                } else if (descriptionTextView.getText() == null
+                        || descriptionTextView.getText().length() == 0) {
+                    alertError(R.string.product_description_error_title,
+                            R.string.product_description_error_message);
+                } else if (priceTextView.getText() == null
+                        || priceTextView.getText().length() == 0) {
+                    alertError(R.string.product_price_error_title,
+                            R.string.product_price_error_message);
+                } else {
+                    String name = nameTextView.getText().toString().trim();
+                    String description = descriptionTextView.getText().toString().trim();
+                    String category = categoryArray[categorySpinner.getSelectedItemPosition()];
+                    String status = statusArray[statusSpinner.getSelectedItemPosition()];
+                    Integer year = Integer.valueOf(yearArray[yearSpinner.getSelectedItemPosition()]);
+                    Integer price = Integer.valueOf(priceTextView.getText().toString().trim());
+                    Product product = new Product(name, description, category);
+                    product.rate(Product.Status.from(status), year, price);
+                    activity.postProduct(product);
+                }
         }
     }
 
