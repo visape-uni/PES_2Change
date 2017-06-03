@@ -25,14 +25,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import pes.twochange.R;
-import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Product;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.activity.ImagePickDialog;
 import pes.twochange.presentation.fragment.AddProductsListFragment;
 import pes.twochange.presentation.fragment.NewProductFragment;
-import pes.twochange.presentation.fragment.ProductsListFragment;
 import pes.twochange.presentation.fragment.WantedProductsListFragment;
 
 public class ListsActivity extends BaseActivity implements
@@ -81,11 +79,13 @@ public class ListsActivity extends BaseActivity implements
             currentList = item.getItemId();
             switch (item.getItemId()) {
                 case R.id.navigation_wanted:
-                    displayFragment(R.id.content, WantedProductsListFragment.newInstance(), "wanted");
+                    fragment = WantedProductsListFragment.newInstance();
+                    displayFragment(R.id.content, fragment, "wanted");
                     break;
 
                 case R.id.navigation_offered:
-                    displayFragment(R.id.content, AddProductsListFragment.newInstance(), "offered");
+                    fragment = AddProductsListFragment.newInstance();
+                    displayFragment(R.id.content, fragment, "offered");
                     break;
 
                 case R.id.navigation_matches:
@@ -127,7 +127,7 @@ public class ListsActivity extends BaseActivity implements
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.remove_wanted_title)
                         .setMessage("Do you really want to remove \"" +
-                                wantedProducts.get(position).getTitle() + "\" from your wanted list?")
+                                wantedProducts.get(position).getName() + "\" from your wanted list?")
                         .setPositiveButton(
                                 R.string.yes,
                                 new DialogInterface.OnClickListener() {
@@ -188,24 +188,24 @@ public class ListsActivity extends BaseActivity implements
         }
     }
 
-    private ArrayList<Ad> wantedProducts;
-    private ArrayList<Ad> offeredProducts;
-    private ArrayList<Ad> matchProducts;
+    private ArrayList<Product> wantedProducts;
+    private ArrayList<Product> offeredProducts;
+    private ArrayList<Product> matchProducts;
 
     @Override
     public void loadProductList() {
         switch (currentList) {
             case WANTED:
-                if (wantedProducts != null) {
+                if (wantedProducts != null && wantedProducts.size() > 0) {
                     if (fragment instanceof WantedProductsListFragment) {
                         ((WantedProductsListFragment) fragment).display(wantedProducts);
                     }
                 } else {
                     AdTheme.getInstance().getWantedList(
                             username,
-                            new AdTheme.ListResponse() {
+                            new AdTheme.ProductListResponse() {
                                 @Override
-                                public void listResponse(ArrayList<Ad> productItems) {
+                                public void listResponse(ArrayList<Product> productItems) {
                                     wantedProducts = productItems;
                                     loadProductList();
                                 }
@@ -215,18 +215,18 @@ public class ListsActivity extends BaseActivity implements
                 break;
 
             case OFFERED:
-                if (offeredProducts != null) {
-                    if (fragment instanceof ProductsListFragment) {
-                        ((ProductsListFragment) fragment).display(offeredProducts);
+                if (offeredProducts != null && offeredProducts.size() > 0) {
+                    if (fragment instanceof AddProductsListFragment) {
+                        ((AddProductsListFragment) fragment).display(offeredProducts);
                     }
                 } else {
-                    AdTheme.getInstance().getAllAds(
-                            new AdTheme.ListResponse() {
+                    AdTheme.getInstance().getAllProducts(
+                            new AdTheme.ProductListResponse() {
                                 @Override
-                                public void listResponse(ArrayList<Ad> productItems) {
+                                public void listResponse(ArrayList<Product> productItems) {
                                     offeredProducts = new ArrayList<>();
-                                    for (Ad product : productItems) {
-                                        if (product.getUserName().equals(username)) {
+                                    for (Product product : productItems) {
+                                        if (product.getUsername().equals(username)) {
                                             offeredProducts.add(product);
                                         }
                                     }
@@ -290,6 +290,8 @@ public class ListsActivity extends BaseActivity implements
         fragment = fragmentManager.findFragmentByTag("offered");
         toolbar.setVisibility(View.VISIBLE);
         navigation.setVisibility(View.VISIBLE);
+        currentList = OFFERED;
+        loadProductList();
     }
 
     @Override

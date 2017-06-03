@@ -9,7 +9,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 import pes.twochange.R;
-import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Product;
 import pes.twochange.presentation.adapter.RecyclerViewWantedAdapter;
 import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
@@ -26,9 +26,9 @@ public class WantedProductsListFragment extends AddProductsListFragment {
     }
 
     @Override
-    protected void buildRecyclerView(@NonNull View view) {
+    public void buildRecyclerView(@NonNull View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
-        wantedAdapter = new RecyclerViewWantedAdapter(new ArrayList<Ad>(), activity, activity);
+        wantedAdapter = new RecyclerViewWantedAdapter(new ArrayList<Product>(), activity, activity);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(wantedAdapter);
@@ -38,7 +38,7 @@ public class WantedProductsListFragment extends AddProductsListFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof ProductsListFragment.OnFragmentInteractionListener) {
+        if (context instanceof WantedProductsListFragment.OnFragmentInteractionListener) {
             activity = (WantedProductsListFragment.OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
@@ -53,13 +53,13 @@ public class WantedProductsListFragment extends AddProductsListFragment {
     }
 
     @Override
-    public void display(ArrayList<Ad> products) {
+    public void display(ArrayList<Product> products) {
         if (products.size() == 0) {
             // TODO empty "error"
         }
-//        wantedAdapter.setProductArrayList(products);
-//        wantedAdapter.notifyDataSetChanged();
-//        recyclerView.setAdapter(wantedAdapter);
+        wantedAdapter.setProductArrayList(products);
+        wantedAdapter.notifyDataSetChanged();
+        recyclerView.setAdapter(wantedAdapter);
     }
 
     public interface OnFragmentInteractionListener

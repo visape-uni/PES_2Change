@@ -178,16 +178,16 @@ public class AdTheme {
         ).with("title", productName);
     }
 
-    public void getWantedList(String username, final ListResponse response, final ErrorResponse error) {
+    public void getWantedList(String username, final ProductListResponse response, final ErrorResponse error) {
         Firebase.getInstance().get(
                 "lists/" + username + "/wanted",
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
-                        ArrayList<Ad> adArrayList = new ArrayList<>();
-                        GenericTypeIndicator<HashMap<String, Ad>> typeIndicator =
-                                new GenericTypeIndicator<HashMap<String, Ad>>() {};
-                        HashMap<String, Ad> firebase = dataSnapshot.getValue(typeIndicator);
+                        ArrayList<Product> adArrayList = new ArrayList<>();
+                        GenericTypeIndicator<HashMap<String, Product>> typeIndicator =
+                                new GenericTypeIndicator<HashMap<String, Product>>() {};
+                        HashMap<String, Product> firebase = dataSnapshot.getValue(typeIndicator);
                         if (firebase != null) {
                             adArrayList = new ArrayList<>(firebase.values());
                         }
@@ -196,7 +196,7 @@ public class AdTheme {
 
                     @Override
                     public void empty() {
-                        response.listResponse(new ArrayList<Ad>());
+                        response.listResponse(new ArrayList<Product>());
                     }
 
                     @Override
@@ -212,7 +212,7 @@ public class AdTheme {
                 new ListResponse() {
                     @Override
                     public void listResponse(ArrayList<Ad> productItems) {
-                        ArrayList<Ad> offered = new ArrayList<Ad>();
+                        ArrayList<Ad> offered = new ArrayList<>();
                         for (Ad product: productItems) {
                             if (product.getUserName().equals(username)) {
                                 offered.add(product);

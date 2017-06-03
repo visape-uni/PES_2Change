@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import pes.twochange.R;
-import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Product;
 import pes.twochange.presentation.adapter.RecyclerViewProductAdapter;
 import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
 
@@ -38,9 +38,10 @@ public class ProductsListFragment extends Fragment {
         return view;
     }
 
-    protected void buildRecyclerView(@NonNull View view) {
+    public void buildRecyclerView(@NonNull View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
-        productAdapter = new RecyclerViewProductAdapter(getContext(), new ArrayList<Ad>(), activity);
+        productAdapter = new RecyclerViewProductAdapter(getContext(), new ArrayList<Product>(),
+                activity);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(productAdapter);
@@ -64,7 +65,7 @@ public class ProductsListFragment extends Fragment {
         activity = null;
     }
 
-    public void display(ArrayList<Ad> products) {
+    public void display(ArrayList<Product> products) {
         if (products.size() == 0) {
             // TODO empty "error"
         }

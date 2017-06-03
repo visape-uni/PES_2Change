@@ -38,6 +38,7 @@
         <item>Clothes</item>
         <item>Home</item>
         <item>Tools</item>
+        <item>Instruments</item>
         <item>Toys</item>
         <item>Books</item>
         <item>Others</item>
@@ -187,5 +188,7 @@
     <string name="product_description_error_message">Describe your product so people know what are you offering</string>
     <string name="product_price_error_title">Empty price</string>
     <string name="product_price_error_message">Without any price we cannot calculate the rating of the product</string>
+    <string name="product_image_error_title">No image</string>
+    <string name="product_image_error_message">You should post at least one image</string>
 
 </resources>

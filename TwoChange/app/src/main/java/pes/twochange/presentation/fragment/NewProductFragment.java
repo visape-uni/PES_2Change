@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -35,6 +36,8 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
     private Spinner yearSpinner;
     private EditText priceTextView;
     private RecyclerView imagesList;
+    private TextView postButton;
+    private ProgressBar progressBar;
 
     private String[] categoryArray;
     private String[] statusArray;
@@ -64,7 +67,8 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
         priceTextView = (EditText) view.findViewById(R.id.products_price);
         imagesList = (RecyclerView) view.findViewById(R.id.images_list);
         ImageView addImageButton = (ImageView) view.findViewById(R.id.add_image_button);
-        TextView postButton = (TextView) view.findViewById(R.id.post_product_button);
+        postButton = (TextView) view.findViewById(R.id.post_product_button);
+        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
         categoryArray = getResources().getStringArray(R.array.ad_category);
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(),
@@ -142,7 +146,12 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
                         || priceTextView.getText().length() == 0) {
                     alertError(R.string.product_price_error_title,
                             R.string.product_price_error_message);
+                } else if (imagesList.getAdapter().getItemCount() == 0) {
+                    alertError(R.string.product_image_error_title,
+                            R.string.product_image_error_message);
                 } else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    postButton.setVisibility(View.GONE);
                     String name = nameTextView.getText().toString().trim();
                     String description = descriptionTextView.getText().toString().trim();
                     String category = categoryArray[categorySpinner.getSelectedItemPosition()];
