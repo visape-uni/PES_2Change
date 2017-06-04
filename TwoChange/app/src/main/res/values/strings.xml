@@ -55,7 +55,7 @@
         "use of familiar tactile attributes helps users quickly understand affordances. Yet the "
         "flexibility of the material creates new affordances that supercede those in the physical "
         "world, without breaking the rules of physics.\n"
-        "The fundamentals of light, surface, and movement are key to conveying how objects move, "
+        "The fundamentals of light, surface, and movement are id to conveying how objects move, "
         "interact, and exist in space and in relation to each other. Realistic lighting shows "
         "seams, divides space, and indicates moving parts.\n\n"
 
@@ -115,7 +115,7 @@
         "to user input (e.g., normal, focused, and pressed) or system events. These elevation "
         "changes are consistently implemented using dynamic elevation offsets.\n"
         "Dynamic elevation offsets are the goal elevation that a component moves towards, relative "
-        "to the component’s resting state. They ensure that elevation changes are consistent "
+        "to the component’s resting status. They ensure that elevation changes are consistent "
         "across actions and component types. For example, all components that lift on press have "
         "the same elevation change relative to their resting elevation.\n"
         "Once the input event is completed or cancelled, the component will return to its resting "
@@ -169,5 +169,23 @@
     <string name="search">Search product</string>
     <string name="search_hint">Search product</string>
     <string name="matches">Matches</string>
+    <string name="close">close</string>
+    <string name="your_product">Your product</string>
+    <string name="product_s_name">Product\'s name</string>
+    <string name="ask_product_description">Describe this product</string>
+    <string name="category_hint">Category</string>
+    <string name="state_hint">Status of the product</string>
+    <string name="year_hint">When did you bought it</string>
+    <string name="add_image">add_image</string>
+    <string name="post_product">Post product</string>
+    <string name="image_hint">Add some images of your product</string>
+    <string name="ok">Ok</string>
+    <string name="product_s_price">How much did it cost? (€)</string>
+    <string name="product_name_error_title">Empty name</string>
+    <string name="product_name_error_message">You should give a name to your product</string>
+    <string name="product_description_error_title">Empty description</string>
+    <string name="product_description_error_message">Describe your product so people know what are you offering</string>
+    <string name="product_price_error_title">Empty price</string>
+    <string name="product_price_error_message">Without any price we cannot calculate the rating of the product</string>
 
 </resources>

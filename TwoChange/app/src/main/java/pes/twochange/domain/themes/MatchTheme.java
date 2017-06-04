@@ -66,13 +66,13 @@ public class MatchTheme {
                         Product auxProduct = new Product(auxAd.getTitle(), auxAd.getId(), auxAd.getUserName(), auxAd.getCategory(), auxAd.getRating());
 
                         //Key del producto del usuario sender con el que se quiere hacer el match
-                        String productKeySender = auxProduct.getKey();
+                        String productKeySender = auxProduct.getId();
 
                         //SI es match, AÑADIR posMatch A LOS MATCHES DE LA BD
-                        if (!(isMatched(productKeySender.concat(posMatch.getKey()), myMatches))&&(isMatch(auxProduct, posMatch))) {
+                        if (!(isMatched(productKeySender.concat(posMatch.getId()), myMatches))&&(isMatch(auxProduct, posMatch))) {
 
                             //crear match y guardarlo en la BD
-                            Match match = new Match(currentUsername, posMatch.getUsername(), productKeySender, posMatch.getKey(), posMatch.getCategory());
+                            Match match = new Match(currentUsername, posMatch.getUsername(), productKeySender, posMatch.getId(), posMatch.getCategory());
                             mFirebaseMatches.child(match.getProductKeySender().concat(match.getProductKeyReciver())).setValue(match);
                             myMatches.put(match.getProductKeySender().concat(match.getProductKeyReciver()),match);
                         }
@@ -117,7 +117,7 @@ public class MatchTheme {
             @Override
             public void success(DataSnapshot dataSnapshot) {
                 for (DataSnapshot d: dataSnapshot.getChildren()) {
-                    myMatches.put(d.getKey().toString(), d.getValue(Match.class));
+                    myMatches.put(d.getId().toString(), d.getValue(Match.class));
                 }
             }
             @Override

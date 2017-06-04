@@ -24,7 +24,7 @@ public class ExploreActivity extends BaseActivity
 
         fragment = SearchProductsListFragment.newInstance();
 
-        replaceFragment(R.id.explore_frame, fragment);
+        replaceFragment(R.id.explore_frame, fragment, "main_list");
 
     }
 
@@ -46,7 +46,7 @@ public class ExploreActivity extends BaseActivity
         // Download all the products from Firebase without importing any Firebase library neither
         // class here. This is the presentation layer, Firebase is data layer. You have to give the
         // data through a Theme/Controller/etc.
-        AdTheme.getInstance().getAllProducts(
+        AdTheme.getInstance().getAllAds(
                 new AdTheme.ListResponse() {
                     @Override
                     public void listResponse(ArrayList<Ad> productItems) {

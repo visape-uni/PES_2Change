@@ -53,11 +53,8 @@ public class ImagePickDialog extends DialogFragment implements ActivityCompat.On
         builder.setTitle("Add an image")
                 .setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        ImageSource source = null;
-                        if (item == 0) source = ImageSource.GALLERY;
-                        else source = ImageSource.CAMERA;
-
-                        imagePickListener.onImageSourceSelected(source, imageButtonTag);
+                        imagePickListener.onImageSourceSelected(item == 0 ? ImageSource.GALLERY :
+                                ImageSource.CAMERA, imageButtonTag);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

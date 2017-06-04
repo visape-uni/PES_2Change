@@ -115,22 +115,25 @@ public abstract class BaseActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
     }
 
+    // adds the given fragment to the front of the fragment stack
     protected void addFragment(int contentResId, Fragment fragment, String tag) {
         fragmentManager.beginTransaction()
-                .add(contentResId, fragment)
+                .add(contentResId, fragment, tag)
                 .addToBackStack(tag)
                 .commit();
     }
 
-    protected void replaceFragment(int contentResId, Fragment fragment) {
+    // replaces the front fragment with the given fragment
+    protected void replaceFragment(int contentResId, Fragment fragment, String tag) {
         fragmentManager.beginTransaction()
-                .replace(contentResId, fragment)
+                .replace(contentResId, fragment, tag)
                 .commit();
     }
 
-    protected void displayFragment(int contentResId, Fragment fragment) {
+    // deletes all the fragments of the stack and displays the given one
+    protected void displayFragment(int contentResId, Fragment fragment, String tag) {
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        replaceFragment(contentResId, fragment);
+        replaceFragment(contentResId, fragment, tag);
     }
 
 
