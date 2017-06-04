@@ -52,6 +52,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
 
     private int currentFragment;
 
+    private static final String TAG = "ProfileActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -221,7 +222,8 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                     public void success(Profile p) {
                         setUpProfile();
                         profile = p;
-                        Toast.makeText(ProfileActivity.this, "Profile updated successfully", Toast.LENGTH_LONG);
+                        Log.d(TAG, "UPDATE");
+                        Toast.makeText(ProfileActivity.this, "Profile updated successfully", Toast.LENGTH_LONG).show();
                     }
 
                     @Override

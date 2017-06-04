@@ -81,9 +81,16 @@ public class EditProfileFragment extends Fragment {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //TODO: que pasa quan no hi ha num de telefon o adressa?
+                //TODO: FA UPDATE INFINIT
                 profile.setName(nameEditText.getText().toString());
                 profile.setSurname(surnameEditText.getText().toString());
-                profile.setPhoneNumber(new Profile.PhoneNumber(null,phoneEditText.getText().toString()));
+
+                Profile.PhoneNumber phone = new Profile.PhoneNumber();
+                phone.setNumber(phoneEditText.getText().toString());
+                profile.setPhoneNumber(phone);
+
                 String address = addressEditText.getText().toString();
                 String zipCode = zicCodeEditText.getText().toString();
                 String city = cityEditText.getText().toString();
