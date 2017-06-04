@@ -17,6 +17,7 @@ import android.view.View;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import pes.twochange.R;
 import pes.twochange.domain.callback.AdResponse;
@@ -36,6 +37,11 @@ public class AdList2Activity extends AppCompatActivity {
 
     private RecyclerView recView;
 
+    // Enless scroll
+    private boolean loading = true;
+    private int pastVisibleItems, visibleItemCount, totalItemCount;
+    private StaggeredGridLayoutManager layoutManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +55,28 @@ public class AdList2Activity extends AppCompatActivity {
 
         final AdAdapter adapter = new AdAdapter(new ArrayList<Ad>(), deviceWidth, this);
         recView.setAdapter(adapter);
-        recView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+
+        layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        recView.setLayoutManager(layoutManager);
         recView.setItemAnimator(new DefaultItemAnimator());
+
+        recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if(dy > 0) { //check for scroll down
+                    visibleItemCount = layoutManager.getChildCount();
+                    totalItemCount = layoutManager.getItemCount();
+                    pastVisibleItems = layoutManager.findFirstVisibleItemPositions(null)[0];
+
+                    if (loading)
+                        if ( (visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                            loading = false;
+                            // End of scroll
+                            loadMore();
+                        }
+                }
+            }
+        });
 
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,10 +97,27 @@ public class AdList2Activity extends AppCompatActivity {
                     REQUEST_WRITE_EXTERNAL_STORAGE);
         }
 
-        adTheme.getFirst(20, new AdResponse() {
+        adTheme.getFirst(10, new AdResponse() {
+            @Override
+            public void onSuccess(Ad ad) { adapter.add(ad); }
+
+            @Override
+            public void onFailure(String error) {}
+        });
+    }
+
+    public void loadMore() {
+        final AdAdapter adapter = (AdAdapter) recView.getAdapter();
+        final Ad lastAd = adapter.getLastItem();
+        final List<String> count = new ArrayList<>();
+        adTheme.getNext(6, lastAd.getId(), new AdResponse() {
             @Override
             public void onSuccess(Ad ad) {
-                adapter.add(ad);
+                if (!adapter.contains(ad.getId()))
+                    adapter.add(ad);
+                count.add(ad.getId());
+                if (count.size() == 4)
+                    loading = true;
             }
 
             @Override

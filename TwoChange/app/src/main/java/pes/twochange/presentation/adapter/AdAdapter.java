@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Ad;
@@ -81,6 +83,8 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
     }
 
     private List<Ad> ads;
+    private Set<String> ids;
+
     private int deviceWidth;
     private Context context;
     private Activity activity;
@@ -88,6 +92,7 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
 
     public AdAdapter(List<Ad> ads, int deviceWidth, Activity activity) {
         this.ads = ads;
+        this.ids = new HashSet<>();
         this.deviceWidth = deviceWidth;
         this.activity = activity;
         this.context = activity.getApplicationContext();
@@ -129,11 +134,20 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> impl
 
     public void add(Ad ad) {
         ads.add(ad);
+        ids.add(ad.getId());
         notifyDataSetChanged();
     }
 
     public void update(Ad ad) {
         ads.set(ads.indexOf(ad), ad);
         notifyDataSetChanged();
+    }
+
+    public Ad getLastItem() {
+        return ads.get(ads.size() - 1);
+    }
+
+    public boolean contains(String id) {
+        return ids.contains(id);
     }
 }

@@ -155,6 +155,40 @@ public class AdTheme {
                 });
     }
 
+    public void getNext(int n, final String startKey, final AdResponse callback) {
+        FirebaseDatabase.getInstance().getReference()
+                .child(ADS_CHILD)
+                .orderByKey()
+                .startAt(startKey)
+                .limitToFirst(n)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        final Ad ad = dataSnapshot.getValue(Ad.class);
+                        callback.onSuccess(ad);
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        callback.onFailure(databaseError.getMessage());
+                    }
+                });
+    }
 
     /* ------------------
         WANTED / OFFERED
