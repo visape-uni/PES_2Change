@@ -18,7 +18,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import pes.twochange.R;
 import pes.twochange.domain.model.Product;
@@ -60,7 +59,6 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
         descriptionTextView = (EditText) view.findViewById(R.id.products_description);
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         statusSpinner = (Spinner) view.findViewById(R.id.state_spinner);
-        yearSpinner = (Spinner) view.findViewById(R.id.year_spinner);
         priceTextView = (EditText) view.findViewById(R.id.products_price);
         imagesList = (RecyclerView) view.findViewById(R.id.images_list);
         ImageView addImageButton = (ImageView) view.findViewById(R.id.add_image_button);
@@ -77,12 +75,6 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
                 android.R.layout.simple_spinner_item, statusArray);
         statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statusSpinner.setAdapter(statusAdapter);
-
-        yearArray = getYearsArray();
-        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_spinner_item, yearArray);
-        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        yearSpinner.setAdapter(yearAdapter);
 
         display(new ArrayList<Uri>());
 
@@ -102,15 +94,6 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
-
-    private String[] getYearsArray() {
-        int size = CURRENT_YEAR - FIRST_YEAR;
-        String[] res = new String[size];
-        for (int i = 0; i < size; i++) {
-            res[i] = (String.format(Locale.FRANCE, "%d", i + FIRST_YEAR));
-        }
-        return res;
     }
 
     @Override
@@ -147,10 +130,9 @@ public class NewProductFragment extends Fragment implements View.OnClickListener
                     String description = descriptionTextView.getText().toString().trim();
                     String category = categoryArray[categorySpinner.getSelectedItemPosition()];
                     String status = statusArray[statusSpinner.getSelectedItemPosition()];
-                    Integer year = Integer.valueOf(yearArray[yearSpinner.getSelectedItemPosition()]);
                     Integer price = Integer.valueOf(priceTextView.getText().toString().trim());
                     Product product = new Product(name, description, category);
-                    product.rate(Product.Status.from(status), year, price);
+                    product.rate(Product.Status.from(status), price);
                     activity.postProduct(product);
                 }
         }

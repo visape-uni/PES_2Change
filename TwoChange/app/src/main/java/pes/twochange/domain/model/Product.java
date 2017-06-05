@@ -147,4 +147,17 @@ public class Product {
 
         setRating(auxRating < 0 ? 0 : auxRating);
     }
+
+    public void rate(Status state, Integer price) {
+        int auxRating = 50;
+        auxRating -= state.getPenalty();
+
+        if (price != null) {
+            int pricePoints = price / 10;    // 1 point each 500 €/$/?
+            auxRating += pricePoints;
+        }
+        auxRating = auxRating < 0 ? 0 : auxRating;
+        auxRating = auxRating > 100 ? 100 : auxRating;
+        setRating(auxRating);
+    }
 }
