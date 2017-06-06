@@ -17,6 +17,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import pes.twochange.R;
@@ -107,6 +108,15 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                     }
                 }, this
         );
+
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.userRatingBar);
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                ProfileTheme.getInstance(profile).rate(rating);
+                setUpProfile();
+            }
+        });
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -119,7 +129,6 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_editar_perfil:
-                //TODO: abrir activity editar perfil
                 Bundle bundle = new Bundle();
                 bundle.putString("usernameProfile", usernameProfile);
                 fragment = EditProfileFragment.newInstance();
@@ -131,11 +140,9 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 //TODO: desactivar notificaciones
                 return true;
             case R.id.action_block:
-                //TODO: block user
                 SettingsTheme.getInstance(currentUsername).blockUser(profile.getUsername());
                 return true;
             case R.id.action_open_chat:
-                //TODO: open chat
                 Intent chatIntent = new Intent(this,ChatActivity.class);
                 Chat chat = new Chat(currentUsername,profile.getUsername());
                 chatIntent.putExtra("chat",chat);
@@ -192,11 +199,14 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
 
         TextView usernameTextView = (TextView) findViewById(R.id.usernameTxt);
         TextView nameTextView = (TextView) findViewById(R.id.nameTxt);
-        RatingBar userRatingBar = (RatingBar) findViewById(R.id.userRatingBar);
+        TextView numRates = (TextView) findViewById(R.id.ratesNum);
+        TextView rate = (TextView) findViewById(R.id.rate);
 
         usernameTextView.setText(profile.getUsername().toUpperCase());
         nameTextView.setText(profile.fullName());
-        userRatingBar.setRating(profile.getRate());
+        if (numRates.equals(0)) rate.setText(String.valueOf(0));
+        else rate.setText(new DecimalFormat("##.##").format(profile.getRate()));
+        numRates.setText(String.valueOf(profile.getNumRates()));
 
         // TODO fer que nomes es pugui puntuar al user si no s'ha puntuat anteriorment
     }
@@ -216,26 +226,13 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     }
 
     public void update(Profile pro) {
-        ProfileTheme.getInstance(pro).updateProfile(
-                new ProfileResponse() {
-                    @Override
-                    public void success(Profile p) {
-                        setUpProfile();
-                        profile = p;
-                        Log.d(TAG, "UPDATE");
-                        Toast.makeText(ProfileActivity.this, "Profile updated successfully", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void failure(String s) {
-                    }
-                }
-        );
+        profile = pro;
+        setUpProfile();
+        Toast.makeText(ProfileActivity.this, "Profile updated successfully", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void error(String error) {
-        // TODO
     }
 
     @Override

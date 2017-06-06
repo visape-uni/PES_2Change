@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +12,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+
 import pes.twochange.R;
 import pes.twochange.domain.callback.ProfileResponse;
+import pes.twochange.domain.model.ModelAdapter;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.controller.ProfileActivity;
+import pes.twochange.services.DatabaseResponse;
+import pes.twochange.services.Firebase;
 
 /**
  * Created by Victor on 03/06/2017.
@@ -83,20 +89,32 @@ public class EditProfileFragment extends Fragment {
             public void onClick(View v) {
 
                 //TODO: que pasa quan no hi ha num de telefon o adressa?
-                //TODO: FA UPDATE INFINIT
-                profile.setName(nameEditText.getText().toString());
-                profile.setSurname(surnameEditText.getText().toString());
+                profile.setName(nameEditText.getText().toString().trim());
+                profile.setSurname(surnameEditText.getText().toString().trim());
 
-                Profile.PhoneNumber phone = new Profile.PhoneNumber();
-                phone.setNumber(phoneEditText.getText().toString());
-                profile.setPhoneNumber(phone);
+                profile.setPhoneNumber(phoneEditText.getText().toString().trim());
 
-                String address = addressEditText.getText().toString();
-                String zipCode = zicCodeEditText.getText().toString();
-                String city = cityEditText.getText().toString();
-                String state = stateEditText.getText().toString();
-                String country = countryEditText.getText().toString();
+                String address = addressEditText.getText().toString().trim();
+                String zipCode = zicCodeEditText.getText().toString().trim();
+                String city = cityEditText.getText().toString().trim();
+                String state = stateEditText.getText().toString().trim();
+                String country = countryEditText.getText().toString().trim();
                 profile.setAddress(new Profile.Address(address, zipCode, city, state, country));
+
+                ModelAdapter<Profile> model = new ModelAdapter<Profile>() {
+                    @Override
+                    public Class classType() {
+                        return Profile.class;
+                    }
+
+                    @Override
+                    public Profile object() {
+                        return profile;
+                    }
+                };
+
+                Firebase.getInstance().update("profile", profile.getUsername(), model);
+
                 ProfileActivity activity = (ProfileActivity) getActivity();
                 activity.update(profile);
             }
