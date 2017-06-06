@@ -34,7 +34,7 @@
                 style="@style/EditProfileStyle"
                 android:layout_marginTop="8dp"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPassword" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -46,7 +46,7 @@
                 style="@style/EditProfileStyle"
                 android:layout_marginTop="8dp"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPassword" />
         </android.support.design.widget.TextInputLayout>
 
         <Button
@@ -58,7 +58,7 @@
             android:layout_marginRight="24dp"
             android:layout_marginTop="36dp"
             android:background="@drawable/orangeroundedbutton"
-            android:text="Next"
+            android:text="Sign Up"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.517"
