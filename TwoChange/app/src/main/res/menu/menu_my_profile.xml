@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="pes.twochange.presentation.controller.ProfileActivity"
+    app:title="My profile">
+
+    <item
+        android:id="@+id/action_desactivar"
+        android:orderInCategory="100"
+        android:title="Disable notifications"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_editar_perfil"
+        android:orderInCategory="100"
+        android:title="Edit Profile"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_edit_perfil"/>
+
+</menu>

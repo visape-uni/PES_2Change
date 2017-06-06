@@ -36,8 +36,10 @@
         <activity android:name=".presentation.activity.PostAdActivity" />
         <activity android:name=".presentation.activity.EditProfileActivity" />
         <activity android:name=".presentation.activity.LoginActivity" />
+
         <activity android:name=".presentation.activity.AdList2Activity" />
         <activity android:name=".presentation.activity.AdsListsActivity"/>
+
         <activity android:name=".presentation.controller.ExploreActivity" />
         <activity android:name=".presentation.activity.AdActivity" />
         <activity android:name=".presentation.controller.OptionsActivity" />
@@ -64,6 +66,10 @@
             </intent-filter>
         </service>
 
+        <activity
+            android:name=".presentation.controller.ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

@@ -7,6 +7,7 @@
     <color name="PrimaryBackgroundColor">#caedcb</color>
     <color name="BlueColoredButton">#1d7389</color>
     <color name="black">#000</color>
+    <color name="light_grey" >#CCC</color>
     <color name="white">#fff</color>
     <color name="cream">#f0f4c3</color>
     <color name="label_divider">#757575</color>

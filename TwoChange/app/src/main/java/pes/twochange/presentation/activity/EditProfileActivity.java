@@ -129,7 +129,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 uid,
                 name,
                 surname,
-                new Profile.PhoneNumber(null, phone),
+                phone,
                 new Profile.Address(addressStr, zip, city, state, country)
         );
     }

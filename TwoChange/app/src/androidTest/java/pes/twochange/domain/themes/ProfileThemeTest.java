@@ -61,7 +61,7 @@ public class ProfileThemeTest {
                 lw(),
                 sw(),
                 sw(),
-                new Profile.PhoneNumber(34, lw()),
+                lw(),
                 new Profile.Address(
                         sw(),
                         sw(),

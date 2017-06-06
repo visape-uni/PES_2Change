@@ -187,5 +187,7 @@
     <string name="product_description_error_message">Describe your product so people know what are you offering</string>
     <string name="product_price_error_title">Empty price</string>
     <string name="product_price_error_message">Without any price we cannot calculate the rating of the product</string>
+    <string name="rates">Rates</string>
+    <string name="title_activity_profile">ProfileActivity</string>
 
 </resources>

@@ -55,7 +55,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                     break;
 
                 case R.id.profile:
-                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                    intent = new Intent(getApplicationContext(), pes.twochange.presentation.controller.ProfileActivity.class);
+                    startActivity(intent);
                     break;
 
                 case R.id.settings:
