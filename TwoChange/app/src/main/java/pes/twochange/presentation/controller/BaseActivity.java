@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import pes.twochange.R;
 import pes.twochange.presentation.activity.LoginActivity;
 import pes.twochange.presentation.activity.ProfileActivity;
+import pes.twochange.presentation.activity.RecyclerChatActivity;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -51,7 +52,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     break;
 
                 case R.id.chat:
-//                    startActivity(new Intent(getApplicationContext(), ChatActivity.class));
+                    startActivity(new Intent(getApplicationContext(), RecyclerChatActivity.class));
                     break;
 
                 case R.id.profile:

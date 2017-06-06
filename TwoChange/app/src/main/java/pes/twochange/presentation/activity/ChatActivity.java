@@ -44,6 +44,7 @@ import java.io.File;
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Message;
+import pes.twochange.domain.themes.ChatTheme;
 import pes.twochange.services.NotificationSender;
 
 import static android.Manifest.permission.CAMERA;
@@ -83,17 +84,18 @@ public class ChatActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);*/
 
         //Coger chat pasado como extra en el intent
-        Chat chat = (Chat) getIntent().getExtras().getSerializable("chat");
+        final Chat chat = (Chat) getIntent().getExtras().getSerializable("chat");
 
         //User sender
         userSender = chat.getMessageSender();
         //User reciver
         userReciver = chat.getMessageReciver();
 
+        //ChatTheme.getInstance(chat).openChat();
+
         //Suscribirse al topic para recibir notificaciones de chat
         FirebaseMessaging.getInstance()
                 .subscribeToTopic(userReciver);
-
 
         //Instance to Firebase database
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -101,11 +103,11 @@ public class ChatActivity extends AppCompatActivity {
         //Firebase ref to sender's chat
         mFirebaseChatRefSender = mFirebaseDatabase.getReference().child("chats").child(userSender).child(userReciver);
 
-        //Display the messages of the DB into the list view
-        displayChatMessage();
-
         //Firebase ref to reciver's chat
         mFirebaseChatRefReciver = mFirebaseDatabase.getReference().child("chats").child(userReciver).child(userSender);
+
+        //Display the messages of the DB into the list view
+        displayChatMessage();
 
         //OnClickListener to send messages
         sendBtn = (FloatingActionButton)findViewById(R.id.sender_btn);
@@ -122,12 +124,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 if (!content.isEmpty()) {
 
-                    //If the message is not empty send it to the DBs
-                    new Message(content, userSender, userReciver).send();
-
-                    //Send notification for the reciver
-                    NotificationSender n = new NotificationSender();
-                    n.sendNotification(userSender);
+                    ChatTheme.getInstance(chat).sendChatMessage(content);
 
                     //Put the text field empty again
                     messageInput.setText("");
