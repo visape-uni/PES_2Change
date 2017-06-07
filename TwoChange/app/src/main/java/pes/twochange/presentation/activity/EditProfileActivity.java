@@ -129,7 +129,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 null, //The uid is assigned to the profile on the AuthActivity
                 name,
                 surname,
-                new Profile.PhoneNumber(null, phone),
+                phone,
                 new Profile.Address(addressStr, zip, city, state, country)
         );
     }

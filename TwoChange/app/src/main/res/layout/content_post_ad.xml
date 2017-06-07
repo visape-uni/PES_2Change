@@ -190,22 +190,6 @@
                             android:layout_weight="1">
 
                             <EditText
-                                android:id="@+id/yearTxt"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:digits="0123456789"
-                                android:ems="10"
-                                android:hint="@string/ad_year"
-                                android:inputType="number"
-                                android:maxLines="1" />
-                        </android.support.design.widget.TextInputLayout>
-
-                        <android.support.design.widget.TextInputLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1">
-
-                            <EditText
                                 android:id="@+id/priceTxt"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"

@@ -71,7 +71,7 @@ public class NewProfileFragment extends Fragment {
                             null, //The uid is determined on the AuthActivity
                             name,
                             surname,
-                            new Profile.PhoneNumber(null, phone),
+                            phone,
                             new Profile.Address(addressStr, zip, city, state, country)
                     );
                     activity.onSetProfileClick(profile);

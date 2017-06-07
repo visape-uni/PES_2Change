@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_wanted"
+        android:name="@string/wanted"
+        android:title="@string/wanted" />
+    <!--HEART ICON-->
+
+    <item
+        android:id="@+id/navigation_offered"
+        android:name="@string/offered"
+        android:title="@string/offered" />
+    <!--??? ICON-->
+
+    <item
+        android:id="@+id/navigation_matches"
+        android:name="@string/matches"
+        android:title="@string/matches" />
+    <!--??? ICON-->
+
+</menu>

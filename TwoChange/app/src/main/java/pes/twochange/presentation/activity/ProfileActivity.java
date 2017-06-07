@@ -10,11 +10,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import pes.twochange.R;
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.ProfileTheme;
+import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.Config;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
@@ -26,6 +30,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private TextView addressTextView;
     private Button editProfileButton;
     private Button chatButton;
+    private Button blockButton;
     private ProgressBar loadingProgressBar;
 
     private String username;
@@ -33,10 +38,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private Boolean selfProfile;
 
+    private static DatabaseReference db = FirebaseDatabase.getInstance().getReferenceFromUrl("https://change-64bd0.firebaseio.com/").child("users_blocked");
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_profile_1);
 
         username = getIntent().getStringExtra("username");
         selfProfile = username == null;
@@ -54,6 +62,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         editProfileButton = (Button) findViewById(R.id.edit_profile_button);
         chatButton = (Button) findViewById(R.id.chat_button);
         loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progress_bar);
+        blockButton = (Button) findViewById(R.id.block_button);
+
+        blockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SettingsTheme.getInstance(username).blockUser(profile.getUsername());
+            }
+        });
 
         ProfileTheme.getInstance().get(
                 username,
@@ -79,7 +95,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         usernameTextView.setText(username);
 
         if (profile.getPhoneNumber() != null) {
-            phoneTextView.setText(profile.getPhoneNumber().getNumber());
+            phoneTextView.setText(profile.getPhoneNumber());
         } else {
             phoneTextView.setText("No phone number provided");
         }
@@ -93,9 +109,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         if (selfProfile) {
             editProfileButton.setVisibility(View.VISIBLE);
             editProfileButton.setOnClickListener(this);
+            blockButton.setVisibility(View.GONE);
         } else {
             chatButton.setVisibility(View.VISIBLE);
             chatButton.setOnClickListener(this);
+            blockButton.setVisibility(View.VISIBLE);
         }
         loadingProgressBar.setVisibility(View.GONE);
     }

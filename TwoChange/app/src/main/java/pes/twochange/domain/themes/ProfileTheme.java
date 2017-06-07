@@ -1,5 +1,7 @@
 package pes.twochange.domain.themes;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
@@ -119,6 +121,18 @@ public class ProfileTheme implements ModelAdapter<Profile> {
         void listResponse(ArrayList<String> usernames, ArrayList<Profile> profiles);
         void empty();
         void failure(String message);
+    }
+
+    public void rate(float rate) {
+        if (profile.getRate() < 0) {
+            profile.setRate(0);
+        }
+        float actualRate = profile.getRate()*profile.getNumRates();
+        profile.incNumRates();
+        profile.setRate((actualRate+rate)/profile.getNumRates());
+
+        //actualitzar el profile
+        update();
     }
 
 

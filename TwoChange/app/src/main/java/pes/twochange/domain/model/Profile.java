@@ -1,24 +1,33 @@
 package pes.twochange.domain.model;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+
 public class Profile {
 
     private String username;
     private String uid;
     private String name;
     private String surname;
-    private PhoneNumber phoneNumber;
+    private String phoneNumber;
     private Address address;
+    private float rate;
+    private int numRates;
+
 
     public Profile() {
     }
 
-    public Profile(String username, String uid, String name, String surname, PhoneNumber phoneNumber, Address address) {
+    public Profile(String username, String uid, String name, String surname, String phoneNumber, Address address) {
         this.username = username;
         this.uid = uid;
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.rate = -1; //user no rated
+        this.numRates = 0; //0 users rate this user
     }
 
     public String getUsername() {
@@ -53,11 +62,11 @@ public class Profile {
         this.surname = surname;
     }
 
-    public PhoneNumber getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(PhoneNumber phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -67,6 +76,26 @@ public class Profile {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public float getRate() {
+        return this.rate;
+    }
+
+    public void setRate(float rate) {
+        this.rate = rate;
+    }
+
+    public int getNumRates () {
+        return this.numRates;
+    }
+
+    public void setNumRate(int numRates) {
+        this.numRates = numRates;
+    }
+
+    public void incNumRates () {
+        ++this.numRates;
     }
 
     public static class Address {
@@ -135,51 +164,16 @@ public class Profile {
         }
     }
 
-    public static class PhoneNumber {
-
-        private Integer suffix;
-        private String number;
-
-        public PhoneNumber() {
-        }
-
-        public PhoneNumber(Integer suffix, String number) {
-            this.suffix = suffix;
-            this.number = number;
-        }
-
-        public Integer getSuffix() {
-            return suffix;
-        }
-
-        public void setSuffix(Integer suffix) {
-            this.suffix = suffix;
-        }
-
-        public String getNumber() {
-            return number;
-        }
-
-        public void setNumber(String number) {
-            this.number = number;
-        }
-
-        @Override
-        public String toString() {
-            return "(+" + suffix + ") " + number;
-        }
-    }
 
     @Override
     public String toString() {
-        String phoneNumberString = (phoneNumber == null) ? "null" : phoneNumber.toString();
         String addressString = (address == null) ? "null" : address.toString();
         return "Profile{" +
                 "username='" + username + '\'' +
                 ", uid='" + uid + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", phoneNumber='" + phoneNumberString + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", address='" + addressString + '\'' +
                 '}';
     }

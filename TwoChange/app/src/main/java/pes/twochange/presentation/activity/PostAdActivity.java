@@ -1,13 +1,13 @@
 package pes.twochange.presentation.activity;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,7 +16,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,20 +25,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
-import java.io.IOException;
 
 import pes.twochange.R;
+import pes.twochange.domain.callback.AdResponse;
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Image;
 import pes.twochange.domain.model.Profile;
+import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 
@@ -59,20 +54,20 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 400;
     public static final int REQUEST_CAMERA = 401;
 
-    private TextView ratingLbl;
-    private EditText titleTxt, descriptionTxt, yearTxt, priceTxt;
+    private EditText titleTxt, descriptionTxt, priceTxt;
     private Spinner stateSpn, adTypeSpn, adCategorySpn;
     private ImageButton addImageBtn1, addImageBtn2, addImageBtn3, addImageBtn4;
     private LinearLayout itemDetails;
 
     private Ad ad;
 
-    private boolean isEdition = true;
+    private boolean isEdition;
     private boolean hasCameraPermission = false;
     private boolean hasExternalStoragePermission = false;
+
     private View selectedImageButton = null;
 
-    private ProgressDialog pDialog;
+    private AdTheme adTheme = AdTheme.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,21 +76,19 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*  Not happening yet because of problems with camera.
         if (!CAMERA_SAVE_LOCATION.exists()) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_WRITE_EXTERNAL_STORAGE);
         }
-        */
+
+
+        ad = new Ad();
 
         itemDetails = (LinearLayout) findViewById(R.id.itemDetailsLayout);
 
-        ratingLbl = (TextView) findViewById(R.id.ratingLbl);
-
         titleTxt = (EditText) findViewById(R.id.titleTxt);
         descriptionTxt = (EditText) findViewById(R.id.descriptionTxt);
-        yearTxt = (EditText) findViewById(R.id.yearTxt);
         priceTxt = (EditText) findViewById(R.id.priceTxt);
 
         stateSpn = (Spinner) findViewById(R.id.stateSpn);
@@ -107,51 +100,39 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         addImageBtn3 = (ImageButton) findViewById(R.id.addImageBtn3);
         addImageBtn4 = (ImageButton) findViewById(R.id.addImageBtn4);
 
-
-        pDialog = new ProgressDialog(PostAdActivity.this);
-        pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pDialog.setMessage("Loading...");
-        pDialog.setCancelable(false);
-        pDialog.setMax(100);
-
-
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
             isEdition = extras.getBoolean("edition", false);
             String adId = extras.getString("adId", null);
 
-            if (isEdition && adId == null)
-                throw new IllegalStateException("PostAdActivity called for edition but no Ad provided");
-            else if (isEdition) {
-                Ad.findById(adId, new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.i(LOG_TAG, "LOADED AD");
-                        ad = dataSnapshot.getValue(Ad.class);
-                        titleTxt.setText(ad.getTitle());
-                        descriptionTxt.setText(ad.getDescription());
-                        pDialog.dismiss();
-                    }
+            if (isEdition) {
+                if (adId == null)
+                    throw new IllegalStateException("PostAdActivity called for edition but no adId provided");
+                else {
+                    adTheme.findById(adId, new AdResponse() {
+                        @Override
+                        public void onSuccess(Ad newAd) {
+                            ad = newAd;
+                            titleTxt.setText(ad.getTitle());
+                            descriptionTxt.setText(ad.getDescription());
+                        }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        pDialog.dismiss();
-                    }
-                });
-            } else {
+                        @Override
+                        public void onFailure(String error) {
+                            Snackbar.make(titleTxt, "There was a problem loading the ad", Snackbar.LENGTH_LONG).show();
+                        }
+                    });
+
+                    itemDetails.setVisibility(View.GONE);
+                    adCategorySpn.setVisibility(View.GONE);
+                    adTypeSpn.setVisibility(View.GONE);
+
+                    findViewById(R.id.addImgLayout).setVisibility(View.GONE);
+                    findViewById(R.id.addImagesLbl).setVisibility(View.GONE);
+                }
+            } else
                 ad = new Ad();
-                pDialog.dismiss();
-            }
-        }
-
-        if (isEdition) {
-            itemDetails.setVisibility(View.GONE);
-            adCategorySpn.setVisibility(View.GONE);
-            adTypeSpn.setVisibility(View.GONE);
-
-            findViewById(R.id.addImgLayout).setVisibility(View.GONE);
-            findViewById(R.id.addImagesLbl).setVisibility(View.GONE);
         } else {
             ProfileResponse profileResponse = new ProfileResponse() {
                 @Override
@@ -161,36 +142,45 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
 
                 @Override
                 public void failure(String s) {
-                    // Nada
+                    Snackbar.make(titleTxt, "There is no active user to link this ad to", Snackbar.LENGTH_LONG)
+                            .addCallback(new Snackbar.Callback(){
+                                @Override
+                                public void onDismissed(Snackbar snackbar, int event) {
+                                    super.onDismissed(snackbar, event);
+                                    finish();
+                                }
+                            }).show();
                 }
             };
+
             SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
             final String currentUsername = sharedPreferences.getString("username", null);
             ProfileTheme.getInstance().get(currentUsername, profileResponse);
+
+            adTypeSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (position == 1) {
+                        itemDetails.setVisibility(View.GONE);
+                    }
+                    else {
+                        adCategorySpn.setVisibility(View.VISIBLE);
+                        itemDetails.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
+            ad = new Ad();
         }
-
-        adTypeSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 1) {
-                    itemDetails.setVisibility(View.GONE);
-                }
-                else {
-
-                    adCategorySpn.setVisibility(View.VISIBLE);
-                    itemDetails.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    protected void onActivityResult(final int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
@@ -199,47 +189,57 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 case IMAGE_PICK_CODE_3:
                 case IMAGE_PICK_CODE_4:
                     Image selectedImage = ad.getImageAt(requestCode);
-                    if (selectedImage == null) {
-                        selectedImage = new Image(this, intent.getData());
+                    if (intent != null) { // From gallery
+                        selectedImage.setUri(intent.getData());
                         ad.setImageAt(requestCode, selectedImage);
-                    }
+                        setImageToButton(selectedImage, getButtonFromRequestCode(requestCode));
 
-                    try {
-                        ContentUris.parseId(selectedImage.getUri());
-                    } catch (NumberFormatException e) { //  /path/to/image.jpg
-                        //selectedImage.setUri(Uri.parse(selectedImage.getUri().toString()));
-                        selectedImage.setUri(Uri.parse(CAMERA_SAVE_LOCATION.toString() + "/20170415_175859-1148825809.jpg"));
+                    } else { // From camera
+                        final Image finalSelectedImage = selectedImage;
+                        String[] toScan = {finalSelectedImage.getUri().getPath()};
+                        MediaScannerConnection.scanFile(getApplicationContext(), toScan, null,
+                                new MediaScannerConnection.OnScanCompletedListener() {
+                                    @Override
+                                    public void onScanCompleted(String path, Uri uri) {
+                                        if (uri != null) {
+                                            finalSelectedImage.setUri(uri);
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    setImageToButton(finalSelectedImage, getButtonFromRequestCode(requestCode));
+                                                }
+                                            });
+                                        } else {
+                                            String s = "test";
+                                        }
+                                    }
+                                });
                     }
+            }
+        }
+    }
 
-                    Bitmap thumbnail =
-                        MediaStore.Images.Thumbnails.getThumbnail
-                            (
-                                getContentResolver(), ContentUris.parseId(selectedImage.getUri()),
+    private void setImageToButton(Image image, ImageButton button) {
+        Bitmap thumbnail =
+                MediaStore.Images.Thumbnails.getThumbnail
+                        (
+                                getApplicationContext().getContentResolver(), ContentUris.parseId(image.getUri()),
                                 MediaStore.Images.Thumbnails.MICRO_KIND, null
-                            );
+                        );
 
-                    ImageButton button = null;
-                    switch (requestCode) {
-                        case IMAGE_PICK_CODE_1: button = addImageBtn1; break;
-                        case IMAGE_PICK_CODE_2: button = addImageBtn2; break;
-                        case IMAGE_PICK_CODE_3: button = addImageBtn3; break;
-                        case IMAGE_PICK_CODE_4: button = addImageBtn4; break;
-                    }
+        if (button != null) {
+            button.setImageBitmap(thumbnail);
+            button.setColorFilter(Color.argb(0, 0, 0, 0));
+        }
+    }
 
-                    if (button != null) {
-                        button.setImageBitmap(thumbnail);
-                        button.setColorFilter(Color.argb(0, 0, 0, 0));
-                    }
-                    break;
-            }
-        } else if (resultCode == RESULT_CANCELED) {
-            switch (requestCode) {
-                case IMAGE_PICK_CODE_1:
-                case IMAGE_PICK_CODE_2:
-                case IMAGE_PICK_CODE_3:
-                case IMAGE_PICK_CODE_4:
-                    break;
-            }
+    private ImageButton getButtonFromRequestCode(int requestCode) {
+        switch (requestCode) {
+            case IMAGE_PICK_CODE_1: return addImageBtn1;
+            case IMAGE_PICK_CODE_2: return addImageBtn2;
+            case IMAGE_PICK_CODE_3: return addImageBtn3;
+            case IMAGE_PICK_CODE_4: return addImageBtn4;
+            default: return null;
         }
     }
 
@@ -248,33 +248,52 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
         requestPermissions();
     }
 
-    public void publish(View v) {
+    public void publish(final View v) {
         ad.setTitle(titleTxt.getText().toString().toUpperCase());
         ad.setDescription(descriptionTxt.getText().toString());
 
-        if (!isEdition) {
-            Integer year = yearTxt.getText().length() == 0 ? null : Integer.valueOf(yearTxt.getText().toString());
+        final Snackbar.Callback successCallback = new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+                super.onDismissed(snackbar, event);
+                finish();
+            }
+        };
+
+        if (isEdition) {
+            adTheme.update(ad, new AdResponse() {
+                @Override
+                public void onSuccess(Ad ad) {
+                    Snackbar.make(v, "Ad successfully updated!", Snackbar.LENGTH_SHORT)
+                            .addCallback(successCallback)
+                            .show();
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    Snackbar.make(v, "There was an error updating the ad. Please try again.", Snackbar.LENGTH_LONG).show();
+                }
+            });
+        } else {
             Integer price = priceTxt.getText().length() == 0 ? null : Integer.valueOf(priceTxt.getText().toString());
             Ad.ProductState state = Ad.ProductState.from(stateSpn.getSelectedItem().toString());
 
-            ad.rate(state, year, price);
+            ad.rate(state, price);
             ad.setCategory(adCategorySpn.getSelectedItem().toString());
-        }
 
+            adTheme.save(ad, new AdResponse() {
+                @Override
+                public void onSuccess(Ad ad) {
+                    Snackbar.make(v, "Your ad has been published!", Snackbar.LENGTH_SHORT)
+                            .addCallback(successCallback)
+                            .show();
+                }
 
-        try {
-            if (isEdition) {
-                ad.update();
-                Snackbar.make(v, "Ad successfully saved!", Snackbar.LENGTH_LONG).show();
-
-            } else {
-                ad.save();
-                Snackbar.make(v, "Your ad has been published!", Snackbar.LENGTH_LONG).show();
-            }
-            finish();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Snackbar.make(v, "There was an error publishing the ad. Please try again.", Snackbar.LENGTH_LONG).show();
+                @Override
+                public void onFailure(String error) {
+                    Snackbar.make(v, "There was an error publishing the ad. Please try again.", Snackbar.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
@@ -282,62 +301,56 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
     public void onImageSourceSelected(ImagePickDialog.ImageSource source, int imageButtonTag) {
         Intent pickImage = null;
         switch (source) {
-            case GALLERY:
+            case GALLERY: {
+                ad.setImageAt(imageButtonTag, new Image(this, Image.generateName()));
                 pickImage = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 break;
-            case CAMERA:
-                try {
-                    File photo = File.createTempFile(Image.generateName(), ".jpg", CAMERA_SAVE_LOCATION);
-                    Uri photoURI = FileProvider.getUriForFile(this,
-                            "com.twochange.fileprovider",
-                            photo);
+            }
+            case CAMERA: {
+                Image image = new Image(this, Image.generateName());
+                image.setFormat(Image.Format.JPEG);
+                File photo = new File(CAMERA_SAVE_LOCATION, image.getFirebaseName());
+                //File photo = File.createTempFile(Image.generateName(), ".jpg", CAMERA_SAVE_LOCATION);
+                /*Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.twochange.fileprovider",
+                        photo);*/
+                Uri photoURI = Uri.fromFile(photo);
+                image.setUri(photoURI);
 
-                    ad.setImageAt(imageButtonTag, new Image(this, photoURI));
+                ad.setImageAt(imageButtonTag, image);
 
-                    pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    pickImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                pickImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 break;
+            }
         }
-        int code = -1;
-        switch (imageButtonTag) {
-            case 0: code = IMAGE_PICK_CODE_1; break;
-            case 1: code = IMAGE_PICK_CODE_2; break;
-            case 2: code = IMAGE_PICK_CODE_3; break;
-            case 3: code = IMAGE_PICK_CODE_4; break;
-        }
-        startActivityForResult(pickImage, code);
+        startActivityForResult(pickImage, imageButtonTag);
     }
 
     private void requestPermissions() {
         if (android.os.Build.VERSION.SDK_INT >= 23) {
             int permissionCheck;
 
-            permissionCheck = ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.CAMERA);
-            if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+            permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+            hasCameraPermission = permissionCheck == PackageManager.PERMISSION_GRANTED;
+            if (!hasCameraPermission)
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.CAMERA},
                         REQUEST_CAMERA);
-            } else hasCameraPermission = true;
 
-            permissionCheck = ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+            permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            hasExternalStoragePermission = permissionCheck == PackageManager.PERMISSION_GRANTED;
+            if (!hasExternalStoragePermission)
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUEST_WRITE_EXTERNAL_STORAGE);
-            } else hasExternalStoragePermission = true;
 
-            if (hasCameraPermission && hasExternalStoragePermission) {
+            if (hasCameraPermission && hasExternalStoragePermission)
                 showImagePickDialog();
-            }
-        } else {
+
+        } else
             showImagePickDialog();
-        }
     }
 
     @Override
@@ -362,9 +375,8 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                     Log.i(LOG_TAG, "Created directory: " + CAMERA_SAVE_LOCATION.toString());
             }
 
-            if (hasCameraPermission && hasExternalStoragePermission) {
+            if (hasCameraPermission && hasExternalStoragePermission)
                 showImagePickDialog();
-            }
         }
     }
 

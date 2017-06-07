@@ -1,23 +1,19 @@
 package pes.twochange.presentation.controller;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
+import android.support.v4.app.Fragment;
 
-import com.squareup.picasso.Picasso;
+import java.util.ArrayList;
 
 import pes.twochange.R;
-import pes.twochange.services.ImageManager;
+import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.themes.AdTheme;
+import pes.twochange.presentation.fragment.SearchProductsListFragment;
 
-public class ExploreActivity extends BaseActivity {
+public class ExploreActivity extends BaseActivity
+        implements SearchProductsListFragment.OnFragmentInteractionListener {
 
-    private ImageView image1;
-    private ImageView image2;
+    private Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,74 +22,9 @@ public class ExploreActivity extends BaseActivity {
 
         toolbar.setTitle(R.string.explore);
 
-        image1 = (ImageView) findViewById(R.id.image1);
+        fragment = SearchProductsListFragment.newInstance();
 
-        // interestellar.jpg
-        ImageManager.getInstance().getDownloadUrl(
-                "interestellar.jpg",
-                new ImageManager.UrlResponse() {
-                    @Override
-                    public void onSuccess(String url) {
-                        Picasso.with(getApplicationContext()).load(url).into(image1);
-                    }
-
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        Log.wtf("HOTFIX", errorMessage);
-                        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-
-        image2 = (ImageView) findViewById(R.id.image2);
-
-        // test/tom.jpg
-        ImageManager.getInstance().getDownloadUrl(
-                "test/tom.jpg",
-                new ImageManager.UrlResponse() {
-                    @Override
-                    public void onSuccess(String url) {
-                        Picasso.with(getApplicationContext()).load(url).into(image2);
-                    }
-
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        Log.wtf("HOTFIX", errorMessage);
-                        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-        Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        image1.setDrawingCacheEnabled(true);
-                        image1.buildDrawingCache();
-                        Bitmap bitmap = image1.getDrawingCache();
-
-                        String path = "test/" + System.currentTimeMillis() + ".jpg";
-
-                        ImageManager.getInstance().storeImage(
-                                path,
-                                bitmap,
-                                new ImageManager.UploadResponse() {
-                                    @Override
-                                    public void onSuccess(@Nullable String url) {
-                                        Toast.makeText(ExploreActivity.this, "SUCCESS", Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    @Override
-                                    public void onFailure(String errorMessage) {
-                                        Toast.makeText(ExploreActivity.this, "FAILURE: " + errorMessage, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                        );
-                    }
-                }
-        );
+        replaceFragment(R.id.explore_frame, fragment, "main_list");
 
     }
 
@@ -101,4 +32,111 @@ public class ExploreActivity extends BaseActivity {
     protected int currentMenuItemIndex() {
         return EXPLORE_ACTIVITY;
     }
+
+    private ArrayList<Ad> productsList = new ArrayList<>();
+
+    @Override
+    public void loadProductList() {
+        // TODO
+        // Descarga todos los productos de Firebase sin importar ninguna libreria ni clase de
+        // firebase aqui. Esto es la capa de presentación, firebase es la de datos. Hay que pasar
+        // por un Theme/Controlador/etc.
+        //
+        // TODO
+        // Download all the products from Firebase without importing any Firebase library neither
+        // class here. This is the presentation layer, Firebase is data layer. You have to give the
+        // data through a Theme/Controller/etc.
+        AdTheme.getInstance().getAllAds(
+                new AdTheme.ListResponse() {
+                    @Override
+                    public void listResponse(ArrayList<Ad> productItems) {
+                        productsList = productItems;
+                        if (fragment != null && fragment instanceof SearchProductsListFragment) {
+                            ((SearchProductsListFragment) fragment).display(productsList);
+                        }
+                    }
+                },
+                new AdTheme.ErrorResponse() {
+                    @Override
+                    public void error(String error) {
+
+                    }
+                }
+        );
+    }
+
+    private ArrayList<Ad> searchResultList = new ArrayList<>();
+
+    @Override
+    public void searchProducts(String query) {
+        if (productsList != null && productsList.size() > 0) {
+            searchResultList = new ArrayList<>();
+            String upperCaseQuery = query.toUpperCase();
+            for (Ad product : productsList) {
+                String upperCaseTitle = product.getTitle().toUpperCase();
+                String upperCaseDescription = product.getDescription().toUpperCase();
+                if (upperCaseTitle.contains(upperCaseQuery) ||
+                        upperCaseDescription.contains(upperCaseQuery)) {
+                    searchResultList.add(product);
+                }
+            }
+            if (fragment != null && fragment instanceof SearchProductsListFragment) {
+                ((SearchProductsListFragment) fragment).display(searchResultList);
+            }
+        } else {
+            // TODO
+            // Descarga productos que contenga $query de Firebase
+            //
+            // TODO
+            // Download product that contain $query from Firebase
+        }
+    }
+
+    private ArrayList<Ad> categoryResultList = new ArrayList<>();
+
+    private void categoryFilter(String category) {
+        if (productsList != null && productsList.size() > 0) {
+            categoryResultList = new ArrayList<>();
+            for (Ad product : productsList) {
+                String prodCategory = product.getCategory();
+                if (category.equals(prodCategory)) categoryResultList.add(product);
+            }
+            if (fragment != null && fragment instanceof SearchProductsListFragment) {
+                ((SearchProductsListFragment) fragment).display(categoryResultList);
+            }
+        } else {
+            // TODO
+            // Descarga productos que contenga $query de Firebase
+            //
+            // TODO
+            // Download product that contain $query from Firebase
+        }
+    }
+
+    private ArrayList<Ad> rateResultList = new ArrayList<>();
+
+    private void rateFilter(int min, int max) {
+        if (productsList != null && productsList.size() > 0) {
+            rateResultList = new ArrayList<>();
+            for (Ad product : productsList) {
+                int prodRate = product.getRating();
+                if ((prodRate >= min) && (prodRate <= max)) rateResultList.add(product);
+            }
+            if (fragment != null && fragment instanceof SearchProductsListFragment) {
+                ((SearchProductsListFragment) fragment).display(rateResultList);
+            }
+        } else {
+            // TODO
+            // Descarga productos que contenga $query de Firebase
+            //
+            // TODO
+            // Download product that contain $query from Firebase
+        }
+    }
+
+    @Override
+    public void onRecyclerViewItemClickListener(int position) {
+
+    }
+
 }
