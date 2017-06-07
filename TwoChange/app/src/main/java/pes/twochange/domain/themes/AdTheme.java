@@ -244,25 +244,25 @@ public class AdTheme {
         ).with("title", productName);
     }
 
-    public void getWantedList(String username, final ListResponse response, final ErrorResponse error) {
+    public void getWantedList(String username, final ProductListResponse response, final ErrorResponse error) {
         Firebase.getInstance().get(
                 "lists/" + username + "/wanted",
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
-                        ArrayList<Ad> adArrayList = new ArrayList<>();
-                        GenericTypeIndicator<HashMap<String, Ad>> typeIndicator =
-                                new GenericTypeIndicator<HashMap<String, Ad>>() {};
-                        HashMap<String, Ad> firebase = dataSnapshot.getValue(typeIndicator);
+                        ArrayList<Product> productArrayList = new ArrayList<>();
+                        GenericTypeIndicator<HashMap<String, Product>> typeIndicator =
+                                new GenericTypeIndicator<HashMap<String, Product>>() {};
+                        HashMap<String, Product> firebase = dataSnapshot.getValue(typeIndicator);
                         if (firebase != null) {
-                            adArrayList = new ArrayList<>(firebase.values());
+                            productArrayList = new ArrayList<>(firebase.values());
                         }
-                        response.listResponse(adArrayList);
+                        response.listResponse(productArrayList);
                     }
 
                     @Override
                     public void empty() {
-                        response.listResponse(new ArrayList<Ad>());
+                        response.listResponse(new ArrayList<Product>());
                     }
 
                     @Override
@@ -273,14 +273,14 @@ public class AdTheme {
         ).list();
     }
 
-    public void getOfferedList(final String username, final ListResponse response, final ErrorResponse error) {
-        getAllAds(
-                new ListResponse() {
+    public void getOfferedList(final String username, final ProductListResponse response, final ErrorResponse error) {
+        getAllProducts(
+                new ProductListResponse() {
                     @Override
-                    public void listResponse(ArrayList<Ad> productItems) {
-                        ArrayList<Ad> offered = new ArrayList<Ad>();
-                        for (Ad product: productItems) {
-                            if (product.getUserName().equals(username)) {
+                    public void listResponse(ArrayList<Product> productItems) {
+                        ArrayList<Product> offered = new ArrayList<>();
+                        for (Product product: productItems) {
+                            if (product.getUsername().equals(username)) {
                                 offered.add(product);
                             }
                         }

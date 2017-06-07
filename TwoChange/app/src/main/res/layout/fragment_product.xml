@@ -1,0 +1,129 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    tools:context="pes.twochange.presentation.fragment.ProductFragment">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/image_pager"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+    <pes.twochange.presentation.view.GreenViewPagerIndicator
+        android:id = "@+id/indicator"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        app:delimiterSize = "8dp"
+        app:itemSize = "8dp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center_horizontal" />
+
+
+    <TextView
+        android:id="@+id/product_name"
+        android:layout_width="match_parent"
+        android:minHeight="36dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:textStyle="bold"
+        android:textColor="#888888"
+        android:text="@string/category_hint_caps" />
+
+    <TextView
+        android:id="@+id/product_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_marginBottom="24dp"
+        android:textColor="@color/black"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp"
+        android:textStyle="bold"
+        android:textColor="#888888"
+        android:text="@string/description_hint_caps" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:id="@+id/product_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/black"
+            android:layout_toStartOf="@+id/product_rating"/>
+
+        <TextView
+            android:id="@+id/product_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="32sp"
+            android:textColor="@color/black"
+            android:layout_marginStart="8dp"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/user_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <ImageView
+            android:id="@+id/user_image"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/placeholder"
+            android:layout_alignParentStart="true"/>
+
+        <TextView
+            android:id="@+id/user_username"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_toEndOf="@+id/user_image"
+            android:layout_toStartOf="@+id/user_action" />
+
+        <Button
+            android:id="@+id/user_action"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:backgroundTint="@color/colorAccent"
+            android:layout_alignParentEnd="true"
+            android:text="@string/chat_button"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            tools:targetApi="lollipop" />
+
+    </RelativeLayout>
+
+</LinearLayout>

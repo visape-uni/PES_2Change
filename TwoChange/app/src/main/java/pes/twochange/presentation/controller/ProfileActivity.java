@@ -20,8 +20,8 @@ import java.util.ArrayList;
 
 import pes.twochange.R;
 import pes.twochange.domain.callback.ProfileResponse;
-import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Chat;
+import pes.twochange.domain.model.Product;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.domain.themes.ProfileTheme;
@@ -43,8 +43,8 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     private Profile profile;
     private Fragment fragment;
 
-    private ArrayList<Ad> wantedList;
-    private ArrayList<Ad> offeredList;
+    private ArrayList<Product> wantedList;
+    private ArrayList<Product> offeredList;
 
     private static final int WANTED = 1;
     private static final int OFFERED = 2;
@@ -89,9 +89,9 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
 
         AdTheme.getInstance().getWantedList(
                 usernameProfile,
-                new AdTheme.ListResponse() {
+                new AdTheme.ProductListResponse() {
                     @Override
-                    public void listResponse(ArrayList<Ad> wantedItems) {
+                    public void listResponse(ArrayList<Product> wantedItems) {
                         wantedList = wantedItems;
                         numWanted = wantedList.size();
                         setUpWanted();
@@ -101,9 +101,9 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
 
         AdTheme.getInstance().getOfferedList(
                 usernameProfile,
-                new AdTheme.ListResponse() {
+                new AdTheme.ProductListResponse() {
                     @Override
-                    public void listResponse(ArrayList<Ad> offeredItems) {
+                    public void listResponse(ArrayList<Product> offeredItems) {
                         offeredList = offeredItems;
                         numOffered = offeredList.size();
                         setUpOffered();
@@ -174,9 +174,9 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 currentFragment = OFFERED;
                 AdTheme.getInstance().getOfferedList(
                 usernameProfile,
-                        new AdTheme.ListResponse() {
+                        new AdTheme.ProductListResponse() {
                             @Override
-                            public void listResponse(ArrayList<Ad> offeredItems) {
+                            public void listResponse(ArrayList<Product> offeredItems) {
                                 offeredList = offeredItems;
                                 numOffered = offeredList.size();
                                 setUpOffered();
@@ -190,9 +190,9 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 currentFragment = WANTED;
                 AdTheme.getInstance().getWantedList(
                         usernameProfile,
-                        new AdTheme.ListResponse() {
+                        new AdTheme.ProductListResponse() {
                             @Override
-                            public void listResponse(ArrayList<Ad> wantedItems) {
+                            public void listResponse(ArrayList<Product> wantedItems) {
                                 wantedList = wantedItems;
                                 numWanted = wantedList.size();
                                 setUpWanted();

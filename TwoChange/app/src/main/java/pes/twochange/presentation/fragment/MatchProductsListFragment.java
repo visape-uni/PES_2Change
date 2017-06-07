@@ -25,7 +25,7 @@ public class MatchProductsListFragment extends ProductsListFragment {
     }
 
     @Override
-    protected void buildRecyclerView(@NonNull View view) {
+    public void buildRecyclerView(@NonNull View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
         adapter = new RecyclerViewMatchAdapter(getContext(), new ArrayList<Ad>(), activity);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
