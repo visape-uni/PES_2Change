@@ -1,5 +1,6 @@
 package pes.twochange.presentation.controller;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ public class AuthActivity extends AppCompatActivity implements
     private static final String TAG = "New User Fragment";
     private GoogleApiClient googleApiClient;
     private FragmentManager fragmentManager;
+    private static Context context;
     private Fragment fragment;
 
     @Override
@@ -56,6 +58,7 @@ public class AuthActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
         fragmentManager = getSupportFragmentManager();
+        context = getApplicationContext();
 
         //Whether the user automatically logged in has a profile or not
         if (getIntent().getExtras().getString("startPoint").equals("LOGIN")) {
@@ -251,5 +254,9 @@ public class AuthActivity extends AppCompatActivity implements
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+    public static Context getContext(){
+        return context;
     }
 }
