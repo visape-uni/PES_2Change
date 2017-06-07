@@ -217,53 +217,43 @@ public class AuthActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onSetProfileClick(Profile profile) {
-        this.newProfile = profile;
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("profile").child(profile.getUsername());
-        ref.addListenerForSingleValueEvent(setProfileValueListener);
-    }
+    public void onSetProfileClick(final Profile profile) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        ref.child("profile").child(profile.getUsername()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Toast.makeText(getApplication(), "There is already a user with this username"
+                            , Toast.LENGTH_LONG).show();
+                } else {
+                    mAuth = FirebaseAuth.getInstance();
+                    final String uid = mAuth.getCurrentUser().getUid();
+                    profile.setUid(uid);
+                    ProfileTheme.getInstance(profile).updateProfile(
+                            new ProfileResponse() {
+                                @Override
+                                public void success(Profile profile) {
+                                    SharedPreferences.Editor editor = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE).edit();
+                                    editor.putString("username", profile.getUsername());
+                                    editor.putString("uid", uid);
+                                    editor.apply();
+                                    startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
+                                    finish();
+                                }
+                                @Override
+                                public void failure(String s) {
+                                    Toast.makeText(getApplication(), "Internal Error", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                    );
 
-    private Profile newProfile = new Profile();
-
-    private ValueEventListener setProfileValueListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            if (dataSnapshot.exists()) {
-                Toast.makeText(getApplication(), "There is already a user with this username"
-                        , Toast.LENGTH_LONG).show();
-            } else {
-                mAuth = FirebaseAuth.getInstance();
-                final String uid = mAuth.getCurrentUser().getUid();
-                newProfile.setUid(uid);
-                ProfileTheme.getInstance(newProfile).updateProfile(setProfileResponse);
+                }
             }
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-
-        }
-    };
-
-
-    private ProfileResponse setProfileResponse = new ProfileResponse() {
-        @Override
-        public void success(Profile profile) {
-
-                SharedPreferences.Editor editor = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE).edit();
-                editor.putString("username", profile.getUsername());
-                editor.putString("uid", profile.getUid());
-                editor.apply();
-                Log.d(TAG, "creant explore activity");
-                startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
-                finish();
-        }
-
-        @Override
-        public void failure(String s) {
-            Toast.makeText(getApplication(), "Internal Error", Toast.LENGTH_LONG).show();
-        }
-    };
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
 
     public static Context getContext(){
         return context;
