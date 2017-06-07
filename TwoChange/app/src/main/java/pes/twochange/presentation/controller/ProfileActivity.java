@@ -141,7 +141,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         }
         else {
             toolbar = (Toolbar) findViewById(R.id.toolbar);
-            toolbar.setTitle(usernameProfile + " profile");
+            toolbar.setTitle("User profile");
             getMenuInflater().inflate(R.menu.menu_user_profile, menu);
         }
         return true;

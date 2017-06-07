@@ -21,7 +21,7 @@ import pes.twochange.presentation.activity.RecyclerChatActivity;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private final static int[] MENU_IDs = { R.id.explore, R.id.lists, R.id.chat, R.id.profile, R.id.settings,
+    private final static int[] MENU_IDs = { R.id.explore, R.id.lists, R.id.chat, R.id.profile, R.id.searchProfile,
             R.id.help, R.id.about, R.id.logout };
 
 //    protected final static String FRAGMENT_EXTRA = "fragment-extra-int";
@@ -29,7 +29,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected final static int AD_ACTIVITY = 1;
     protected final static int CHAT_ACTIVITY = 2;
     protected final static int PROFILE_ACTIVITY = 3;
-    protected final static int SETTINGS_ACTIVITY = 4;
+    protected final static int SEARCH_PROFILE_ACTIVITY = 4;
     protected final static int HELP_ACTIVITY = 5;
     protected final static int ABOUT_ACTIVITY = 6;
 
@@ -59,22 +59,20 @@ public abstract class BaseActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
 
-                case R.id.settings:
-                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                    intent.putExtra("item", 4);
-                    startActivity(intent);
+                case R.id.searchProfile:
+                    startActivity(new Intent(getApplicationContext(), SearchProfileActivity.class));
                     break;
 
                 case R.id.help:
-                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                    /*intent = new Intent(getApplicationContext(), OptionsActivity.class);
                     intent.putExtra("item", 5);
-                    startActivity(intent);
+                    startActivity(intent);*/
                     break;
 
                 case R.id.about:
-                    intent = new Intent(getApplicationContext(), OptionsActivity.class);
+                    /*intent = new Intent(getApplicationContext(), OptionsActivity.class);
                     intent.putExtra("item", 6);
-                    startActivity(intent);
+                    startActivity(intent);*/
                     break;
 
                 case R.id.logout:
