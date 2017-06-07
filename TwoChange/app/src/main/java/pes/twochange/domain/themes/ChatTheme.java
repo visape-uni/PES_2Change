@@ -54,12 +54,12 @@ public class ChatTheme {
             public void success(Profile p) {
                 String message = "";
                 Profile.Address address = p.getAddress();
-                Profile.PhoneNumber phonenumber = p.getPhoneNumber();
+                String phonenumber = p.getPhoneNumber();
                 if(address != null) {
                     message = "Address: " + address.toString();
                 }
                 if (phonenumber != null) {
-                    message += "\n" + "Phone Number: " + phonenumber.toString();
+                    message += "\n" + "Phone Number: " + phonenumber;
                 }
                 if(address != null || phonenumber != null) {
                     ChatTheme.getInstance(chat).sendChatMessage(message);

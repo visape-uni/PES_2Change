@@ -192,7 +192,6 @@ public class AuthActivity extends AppCompatActivity implements
                     try {
                         throw task.getException();
                     } catch(FirebaseAuthWeakPasswordException e) {
-                        //TODO Fix: Quan hauria de saltar aquesta excepcio, salta la Unknown
                         EditText passText = (EditText)findViewById(R.id.passField);
                         EditText repePassText = (EditText)findViewById(R.id.repeatPassField);
                         Toast.makeText(AuthActivity.this, "Error: Password must be larger", Toast.LENGTH_LONG).show();
@@ -210,7 +209,7 @@ public class AuthActivity extends AppCompatActivity implements
                         mailText.setText("");
                         mailText.requestFocus();
                     } catch(Exception e) {
-                        Toast.makeText(AuthActivity.this, "Unknown Error: Check your credentials", Toast.LENGTH_LONG).show();
+                        Toast.makeText(AuthActivity.this, "Internal error. Try later", Toast.LENGTH_LONG).show();
                     }
                 }
             }
