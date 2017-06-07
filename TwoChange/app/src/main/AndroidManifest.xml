@@ -62,7 +62,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".presentation.controller.AuthActivity"></activity>
+        <activity android:name=".presentation.controller.AuthActivity" />
+        <activity android:name=".presentation.activity.AboutActivity"></activity>
     </application>
 
 </manifest>
