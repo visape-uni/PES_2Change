@@ -20,7 +20,7 @@ public class Finder {
 
     // Get the entire list
     public void list() {
-        ref.addValueEventListener(
+        ref.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -37,7 +37,7 @@ public class Finder {
 
     // Get one element with that ID (Firebase only allows one)
     public void byId(final String id) {
-        ref.addValueEventListener(
+        ref.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
