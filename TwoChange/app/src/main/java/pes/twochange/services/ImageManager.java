@@ -15,6 +15,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 
+import pes.twochange.R;
+
 public class ImageManager {
 
     private static final ImageManager ourInstance = new ImageManager();
@@ -32,7 +34,8 @@ public class ImageManager {
                 new UrlResponse() {
                     @Override
                     public void onSuccess(String url) {
-                        Picasso.with(context).load(url).into(imageView);
+                        Picasso.with(context).load(url).placeholder(R.drawable.progress_animation)
+                                .error(R.mipmap.placeholder).into(imageView);
                     }
 
                     @Override

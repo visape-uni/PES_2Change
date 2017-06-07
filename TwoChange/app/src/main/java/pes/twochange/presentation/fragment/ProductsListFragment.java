@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import pes.twochange.R;
-import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Product;
 import pes.twochange.presentation.adapter.RecyclerViewProductAdapter;
 import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
 
@@ -38,9 +38,10 @@ public class ProductsListFragment extends Fragment {
         return view;
     }
 
-    protected void buildRecyclerView(@NonNull View view) {
+    public void buildRecyclerView(@NonNull View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
-        productAdapter = new RecyclerViewProductAdapter(getContext(), new ArrayList<Ad>(), activity);
+        productAdapter = new RecyclerViewProductAdapter(getContext(), new ArrayList<Product>(),
+                activity);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(productAdapter);
@@ -64,13 +65,14 @@ public class ProductsListFragment extends Fragment {
         activity = null;
     }
 
-    public void display(ArrayList<Ad> products) {
-        if (products.size() == 0) {
-            // TODO empty "error"
+    public void display(ArrayList<Product> products) {
+        if (recyclerView != null) {
+            if (products.size() == 0) {
+                // TODO empty "error"
+            }
+            productAdapter = new RecyclerViewProductAdapter(getContext(), products, activity);
+            recyclerView.setAdapter(productAdapter);
         }
-        productAdapter.setProductArrayList(products);
-        productAdapter.notifyDataSetChanged();
-        recyclerView.setAdapter(productAdapter);
     }
 
     public interface OnFragmentInteractionListener  extends OnRecyclerViewItemClickListener {

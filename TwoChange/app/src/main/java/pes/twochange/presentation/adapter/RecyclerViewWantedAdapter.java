@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import pes.twochange.R;
-import pes.twochange.domain.model.Ad;
+import pes.twochange.domain.model.Product;
 import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
 import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
@@ -17,10 +17,10 @@ public class RecyclerViewWantedAdapter extends RecyclerView.Adapter<RecyclerView
 
     protected OnRecyclerViewItemClickListener listener;
     protected OnRecyclerViewItemLongClickListener longListener;
-    private ArrayList<Ad> products;
+    private ArrayList<Product> products;
 
     public RecyclerViewWantedAdapter(
-            ArrayList<Ad> products,
+            ArrayList<Product> products,
             OnRecyclerViewItemClickListener listener,
             OnRecyclerViewItemLongClickListener longListener
     ) {
@@ -56,8 +56,8 @@ public class RecyclerViewWantedAdapter extends RecyclerView.Adapter<RecyclerView
                     }
                 }
         );
-        Ad product = products.get(position);
-        holder.title.setText(product.getTitle());
+        Product product = products.get(position);
+        holder.title.setText(product.getName());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class RecyclerViewWantedAdapter extends RecyclerView.Adapter<RecyclerView
         return (products != null) ? products.size() : 0;
     }
 
-    public void setProductArrayList(ArrayList<Ad> products) {
+    public void setProductArrayList(ArrayList<Product> products) {
         this.products = products;
     }
 

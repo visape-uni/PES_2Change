@@ -50,7 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     break;
 
                 case R.id.chat:
-//                    startActivity(new Intent(getApplicationContext(), ChatActivity.class));
+                    startActivity(new Intent(getApplicationContext(), ChatActivity.class));
                     break;
 
                 case R.id.profile:

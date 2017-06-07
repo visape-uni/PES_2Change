@@ -3,7 +3,6 @@ package pes.twochange.presentation.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.themes.SettingsTheme;
-import pes.twochange.presentation.activity.ChatActivity;
+import pes.twochange.presentation.controller.ChatActivity;
 
 /**
  * Created by Adrian on 07/04/2017.

@@ -69,12 +69,14 @@ public class EditProfileFragment extends Fragment {
                         profile = p;
                         nameEditText.setText(profile.getName());
                         surnameEditText.setText(profile.getSurname());
-                        phoneEditText.setText(profile.getPhoneNumber().toString());
-                        addressEditText.setText(profile.getAddress().getAddress());
-                        zicCodeEditText.setText(profile.getAddress().getZipCode());
-                        cityEditText.setText(profile.getAddress().getTown());
-                        stateEditText.setText(profile.getAddress().getState());
-                        countryEditText.setText(profile.getAddress().getCountry());
+                        if (profile.getPhoneNumber() != null) phoneEditText.setText(profile.getPhoneNumber().toString());
+                        if (profile.getAddress() != null) {
+                            addressEditText.setText(profile.getAddress().getAddress());
+                            zicCodeEditText.setText(profile.getAddress().getZipCode());
+                            cityEditText.setText(profile.getAddress().getTown());
+                            stateEditText.setText(profile.getAddress().getState());
+                            countryEditText.setText(profile.getAddress().getCountry());
+                        }
                     }
 
                     @Override

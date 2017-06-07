@@ -3,6 +3,10 @@ package pes.twochange.domain.themes;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -123,13 +127,36 @@ public class ProfileTheme implements ModelAdapter<Profile> {
         void failure(String message);
     }
 
-    public void rate(float rate) {
+    public void isRated(String userRating, final DatabaseResponse callback) {
+        DatabaseReference mFirebaseRates = FirebaseDatabase.getInstance().getReference().child("rates").child(profile.getUsername()).child(userRating);
+
+        mFirebaseRates.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null) {
+                    callback.empty();
+                } else {
+                    callback.success(dataSnapshot);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.failure(databaseError.toString());
+            }
+        });
+    }
+
+    public void rate(float rate, String userRating) {
         if (profile.getRate() < 0) {
             profile.setRate(0);
         }
         float actualRate = profile.getRate()*profile.getNumRates();
         profile.incNumRates();
         profile.setRate((actualRate+rate)/profile.getNumRates());
+
+        DatabaseReference mFirebaseRates = FirebaseDatabase.getInstance().getReference().child("rates").child(profile.getUsername()).child(userRating);
+        mFirebaseRates.setValue(rate);
 
         //actualitzar el profile
         update();
