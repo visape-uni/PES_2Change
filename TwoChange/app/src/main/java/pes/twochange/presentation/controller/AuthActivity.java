@@ -119,7 +119,6 @@ public class AuthActivity extends AppCompatActivity implements
     // user has an attached user profile or not
     @Override
     public void main() {
-        Log.d (TAG, "Ey6");
         startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
         finish();
     }
@@ -152,7 +151,6 @@ public class AuthActivity extends AppCompatActivity implements
     //Login with Google button pressed listener
     @Override
     public void onLoginWithGoogle() {
-        Log.d (TAG, "Ey1");
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -161,7 +159,6 @@ public class AuthActivity extends AppCompatActivity implements
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
-                Log.d (TAG, "Ey2");
                 AuthTheme.getInstance().login(result.getSignInAccount());
             } else {
                 // TODO Control d'errors

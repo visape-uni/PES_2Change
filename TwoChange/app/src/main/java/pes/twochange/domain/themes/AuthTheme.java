@@ -55,7 +55,6 @@ public class AuthTheme implements FirebaseAuth.AuthStateListener, ProfileRespons
 
     @Override
     public void success(Profile profile) {
-        Log.d ("AuthActivity", "Ey6");
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("username", profile.getUsername());
         editor.putString("uid", uid);
@@ -80,7 +79,6 @@ public class AuthTheme implements FirebaseAuth.AuthStateListener, ProfileRespons
         if (task.isSuccessful()) {
             uid = task.getResult().getUser().getUid();
             ProfileTheme.getInstance().find(uid, this);
-            Log.d ("AuthActivity", "Ey4");
         } else {
             Toast.makeText(AuthActivity.getContext(), "Wrong mail or password", Toast.LENGTH_LONG).show();
         }
@@ -93,7 +91,6 @@ public class AuthTheme implements FirebaseAuth.AuthStateListener, ProfileRespons
     }
 
     public void login(GoogleSignInAccount account) {
-        Log.d ("AuthActivity", "Ey3");
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this);
