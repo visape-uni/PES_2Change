@@ -12,10 +12,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -33,6 +36,7 @@ import pes.twochange.presentation.activity.ChatActivity;
 import pes.twochange.presentation.fragment.EditProfileFragment;
 import pes.twochange.presentation.fragment.ProductsListFragment;
 import pes.twochange.presentation.fragment.WantedProductsListFragment;
+import pes.twochange.services.DatabaseResponse;
 
 public class ProfileActivity extends BaseActivity implements AdTheme.ErrorResponse, WantedProductsListFragment.OnFragmentInteractionListener{
 
@@ -52,6 +56,9 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     private static final int OFFERED = 2;
     private static final int EDIT = 3;
 
+    private boolean rated;
+    RatingBar ratingBar;
+
     private int currentFragment;
 
     private static final String TAG = "ProfileActivity";
@@ -66,9 +73,9 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         if (getIntent().getStringExtra("usernameProfile") == null) usernameProfile = currentUsername;
         else usernameProfile = getIntent().getStringExtra("usernameProfile");
 
-        /*fragment = WantedProductsListFragment.newInstance();
-        displayFragment(R.id.contentProfile, fragment);
-        currentFragment = WANTED;*/
+        fragment = ProductsListFragment.newInstance();
+        displayFragment(R.id.contentProfile, fragment, "offered");
+        currentFragment = OFFERED;
 
         ProfileTheme.getInstance().get(
                 usernameProfile,
@@ -110,11 +117,22 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 }, this
         );
 
-        RatingBar ratingBar = (RatingBar) findViewById(R.id.userRatingBar);
+        ratingBar = (RatingBar) findViewById(R.id.userRatingBar);
+        ratingBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (ratingBar.isIndicator()) {
+                    if (currentUsername.equals(usernameProfile)) Toast.makeText(ProfileActivity.this, "You can't rate your own profile", Toast.LENGTH_LONG).show();
+                    else Toast.makeText(ProfileActivity.this, "You have already rated this user", Toast.LENGTH_LONG).show();
+                }
+                return true;
+            }
+        });
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                ProfileTheme.getInstance(profile).rate(rating);
+
+                ProfileTheme.getInstance(profile).rate(rating, currentUsername);
                 setUpProfile();
             }
         });
@@ -160,7 +178,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 fragment = ProductsListFragment.newInstance();
                 displayFragment(R.id.contentProfile, fragment, "offered");
                 currentFragment = OFFERED;
-                TODO: AdTheme.getInstance().getOfferedList(
+                AdTheme.getInstance().getOfferedList(
                 usernameProfile,
                         new AdTheme.ListResponse() {
                             @Override
@@ -195,6 +213,25 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         return PROFILE_ACTIVITY;
     }
 
+    DatabaseResponse rateCallback = new DatabaseResponse() {
+        @Override
+        public void success(DataSnapshot dataSnapshot) {
+            rated = true;
+            ratingBar.setIsIndicator(true);
+        }
+
+        @Override
+        public void empty() {
+            rated = false;
+            ratingBar.setIsIndicator(false);
+        }
+
+        @Override
+        public void failure(String message) {
+            Log.d(TAG, message);
+        }
+    };
+
     private void setUpProfile() {
         // TODO cargar imagen perfil
 
@@ -203,13 +240,19 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         TextView numRates = (TextView) findViewById(R.id.ratesNum);
         TextView rate = (TextView) findViewById(R.id.rate);
 
+        if (currentUsername.equals(usernameProfile)) {
+            rated = true;
+            ratingBar.setIsIndicator(true);
+        } else {
+            ProfileTheme.getInstance(profile).isRated(currentUsername, rateCallback);
+        }
+
         usernameTextView.setText(profile.getUsername().toUpperCase());
         nameTextView.setText(profile.fullName());
         if (numRates.equals(0)) rate.setText(String.valueOf(0));
         else rate.setText(new DecimalFormat("##.##").format(profile.getRate()));
         numRates.setText(String.valueOf(profile.getNumRates()));
 
-        // TODO fer que nomes es pugui puntuar al user si no s'ha puntuat anteriorment
     }
 
     private void setUpWanted () {
