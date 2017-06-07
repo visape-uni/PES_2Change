@@ -23,21 +23,29 @@ import android.view.View;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 import pes.twochange.R;
+import pes.twochange.domain.model.Match;
 import pes.twochange.domain.model.Product;
 import pes.twochange.domain.themes.AdTheme;
+import pes.twochange.domain.themes.MatchTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.activity.ImagePickDialog;
 import pes.twochange.presentation.fragment.AddProductsListFragment;
+import pes.twochange.presentation.fragment.MatchProductsListFragment;
 import pes.twochange.presentation.fragment.NewProductFragment;
 import pes.twochange.presentation.fragment.WantedProductsListFragment;
 
 public class ListsActivity extends BaseActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener, AdTheme.ErrorResponse,
-        AddProductsListFragment.OnFragmentInteractionListener,
+        AddProductsListFragment.OnFragmentInteractionListener, MatchTheme.ErrorResponse,
         WantedProductsListFragment.OnFragmentInteractionListener,
-        NewProductFragment.OnFragmentInteractionListener, ImagePickDialog.ImagePickListener {
+        NewProductFragment.OnFragmentInteractionListener,
+        ImagePickDialog.ImagePickListener, MatchTheme.MatchesFinished,
+        MatchProductsListFragment.OnFragmentInteractionListener {
+
+    // region ACTIVITY
 
     private String username;
     private int currentList = WANTED;
@@ -88,13 +96,27 @@ public class ListsActivity extends BaseActivity implements
                     break;
 
                 case R.id.navigation_matches:
-//                displayFragment(R.id.content, MatchProductsListFragment.newInstance());
+                    fragment = MatchProductsListFragment.newInstance();
+                    displayFragment(R.id.content_list, fragment, "matches");
                     break;
 
             }
         }
         return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        if (fragment instanceof NewProductFragment) {
+            close();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    // endregion
+
+    // region Recycler View Listeners
 
     @Override
     public void onRecyclerViewItemClickListener(int position) {
@@ -107,15 +129,6 @@ public class ListsActivity extends BaseActivity implements
 
             case MATCHES:
                 break;
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (fragment instanceof NewProductFragment) {
-            close();
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -162,6 +175,10 @@ public class ListsActivity extends BaseActivity implements
         return true;
     }
 
+    // endregion
+
+    // region Products
+
     @Override
     public void addProduct() {
         switch (currentList) {
@@ -180,14 +197,17 @@ public class ListsActivity extends BaseActivity implements
                 break;
 
             case MATCHES:
-                // TODO calculate matches
+                if (wantedProducts == null) {
+                    wantedProducts = new ArrayList<>();
+                }
+                MatchTheme.getInstance().makeMatches(username, matchedProducts, wantedProducts, this);
                 break;
         }
     }
 
     private ArrayList<Product> wantedProducts;
     private ArrayList<Product> offeredProducts;
-    private ArrayList<Product> matchProducts;
+    private Map<String, Match> matchedProducts;
 
     private AdTheme.ProductListResponse wantedProductsResponse = new AdTheme.ProductListResponse() {
         @Override
@@ -234,15 +254,26 @@ public class ListsActivity extends BaseActivity implements
                 break;
 
             case MATCHES:
-//                MatchTheme.getInstance()
+                if (matchedProducts != null) {
+                    if (fragment instanceof MatchProductsListFragment) {
+                        ((MatchProductsListFragment) fragment)
+                                .display(matchedProducts);
+                    }
+                } else {
+                    MatchTheme.getInstance().getMatches(username, this, this);
+                }
                 break;
         }
     }
+
+    // endregion
 
     @Override
     public void error(String error) {
 
     }
+
+    // region Create Product
 
     private ArrayList<String> images;
     private ArrayList<Uri> imageUris;
@@ -297,6 +328,7 @@ public class ListsActivity extends BaseActivity implements
         String id = AdTheme.getInstance().save(product);
         String path = String.format("product/%s/", id);
         AdTheme.getInstance().storeImages(path, images, imageUris);
+        close();
     }
 
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 400;
@@ -315,7 +347,6 @@ public class ListsActivity extends BaseActivity implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED) {
             // TODO show error because we do not have permission
-            error("");
         } else {
             switch (requestCode) {
                 case REQUEST_WRITE_EXTERNAL_STORAGE:
@@ -389,4 +420,26 @@ public class ListsActivity extends BaseActivity implements
             ((NewProductFragment) fragment).display(imageUris);
         }
     }
+
+    // endregion
+
+    // region Match
+
+    @Override
+    public void onFinish(Map<String, Match> myMatches) {
+        if (myMatches == null || myMatches.size() == 0) {
+            // TODO error
+        } else {
+            matchedProducts = myMatches;
+            loadProductList();
+        }
+    }
+
+    @Override
+    public void match() {
+        Log.v("MATCH", username + " " + wantedProducts.size());
+        MatchTheme.getInstance().makeMatches(username, matchedProducts, wantedProducts, this);
+    }
+
+    // endregion
 }

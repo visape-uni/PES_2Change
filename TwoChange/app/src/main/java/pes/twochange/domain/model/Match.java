@@ -18,7 +18,7 @@ public class Match {
     }
 
     private String usernameSender;
-    private String usernameReciver;
+    private String usernameReceiver;
     private String productKeySender;
     private String productKeyReciver;
     private String categoryProductReciver;
@@ -29,7 +29,7 @@ public class Match {
     //CONSTRUCTOR
     public Match(String usernameSender, String usernameReciver, String productKeySender, String productKeyReciver, String categoryProductReciver) {
         this.usernameSender = usernameSender;
-        this.usernameReciver = usernameReciver;
+        this.usernameReceiver = usernameReciver;
         this.productKeySender = productKeySender;
         this.productKeyReciver = productKeyReciver;
         this.categoryProductReciver = categoryProductReciver;
@@ -49,11 +49,11 @@ public class Match {
     }
 
     public String getUsernameReciver() {
-        return usernameReciver;
+        return usernameReceiver;
     }
 
     public void setUsernameReciver(String usernameReciver) {
-        this.usernameReciver = usernameReciver;
+        this.usernameReceiver = usernameReciver;
     }
 
     public String getProductKeySender() {

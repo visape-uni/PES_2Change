@@ -3,18 +3,21 @@
 
     <item
         android:id="@+id/navigation_wanted"
+        android:icon="@drawable/arrow_down_box"
         android:name="@string/wanted"
         android:title="@string/wanted" />
     <!--HEART ICON-->
 
     <item
         android:id="@+id/navigation_offered"
+        android:icon="@drawable/arrow_up_box"
         android:name="@string/offered"
         android:title="@string/offered" />
     <!--??? ICON-->
 
     <item
         android:id="@+id/navigation_matches"
+        android:icon="@drawable/heart_half_full"
         android:name="@string/matches"
         android:title="@string/matches" />
     <!--??? ICON-->
