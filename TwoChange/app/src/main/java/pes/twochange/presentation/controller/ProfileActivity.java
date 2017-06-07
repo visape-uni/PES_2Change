@@ -51,7 +51,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     private static final int OFFERED = 2;
     private static final int EDIT = 3;
 
-    private boolean rated;
+    private float rate;
     RatingBar ratingBar;
 
     private int currentFragment;
@@ -113,22 +113,17 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         );
 
         ratingBar = (RatingBar) findViewById(R.id.userRatingBar);
-        ratingBar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (ratingBar.isIndicator()) {
-                    if (currentUsername.equals(usernameProfile)) Toast.makeText(ProfileActivity.this, "You can't rate your own profile", Toast.LENGTH_LONG).show();
-                    else Toast.makeText(ProfileActivity.this, "You have already rated this user", Toast.LENGTH_LONG).show();
-                }
-                return true;
-            }
-        });
+
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-
-                ProfileTheme.getInstance(profile).rate(rating, currentUsername);
-                setUpProfile();
+                if (currentUsername.equals(usernameProfile)) {
+                    Toast.makeText(ProfileActivity.this, "You can't rate your own profile", Toast.LENGTH_SHORT).show();
+                } else {
+                    rate = rating;
+                    ProfileTheme.getInstance(profile).isRated(currentUsername, rateCallback);
+                }
+                    setUpProfile();
             }
         });
     }
@@ -141,7 +136,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         }
         else {
             toolbar = (Toolbar) findViewById(R.id.toolbar);
-            toolbar.setTitle(usernameProfile + " profile");
+            toolbar.setTitle("User profile");
             getMenuInflater().inflate(R.menu.menu_user_profile, menu);
         }
         return true;
@@ -159,9 +154,10 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 currentFragment = EDIT;
                 return true;
             case R.id.action_desactivar:
-                //TODO: desactivar notificaciones
+                //TODO: desactivar/activar notificaciones
                 return true;
             case R.id.action_block:
+                //TODO: unblock user
                 SettingsTheme.getInstance(currentUsername).blockUser(profile.getUsername());
                 return true;
             case R.id.action_open_chat:
@@ -219,14 +215,13 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     DatabaseResponse rateCallback = new DatabaseResponse() {
         @Override
         public void success(DataSnapshot dataSnapshot) {
-            rated = true;
-            ratingBar.setIsIndicator(true);
+            Toast.makeText(ProfileActivity.this, "You have already rated this user", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void empty() {
-            rated = false;
-            ratingBar.setIsIndicator(false);
+            ProfileTheme.getInstance(profile).rate(rate, currentUsername);
+            Toast.makeText(ProfileActivity.this, "User rated successfully", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -242,13 +237,6 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         TextView nameTextView = (TextView) findViewById(R.id.nameTxt);
         TextView numRates = (TextView) findViewById(R.id.ratesNum);
         TextView rate = (TextView) findViewById(R.id.rate);
-
-        if (currentUsername.equals(usernameProfile)) {
-            rated = true;
-            ratingBar.setIsIndicator(true);
-        } else {
-            ProfileTheme.getInstance(profile).isRated(currentUsername, rateCallback);
-        }
 
         usernameTextView.setText(profile.getUsername().toUpperCase());
         nameTextView.setText(profile.fullName());

@@ -38,7 +38,6 @@
         <activity android:name=".presentation.activity.AdsListsActivity" />
         <activity android:name=".presentation.controller.ExploreActivity" />
         <activity android:name=".presentation.activity.AdActivity" />
-        <activity android:name=".presentation.controller.OptionsActivity" />
         <activity android:name=".presentation.controller.ListsActivity" />
 
         <provider
@@ -61,6 +60,8 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
+        <activity android:name=".presentation.controller.SearchProfileActivity" />
 
         <activity android:name=".presentation.controller.AuthActivity" />
         <activity android:name=".presentation.activity.AboutActivity"></activity>

@@ -23,15 +23,15 @@
             android:id="@+id/profile"
             android:icon="@drawable/account"
             android:name="@string/profile" />
+        <item
+            android:title="@string/searchProfile"
+            android:id="@+id/searchProfile"
+            android:icon="@drawable/account_search"
+            android:name="@string/searchProfile" />
     </group>
 
     <group
         android:id="@+id/other_option_group">
-        <item
-            android:title="@string/settings"
-            android:id="@+id/settings"
-            android:icon="@drawable/settings"
-            android:name="@string/settings" />
         <item
             android:title="@string/help"
             android:id="@+id/help"
