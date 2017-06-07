@@ -20,6 +20,7 @@ import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.Config;
+import pes.twochange.presentation.controller.ChatActivity;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 

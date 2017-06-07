@@ -18,6 +18,7 @@ import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
+import pes.twochange.presentation.controller.ChatActivity;
 
 public class MainMenuActivity extends AppCompatActivity {
 
