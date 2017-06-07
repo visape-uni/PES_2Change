@@ -190,5 +190,8 @@
     <string name="product_price_error_message">Without any price we cannot calculate the rating of the product</string>
     <string name="product_image_error_title">No image</string>
     <string name="product_image_error_message">You should post at least one image</string>
+    <string name="description_hint_caps">DESCRIPTION</string>
+    <string name="category_hint_caps">CATEGORY</string>
+    <string name="chat_button">CHAT</string>
 
 </resources>

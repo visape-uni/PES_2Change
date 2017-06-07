@@ -54,12 +54,13 @@ public class WantedProductsListFragment extends AddProductsListFragment {
 
     @Override
     public void display(ArrayList<Product> products) {
-        if (products.size() == 0) {
-            // TODO empty "error"
+        if (recyclerView != null) {
+            if (products.size() == 0) {
+                // TODO empty "error"
+            }
+            wantedAdapter = new RecyclerViewWantedAdapter(products, activity, activity);
+            recyclerView.setAdapter(wantedAdapter);
         }
-        wantedAdapter.setProductArrayList(products);
-        wantedAdapter.notifyDataSetChanged();
-        recyclerView.setAdapter(wantedAdapter);
     }
 
     public interface OnFragmentInteractionListener

@@ -1,5 +1,7 @@
 package pes.twochange.domain.model;
 
+import com.google.firebase.database.Exclude;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -93,6 +95,15 @@ public class Product {
 
     public static String generateImageName() {
         return new SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.US).format(Calendar.getInstance().getTime());
+    }
+
+    @Exclude
+    public ArrayList<String> getUrls() {
+        ArrayList<String> urls = new ArrayList<>();
+        for (int i = 0; i < images.size(); i++) {
+            urls.add(String.format("product/%s/%s", id, images.get(i)));
+        }
+        return urls;
     }
 
     public enum Status {

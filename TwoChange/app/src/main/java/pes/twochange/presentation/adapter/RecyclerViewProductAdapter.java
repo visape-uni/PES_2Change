@@ -42,6 +42,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public void onBindViewHolder(final ProductHolder holder, int position) {
+        final int finalPosition = position;
         Product product = productArrayList.get(position);
         String productId = product.getId();
         if (product.getImages().size() > 0) {
@@ -54,6 +55,14 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
         holder.titleTextView.setText(product.getName());
         holder.ratingTextView.setText(String.format(Locale.FRANCE, "%d", product.getRating()));
         holder.categoryTextView.setText(product.getCategory());
+        holder.itemView.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onRecyclerViewItemClickListener(finalPosition);
+                    }
+                }
+        );
     }
 
     @Override

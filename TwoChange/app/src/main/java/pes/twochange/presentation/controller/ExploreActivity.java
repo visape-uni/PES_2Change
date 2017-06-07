@@ -1,5 +1,6 @@
 package pes.twochange.presentation.controller;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -8,12 +9,17 @@ import java.util.ArrayList;
 import pes.twochange.R;
 import pes.twochange.domain.model.Product;
 import pes.twochange.domain.themes.AdTheme;
+import pes.twochange.presentation.Config;
+import pes.twochange.presentation.fragment.ProductFragment;
 import pes.twochange.presentation.fragment.SearchProductsListFragment;
 
-public class ExploreActivity extends BaseActivity
-        implements SearchProductsListFragment.OnFragmentInteractionListener {
+public class ExploreActivity extends BaseActivity implements
+        SearchProductsListFragment.OnFragmentInteractionListener,
+        ProductFragment.OnFragmentInteractionListener {
 
+    public static final String TAG = "EXPLORE ACTIVITY";
     private Fragment fragment;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +28,12 @@ public class ExploreActivity extends BaseActivity
 
         toolbar.setTitle(R.string.explore);
 
+        SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+        username = sharedPreferences.getString("username", null);
+
         fragment = SearchProductsListFragment.newInstance();
 
-        replaceFragment(R.id.explore_frame, fragment, "main_list");
+        displayFragment(R.id.content_explore, fragment, "main_list");
 
     }
 
@@ -106,8 +115,32 @@ public class ExploreActivity extends BaseActivity
     }
 
     @Override
-    public void onRecyclerViewItemClickListener(int position) {
-
+    public void onBackPressed() {
+        if (fragment instanceof ProductFragment) {
+            fragment = SearchProductsListFragment.newInstance();
+            replaceFragment(R.id.content_explore, fragment, "main_list");
+        } else {
+            super.onBackPressed();
+        }
     }
 
+    @Override
+    public void onRecyclerViewItemClickListener(int position) {
+        if (productsList != null && position < productsList.size()) {
+            Product selectedProduct = productsList.get(position);
+            String usersProduct = selectedProduct.getUsername().equals(username) ?
+                    null : selectedProduct.getUsername();
+            fragment = ProductFragment.newInstance(selectedProduct.getName(),
+                    selectedProduct.getDescription(), selectedProduct.getCategory(),
+                    selectedProduct.getRating(), selectedProduct.getUrls(), usersProduct);
+            int contentResId = R.id.content_explore;
+            String tag = "product";
+            replaceFragment(R.id.content_explore, fragment, "product");
+        }
+    }
+
+    @Override
+    public void chat(String username) {
+        // TODO start chat between this.username and username
+    }
 }

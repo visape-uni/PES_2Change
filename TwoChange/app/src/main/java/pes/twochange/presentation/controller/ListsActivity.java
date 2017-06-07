@@ -39,7 +39,6 @@ public class ListsActivity extends BaseActivity implements
         WantedProductsListFragment.OnFragmentInteractionListener,
         NewProductFragment.OnFragmentInteractionListener, ImagePickDialog.ImagePickListener {
 
-    private static final String SINGLE = "single_product_view";
     private String username;
     private int currentList = WANTED;
     private Fragment fragment;
@@ -63,7 +62,7 @@ public class ListsActivity extends BaseActivity implements
         navigation.setOnNavigationItemSelectedListener(this);
 
         fragment = WantedProductsListFragment.newInstance();
-        displayFragment(R.id.content, WantedProductsListFragment.newInstance(), "wanted");
+        displayFragment(R.id.content_list, WantedProductsListFragment.newInstance(), "wanted");
 
         toolbar.setTitle(R.string.ad_list_title);
     }
@@ -80,12 +79,12 @@ public class ListsActivity extends BaseActivity implements
             switch (item.getItemId()) {
                 case R.id.navigation_wanted:
                     fragment = WantedProductsListFragment.newInstance();
-                    displayFragment(R.id.content, fragment, "wanted");
+                    displayFragment(R.id.content_list, fragment, "wanted");
                     break;
 
                 case R.id.navigation_offered:
                     fragment = AddProductsListFragment.newInstance();
-                    displayFragment(R.id.content, fragment, "offered");
+                    displayFragment(R.id.content_list, fragment, "offered");
                     break;
 
                 case R.id.navigation_matches:
@@ -133,10 +132,8 @@ public class ListsActivity extends BaseActivity implements
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        AdTheme.getInstance().remove(
-                                                username,
-                                                wantedProducts.get(position).getId()
-                                        );
+                                        AdTheme.getInstance().remove(username,
+                                                wantedProducts.get(position).getId());
                                         loadProductList();
                                     }
                                 }
@@ -179,7 +176,7 @@ public class ListsActivity extends BaseActivity implements
                 fragment = NewProductFragment.newInstance();
                 toolbar.setVisibility(View.GONE);
                 navigation.setVisibility(View.GONE);
-                addFragment(R.id.content, fragment, "new_product");
+                addFragment(R.id.content_list, fragment, "new_product");
                 break;
 
             case MATCHES:
@@ -192,48 +189,47 @@ public class ListsActivity extends BaseActivity implements
     private ArrayList<Product> offeredProducts;
     private ArrayList<Product> matchProducts;
 
+    private AdTheme.ProductListResponse wantedProductsResponse = new AdTheme.ProductListResponse() {
+        @Override
+        public void listResponse(ArrayList<Product> productItems) {
+            wantedProducts = productItems;
+            loadProductList();
+        }
+    };
+
+    private AdTheme.ProductListResponse offeredProductsResponse = new AdTheme.ProductListResponse() {
+        @Override
+        public void listResponse(ArrayList<Product> productItems) {
+            offeredProducts = new ArrayList<>();
+            for (Product product : productItems) {
+                if (product.getUsername().equals(username)) {
+                    offeredProducts.add(product);
+                }
+            }
+            loadProductList();
+        }
+    };
+
     @Override
     public void loadProductList() {
         switch (currentList) {
             case WANTED:
-                if (wantedProducts != null && wantedProducts.size() > 0) {
+                if (wantedProducts != null) {
                     if (fragment instanceof WantedProductsListFragment) {
                         ((WantedProductsListFragment) fragment).display(wantedProducts);
                     }
                 } else {
-                    AdTheme.getInstance().getWantedList(
-                            username,
-                            new AdTheme.ProductListResponse() {
-                                @Override
-                                public void listResponse(ArrayList<Product> productItems) {
-                                    wantedProducts = productItems;
-                                    loadProductList();
-                                }
-                            }, this
-                    );
+                    AdTheme.getInstance().getWantedList(username, wantedProductsResponse, this);
                 }
                 break;
 
             case OFFERED:
-                if (offeredProducts != null && offeredProducts.size() > 0) {
+                if (offeredProducts != null) {
                     if (fragment instanceof AddProductsListFragment) {
                         ((AddProductsListFragment) fragment).display(offeredProducts);
                     }
                 } else {
-                    AdTheme.getInstance().getAllProducts(
-                            new AdTheme.ProductListResponse() {
-                                @Override
-                                public void listResponse(ArrayList<Product> productItems) {
-                                    offeredProducts = new ArrayList<>();
-                                    for (Product product : productItems) {
-                                        if (product.getUsername().equals(username)) {
-                                            offeredProducts.add(product);
-                                        }
-                                    }
-                                    loadProductList();
-                                }
-                            }, this
-                    );
+                    AdTheme.getInstance().getAllProducts(offeredProductsResponse, this);
                 }
                 break;
 

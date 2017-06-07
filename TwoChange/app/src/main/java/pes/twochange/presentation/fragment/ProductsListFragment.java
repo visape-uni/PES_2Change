@@ -66,12 +66,13 @@ public class ProductsListFragment extends Fragment {
     }
 
     public void display(ArrayList<Product> products) {
-        if (products.size() == 0) {
-            // TODO empty "error"
+        if (recyclerView != null) {
+            if (products.size() == 0) {
+                // TODO empty "error"
+            }
+            productAdapter = new RecyclerViewProductAdapter(getContext(), products, activity);
+            recyclerView.setAdapter(productAdapter);
         }
-        productAdapter.setProductArrayList(products);
-        productAdapter.notifyDataSetChanged();
-        recyclerView.setAdapter(productAdapter);
     }
 
     public interface OnFragmentInteractionListener  extends OnRecyclerViewItemClickListener {
