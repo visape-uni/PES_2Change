@@ -18,6 +18,7 @@ import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
+import pes.twochange.presentation.controller.AuthActivity;
 
 public class MainMenuActivity extends AppCompatActivity {
 
@@ -96,7 +97,10 @@ public class MainMenuActivity extends AppCompatActivity {
                                     startActivity(chatIntent);
                                 } else {
                                     Toast.makeText(getApplicationContext(), "You must LogIn first!", Toast.LENGTH_LONG).show();
-                                    startActivity(new Intent(MainMenuActivity.this, LoginActivity.class));
+                                    FirebaseAuth.getInstance().signOut();
+                                    Intent i = new Intent(getApplicationContext(), AuthActivity.class);
+                                    i.putExtra("startPoint", "LOGIN");
+                                    startActivity(i);
                                     finish();
                                 }
                             }
@@ -143,10 +147,11 @@ public class MainMenuActivity extends AppCompatActivity {
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 Log.d(TAG, String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
-                startActivity(new Intent(MainMenuActivity.this, LoginActivity.class));
+                FirebaseAuth.getInstance().signOut();
+                Intent i = new Intent(getApplicationContext(), AuthActivity.class);
+                i.putExtra("startPoint", "LOGIN");
+                startActivity(i);
                 finish();
-
-
             }
         });
 

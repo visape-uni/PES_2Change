@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,115 +8,114 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:context="pes.twochange.presentation.activity.EditProfileActivity">
+        android:layout_marginTop="6dp"
+        tools:context="pes.twochange.presentation.fragment.newProfileFragment">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/usernameInputLayout"
             style="@style/EditProfileStyle.TextInputLayout"
             android:hint="Username *">
-        <EditText
-            android:id="@+id/userNameField"
-            style="@style/EditProfileStyle"
-            android:layout_marginTop="8dp"
-            android:ems="10"
-            android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/usernameField"
+                style="@style/EditProfileStyle"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="textPersonName" />
         </android.support.design.widget.TextInputLayout>
-
 
         <android.support.design.widget.TextInputLayout
             style="@style/EditProfileStyle.TextInputLayout"
             android:hint="Name *">
-        <EditText
-            android:id="@+id/nameField"
-            style="@style/EditProfileStyle"
-            android:layout_marginTop="8dp"
-            android:ems="10"
-            android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/nameField"
+                style="@style/EditProfileStyle"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="textPersonName" />
         </android.support.design.widget.TextInputLayout>
-
 
         <android.support.design.widget.TextInputLayout
             style="@style/EditProfileStyle.TextInputLayout"
             android:hint="Surname *">
-        <EditText
-            android:id="@+id/surnameField"
-            style="@style/EditProfileStyle"
-            android:ems="10"
-            android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/surnameField"
+                style="@style/EditProfileStyle"
+                android:ems="10"
+                android:inputType="textPersonName" />
         </android.support.design.widget.TextInputLayout>
-
 
         <android.support.design.widget.TextInputLayout
             style="@style/EditProfileStyle.TextInputLayout"
             android:hint="Phone Number">
-        <EditText
-            android:id="@+id/phoneField"
-            style="@style/EditProfileStyle"
-            android:ems="10"
-            android:inputType="phone" />
+            <EditText
+                android:id="@+id/phoneField"
+                style="@style/EditProfileStyle"
+                android:ems="10"
+                android:inputType="phone" />
         </android.support.design.widget.TextInputLayout>
-
 
         <android.support.design.widget.TextInputLayout
             style="@style/EditProfileStyle.TextInputLayout"
             android:hint="Address">
-        <EditText
-            android:id="@+id/addressField"
-            style="@style/EditProfileStyle"
-            android:ems="10"
-            android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/addressField"
+                style="@style/EditProfileStyle"
+                android:ems="10"
+                android:inputType="textPersonName" />
         </android.support.design.widget.TextInputLayout>
-
 
         <android.support.design.widget.TextInputLayout
             style="@style/EditProfileStyle.TextInputLayout"
             android:hint="Zip Code">
-        <EditText
-            android:id="@+id/zipField"
-            style="@style/EditProfileStyle"
-            android:ems="10"
-            android:inputType="phone" />
+            <EditText
+                android:id="@+id/zipField"
+                style="@style/EditProfileStyle"
+                android:ems="10"
+                android:inputType="phone" />
         </android.support.design.widget.TextInputLayout>
-
 
         <android.support.design.widget.TextInputLayout
             style="@style/EditProfileStyle.TextInputLayout"
             android:hint="City">
-        <EditText
-            android:id="@+id/cityField"
-            style="@style/EditProfileStyle"
-            android:ems="10"
-            android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/cityField"
+                style="@style/EditProfileStyle"
+                android:ems="10"
+                android:inputType="textPersonName" />
         </android.support.design.widget.TextInputLayout>
-
 
         <android.support.design.widget.TextInputLayout
             style="@style/EditProfileStyle.TextInputLayout"
             android:hint="State/Province">
-        <EditText
-            android:id="@+id/stateField"
-            style="@style/EditProfileStyle"
-            android:ems="10"
-            android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/stateField"
+                style="@style/EditProfileStyle"
+                android:ems="10"
+                android:inputType="textPersonName" />
         </android.support.design.widget.TextInputLayout>
 
 
         <android.support.design.widget.TextInputLayout
             style="@style/EditProfileStyle.TextInputLayout"
             android:hint="Country">
-        <EditText
-            android:id="@+id/countryField"
-            style="@style/EditProfileStyle"
-            android:ems="10"
-            android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/countryField"
+                style="@style/EditProfileStyle"
+                android:ems="10"
+                android:inputType="textPersonName" />
         </android.support.design.widget.TextInputLayout>
-
 
         <Button
             android:id="@+id/FinishBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="36dp"
             style="@style/EditProfileStyle.TextInputLayout"
             android:background="@drawable/orangeroundedbutton"
-            android:text="Finish"
+            android:text="Set Profile"
             android:textSize="18sp" />
 
     </LinearLayout>

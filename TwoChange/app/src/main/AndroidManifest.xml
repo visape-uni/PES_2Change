@@ -22,7 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.activity.NewUserActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".presentation.activity.ChatActivity">
             <meta-data
@@ -35,9 +34,8 @@
         <activity android:name=".presentation.activity.RecyclerChatActivity" />
         <activity android:name=".presentation.activity.PostAdActivity" />
         <activity android:name=".presentation.activity.EditProfileActivity" />
-        <activity android:name=".presentation.activity.LoginActivity" />
         <activity android:name=".presentation.activity.AdList2Activity" />
-        <activity android:name=".presentation.activity.AdsListsActivity"/>
+        <activity android:name=".presentation.activity.AdsListsActivity" />
         <activity android:name=".presentation.controller.ExploreActivity" />
         <activity android:name=".presentation.activity.AdActivity" />
         <activity android:name=".presentation.controller.OptionsActivity" />
@@ -63,6 +61,9 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
+        <activity android:name=".presentation.controller.AuthActivity" />
+        <activity android:name=".presentation.activity.AboutActivity"></activity>
     </application>
 
 </manifest>

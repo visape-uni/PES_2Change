@@ -35,12 +35,12 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_profile);
+        //setContentView(R.layout.activity_new_profile);
 
         editing = getIntent().getBooleanExtra("editing", false);
 
         TextInputLayout usernameInputLayout = (TextInputLayout) findViewById(R.id.usernameInputLayout);
-        usernameText = (EditText)findViewById(R.id.userNameField);
+        usernameText = (EditText)findViewById(R.id.usernameField);
         nameText = (EditText)findViewById(R.id.nameField);
         surnameText = (EditText)findViewById(R.id.surnameField);
         phoneText = (EditText)findViewById(R.id.phoneField);
@@ -126,7 +126,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         return new Profile(
                 username,
-                uid,
+                null, //The uid is assigned to the profile on the AuthActivity
                 name,
                 surname,
                 new Profile.PhoneNumber(null, phone),

@@ -2,6 +2,8 @@ package pes.twochange.domain.themes;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -14,6 +16,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Profile;
+import pes.twochange.presentation.controller.AuthActivity;
 
 public class AuthTheme implements FirebaseAuth.AuthStateListener, ProfileResponse, OnCompleteListener<AuthResult> {
 
@@ -78,7 +81,7 @@ public class AuthTheme implements FirebaseAuth.AuthStateListener, ProfileRespons
             uid = task.getResult().getUser().getUid();
             ProfileTheme.getInstance().find(uid, this);
         } else {
-            // TODO Control d'errors
+            Toast.makeText(AuthActivity.getContext(), "Wrong mail or password", Toast.LENGTH_LONG).show();
         }
     }
 
