@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -133,8 +134,16 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (usernameProfile.equals(currentUsername)) getMenuInflater().inflate(R.menu.menu_my_profile, menu);
-        else getMenuInflater().inflate(R.menu.menu_user_profile, menu);
+        if (usernameProfile.equals(currentUsername)) {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar.setTitle("My profile");
+            getMenuInflater().inflate(R.menu.menu_my_profile, menu);
+        }
+        else {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar.setTitle(usernameProfile + " profile");
+            getMenuInflater().inflate(R.menu.menu_user_profile, menu);
+        }
         return true;
     }
 
@@ -243,7 +252,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
 
         usernameTextView.setText(profile.getUsername().toUpperCase());
         nameTextView.setText(profile.fullName());
-        if (numRates.equals(0)) rate.setText(String.valueOf(0));
+        if (profile.getNumRates() == 0) rate.setText(String.valueOf(0));
         else rate.setText(new DecimalFormat("##.##").format(profile.getRate()));
         numRates.setText(String.valueOf(profile.getNumRates()));
 
