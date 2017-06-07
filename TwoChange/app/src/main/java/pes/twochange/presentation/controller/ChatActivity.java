@@ -40,12 +40,15 @@ import java.io.File;
 import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Message;
+import pes.twochange.domain.themes.ChatTheme;
+import pes.twochange.domain.themes.SettingsTheme;
+import pes.twochange.presentation.controller.BaseActivity;
 import pes.twochange.services.NotificationSender;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends BaseActivity {
 
     private static final String TAG = "ChatActivitiy";
     private String userSender;
@@ -79,7 +82,7 @@ public class ChatActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);*/
 
         //Coger chat pasado como extra en el intent
-        Chat chat = (Chat) getIntent().getExtras().getSerializable("chat");
+        final Chat chat = (Chat) getIntent().getExtras().getSerializable("chat");
 
         //User sender
         userSender = chat.getMessageSender();
@@ -90,18 +93,17 @@ public class ChatActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance()
                 .subscribeToTopic(userReciver);
 
-
         //Instance to Firebase database
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         //Firebase ref to sender's chat
         mFirebaseChatRefSender = mFirebaseDatabase.getReference().child("chats").child(userSender).child(userReciver);
 
-        //Display the messages of the DB into the list view
-        displayChatMessage();
-
         //Firebase ref to reciver's chat
         mFirebaseChatRefReciver = mFirebaseDatabase.getReference().child("chats").child(userReciver).child(userSender);
+
+        //Display the messages of the DB into the list view
+        displayChatMessage();
 
         //OnClickListener to send messages
         sendBtn = (FloatingActionButton)findViewById(R.id.sender_btn);
@@ -118,18 +120,18 @@ public class ChatActivity extends AppCompatActivity {
 
                 if (!content.isEmpty()) {
 
-                    //If the message is not empty send it to the DBs
-                    new Message(content, userSender, userReciver).send();
-
-                    //Send notification for the reciver
-                    NotificationSender n = new NotificationSender();
-                    n.sendNotification(userSender);
+                    ChatTheme.getInstance(chat).sendChatMessage(content);
 
                     //Put the text field empty again
                     messageInput.setText("");
                 }
             }
         });
+    }
+
+    @Override
+    protected int currentMenuItemIndex() {
+        return CHAT_ACTIVITY;
     }
 
     @Override
@@ -152,7 +154,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
         getMenuInflater().inflate(R.menu.menu_chat, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -162,6 +164,14 @@ public class ChatActivity extends AppCompatActivity {
                 //IF Picture's icon is selected show gallery or camera
                 showOptions();
                 break;
+            case R.id.send_details:
+                Chat chat = new Chat(userSender,userReciver);
+                ChatTheme.getInstance(chat).sendContactDetails();
+                break;
+            case R.id.block_user:
+                SettingsTheme.getInstance(userSender).blockUser(userReciver);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
