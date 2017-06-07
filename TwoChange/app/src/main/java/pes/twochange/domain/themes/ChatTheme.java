@@ -4,6 +4,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Message;
 import pes.twochange.domain.model.Profile;
@@ -30,6 +31,7 @@ public class ChatTheme {
         instance.chat = chat;
         instance.userReciver = chat.getMessageReciver();
         instance.userSender = chat.getMessageSender();
+
         return instance;
     }
 
@@ -47,8 +49,31 @@ public class ChatTheme {
     }
 
     public void sendContactDetails() {
-        String message = "";
-        this.instance.sendChatMessage(message);
+        ProfileTheme.getInstance().get(userSender, new ProfileResponse() {
+            @Override
+            public void success(Profile p) {
+                String message = "";
+                Profile.Address address = p.getAddress();
+                Profile.PhoneNumber phonenumber = p.getPhoneNumber();
+                if(address != null) {
+                    message = "Address: " + address.toString();
+                }
+                if (phonenumber != null) {
+                    message += "\n" + "Phone Number: " + phonenumber.toString();
+                }
+                if(address != null || phonenumber != null) {
+                    ChatTheme.getInstance(chat).sendChatMessage(message);
+                }
+
+            }
+
+            @Override
+            public void failure(String s) {
+                // TODO Control d'errors
+            }
+        });
+
+
     }
 
 

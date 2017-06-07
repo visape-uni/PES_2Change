@@ -45,12 +45,14 @@ import pes.twochange.R;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Message;
 import pes.twochange.domain.themes.ChatTheme;
+import pes.twochange.domain.themes.SettingsTheme;
+import pes.twochange.presentation.controller.BaseActivity;
 import pes.twochange.services.NotificationSender;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends BaseActivity {
 
     private static final String TAG = "ChatActivitiy";
     private String userSender;
@@ -90,8 +92,6 @@ public class ChatActivity extends AppCompatActivity {
         userSender = chat.getMessageSender();
         //User reciver
         userReciver = chat.getMessageReciver();
-
-        //ChatTheme.getInstance(chat).openChat();
 
         //Suscribirse al topic para recibir notificaciones de chat
         FirebaseMessaging.getInstance()
@@ -134,6 +134,11 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     @Override
+    protected int currentMenuItemIndex() {
+        return CHAT_ACTIVITY;
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
         photoItem = menu.findItem(R.id.action_photo);
@@ -153,7 +158,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
         getMenuInflater().inflate(R.menu.menu_chat, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -163,6 +168,14 @@ public class ChatActivity extends AppCompatActivity {
                 //IF Picture's icon is selected show gallery or camera
                 showOptions();
                 break;
+            case R.id.send_details:
+                Chat chat = new Chat(userSender,userReciver);
+                ChatTheme.getInstance(chat).sendContactDetails();
+                break;
+            case R.id.block_user:
+                SettingsTheme.getInstance(userSender).blockUser(userReciver);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }

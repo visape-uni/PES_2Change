@@ -44,23 +44,7 @@ public class RecyclerChatActivity extends Activity {
 
         SharedPreferences sp = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         String user = sp.getString("username", null);
-        //String user = getIntent().getStringExtra("currentUserName");
-
-        //nombres de prueba
-        /*users.add("Félix");
-        users.add("Princesa Chicle");
-        users.add("Guille");
-        users.add("Adri");
-        users.add("Lars Ulrich (cuando tenía pelo)");
-        users.add("Víctor");
-        users.add("Donald Trump");
-        users.add("Andrés");
-        users.add("Lisa Simpson");
-        users.add("Aa Mama");
-        users.add("Adri, otra vez");
-        users.add("Sujeto de prueba Huevo Huevo 7");*/
-
-
+        
         mAdapter = new RecyclerChatAdapter(this, users, user);
         mRecyclerView.setAdapter(mAdapter);
 
