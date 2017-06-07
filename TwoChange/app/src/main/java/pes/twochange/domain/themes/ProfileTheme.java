@@ -73,6 +73,7 @@ public class ProfileTheme implements ModelAdapter<Profile> {
                         if (profile == null) {
                             profileResponse.failure("Cannot find any profile");
                         } else {
+                            Log.d ("AuthActivity", "Ey5");
                             profileResponse.success(profile);
                         }
                     }

@@ -52,6 +52,7 @@ public class AuthActivity extends AppCompatActivity implements
     private FragmentManager fragmentManager;
     private static Context context;
     private Fragment fragment;
+    private AuthTheme authTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,10 @@ public class AuthActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_auth);
         fragmentManager = getSupportFragmentManager();
         context = getApplicationContext();
+
+        authTheme = AuthTheme.getInstance();
+        authTheme.setSharedPreferences(getSharedPreferences(Config.SP_NAME, MODE_PRIVATE));
+        authTheme.setResponse(this);
 
         //Whether the user automatically logged in has a profile or not
         if (getIntent().getExtras().getString("startPoint").equals("LOGIN")) {
@@ -106,10 +111,6 @@ public class AuthActivity extends AppCompatActivity implements
         } else if (password.isEmpty()) {
             Toast.makeText(getApplicationContext(), "You must fill in both fields to log in", Toast.LENGTH_LONG).show();
         } else {
-            AuthTheme authTheme;
-            authTheme = AuthTheme.getInstance();
-            authTheme.setSharedPreferences(getSharedPreferences(Config.SP_NAME, MODE_PRIVATE));
-            authTheme.setResponse(this);
             authTheme.login(email, password);
         }
     }
@@ -118,6 +119,7 @@ public class AuthActivity extends AppCompatActivity implements
     // user has an attached user profile or not
     @Override
     public void main() {
+        Log.d (TAG, "Ey6");
         startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
         finish();
     }
@@ -150,6 +152,7 @@ public class AuthActivity extends AppCompatActivity implements
     //Login with Google button pressed listener
     @Override
     public void onLoginWithGoogle() {
+        Log.d (TAG, "Ey1");
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -158,6 +161,7 @@ public class AuthActivity extends AppCompatActivity implements
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
+                Log.d (TAG, "Ey2");
                 AuthTheme.getInstance().login(result.getSignInAccount());
             } else {
                 // TODO Control d'errors
