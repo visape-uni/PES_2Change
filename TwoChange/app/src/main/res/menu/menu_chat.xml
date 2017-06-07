@@ -15,7 +15,4 @@
             android:title="Block this user"
             android:id="@+id/block_user"/>
     </group>
-
-
->>>>>>> ChatTheme
 </menu>
