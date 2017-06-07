@@ -31,6 +31,7 @@ import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.activity.ChatActivity;
 import pes.twochange.presentation.fragment.EditProfileFragment;
+import pes.twochange.presentation.fragment.ProductsListFragment;
 import pes.twochange.presentation.fragment.WantedProductsListFragment;
 
 public class ProfileActivity extends BaseActivity implements AdTheme.ErrorResponse, WantedProductsListFragment.OnFragmentInteractionListener{
@@ -156,10 +157,10 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         switch (view.getId())
         {
             case R.id.offeredTab:
-                //TODO: fragment = OfferedProductsListFragment.newInstance();
-                //TODO: displayFragment(R.id.contentProfile, fragment);
+                fragment = ProductsListFragment.newInstance();
+                displayFragment(R.id.contentProfile, fragment, "offered");
                 currentFragment = OFFERED;
-                /*TODO: AdTheme.getInstance().getOfferedList(
+                TODO: AdTheme.getInstance().getOfferedList(
                 usernameProfile,
                         new AdTheme.ListResponse() {
                             @Override
@@ -169,7 +170,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                                 setUpOffered();
                             }
                         }, this
-                );*/
+                );
                 break;
             case R.id.wantedTab:
                 fragment = WantedProductsListFragment.newInstance();
@@ -222,7 +223,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         TextView numOfferedTextView = (TextView) findViewById(R.id.offeredNum);
 
         numOfferedTextView.setText(String.valueOf(numOffered));
-        //if (currentFragment == Offered)((OfferedProductsListFragment) fragment).display(offeredList);
+        if (currentFragment == OFFERED)((ProductsListFragment) fragment).display(offeredList);
     }
 
     public void update(Profile pro) {
