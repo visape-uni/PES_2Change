@@ -19,7 +19,9 @@ import java.util.ArrayList;
 
 
 import pes.twochange.R;
+import pes.twochange.domain.callback.BlockedResponse;
 import pes.twochange.domain.model.Chat;
+import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.controller.ChatActivity;
 
@@ -53,7 +55,7 @@ public class RecyclerChatAdapter extends RecyclerView.Adapter<RecyclerChatAdapte
                     String userReciver = ds.getKey().toString();
 
                     //Callback a arreglar
-                    SettingsTheme.getInstance(user).userIsBlocked(userReciver, new SettingsTheme.BlockedResponse() {
+                    SettingsTheme.getInstance(user).userIsBlocked(userReciver, new BlockedResponse() {
                         @Override
                         public void isBlocked(boolean blocked,String userblock) {
                         //si el usuario está bloqueado, no aparecerá en la lista de chats
@@ -61,7 +63,6 @@ public class RecyclerChatAdapter extends RecyclerView.Adapter<RecyclerChatAdapte
                                 useraux.add(userblock);
                                 notifyDataSetChanged();
                             }
-
                         }
                     });
 
