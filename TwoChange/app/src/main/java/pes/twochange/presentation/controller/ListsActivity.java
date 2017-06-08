@@ -88,7 +88,7 @@ public class ListsActivity extends BaseActivity implements
 
     @Override
     protected int currentMenuItemIndex() {
-        return AD_ACTIVITY;
+        return LISTS_ACTIVITY;
     }
 
     @Override
