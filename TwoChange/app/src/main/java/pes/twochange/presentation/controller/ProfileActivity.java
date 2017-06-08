@@ -358,7 +358,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 imageUri = intent.getData();
             }
             Picasso.with(this).load(imageUri).into(image);
-            ImageManager.getInstance().storeImage(imageName, imageUri);
+            ImageManager.getInstance().storeImage(imageName, imageUri, getApplicationContext());
         }
     }
 

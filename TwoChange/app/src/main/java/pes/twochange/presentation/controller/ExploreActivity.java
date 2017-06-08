@@ -80,6 +80,7 @@ public class ExploreActivity extends BaseActivity implements
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        rateFilter(0, 100);
                                         dialog.cancel();
                                     }
                                 }
@@ -100,13 +101,14 @@ public class ExploreActivity extends BaseActivity implements
                 inputText = new EditText(this);
                 inputText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
                 new AlertDialog.Builder(this)
-                        .setView(inputSpinner)
+                        .setView(inputText)
                         .setTitle("Select the approximated rate want to filter with")
                         .setNegativeButton(
                                 "Cancel",
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        rateFilter(0, 100);
                                         dialog.cancel();
                                     }
                                 }
@@ -117,8 +119,12 @@ public class ExploreActivity extends BaseActivity implements
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         String rateStr = inputText.getText().toString();
-                                        int rate = Integer.valueOf(rateStr);
-                                        rateFilter(rate - 10, rate + 10);
+                                        if (rateStr.length() == 0) {
+                                            rateFilter(0, 100);
+                                        } else {
+                                            int rate = Integer.valueOf(rateStr);
+                                            rateFilter(rate - 10, rate + 10);
+                                        }
                                     }
                                 }
                         ).show();
