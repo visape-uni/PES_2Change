@@ -15,30 +15,33 @@
         android:roundIcon="@mipmap/ic_launcher_icon4"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".presentation.controller.SplashActivity">
+        <activity android:name=".presentation.controller.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".presentation.controller.ChatActivity">
+        <activity android:name=".presentation.controller.ChatActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".presentation.activity.MainMenuActivity" />
         </activity>
-        <activity android:name=".presentation.activity.ProfileNoActivity" />
-        <activity android:name=".presentation.activity.MainMenuActivity" />
-        <activity android:name=".presentation.activity.SearchActivity" />
-        <activity android:name=".presentation.activity.RecyclerChatActivity" />
-        <activity android:name=".presentation.activity.PostAdActivity" />
-        <activity android:name=".presentation.activity.EditProfileActivity" />
-        <activity android:name=".presentation.activity.AdList2Activity" />
-        <activity android:name=".presentation.activity.AdsListsActivity" />
-        <activity android:name=".presentation.controller.ExploreActivity" />
-        <activity android:name=".presentation.activity.AdActivity" />
-        <activity android:name=".presentation.controller.ListsActivity" />
+
+        <activity android:name=".presentation.controller.ExploreActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".presentation.controller.ListsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".presentation.controller.AuthActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".presentation.controller.AboutActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".presentation.controller.ProfileActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".presentation.controller.SearchProfileActivity"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -60,15 +63,6 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
-        <activity android:name=".presentation.controller.SearchProfileActivity" />
-
-        <activity android:name=".presentation.controller.AuthActivity" />
-        <activity android:name=".presentation.activity.AboutActivity"></activity>
-        <activity
-            android:name=".presentation.controller.ProfileActivity"
-            android:label="@string/title_activity_profile"
-            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

@@ -16,7 +16,6 @@ import android.widget.FrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 import pes.twochange.R;
-import pes.twochange.presentation.activity.AboutActivity;
 import pes.twochange.presentation.activity.RecyclerChatActivity;
 
 public abstract class BaseActivity extends AppCompatActivity {
