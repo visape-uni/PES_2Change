@@ -198,4 +198,11 @@
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
 
+    <string name="about_slogan">A second chance to everything.</string>
+    <string name="about_text">Developed by:\n
+        \nVíctor Sánchez\nFèlix Arribas\nGuillermo Martínez\nAdrián Ruiz\nAndrés Insaurralde\n
+\nProject 2Change:
+    </string>
+    <string name="about_url"><a>https://github.com/visape-uni/PES_2Change</a></string>
+
 </resources>
