@@ -6,19 +6,17 @@ import android.widget.TextView;
 
 import pes.twochange.R;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        TextView field = (TextView)findViewById(R.id.aboutField);
-        field.setText("Project 2Change\n\nDeveloped by:" +
-                "\nVictor Sánchez" +
-                "\nFèlix Arribas" +
-                "\nGuillermo Martínez" +
-                "\nAdrián Muñoz" +
-                "\nAndrés Insaurralde");
+    }
+
+    @Override
+    protected int currentMenuItemIndex() {
+        return ABOUT_ACTIVITY;
     }
 }
