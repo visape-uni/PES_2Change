@@ -18,10 +18,6 @@ import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.adapter.ProfileAdapter;
 
-/**
- * Created by Visape on 07/06/2017.
- */
-
 public class SearchProfileActivity extends BaseActivity implements TextWatcher, AdapterView.OnItemClickListener{
 
     private EditText searchField;

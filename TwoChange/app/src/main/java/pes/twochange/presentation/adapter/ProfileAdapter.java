@@ -12,6 +12,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pes.twochange.R;
 import pes.twochange.domain.model.Profile;
+import pes.twochange.services.ImageManager;
 
 /**
  * Created by Visape on 07/06/2017.
@@ -39,7 +40,9 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
         if (p != null) {
             TextView usernameTextView = (TextView) v.findViewById(R.id.profileUsername);
             TextView nameTextView = (TextView) v.findViewById(R.id.profileName);
-            CircleImageView foto = (CircleImageView) v.findViewById(R.id.profilePhoto);
+            CircleImageView image = (CircleImageView) v.findViewById(R.id.profilePhoto);
+            String imagePath = String.format("profiles/%s.jpg", p.getUsername());
+            ImageManager.getInstance().putImageIntoView(imagePath, getContext(), image);
 
             if (usernameTextView != null) {
                 usernameTextView.setText(p.getUsername());
@@ -47,10 +50,6 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
 
             if (nameTextView != null) {
                 nameTextView.setText(p.fullName());
-            }
-
-            if (foto != null) {
-                //TODO: foto.setImage()
             }
 
         }

@@ -17,13 +17,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-
 import pes.twochange.R;
 import pes.twochange.domain.callback.BlockedResponse;
 import pes.twochange.domain.model.Chat;
-import pes.twochange.domain.model.Profile;
 import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.controller.ChatActivity;
+import pes.twochange.services.ImageManager;
 
 /**
  * Created by Adrian on 07/04/2017.
@@ -107,6 +106,8 @@ public class RecyclerChatAdapter extends RecyclerView.Adapter<RecyclerChatAdapte
                     }
                 }
         );
+        String imagePath = String.format("profiles/%s.jpg", current);
+        ImageManager.getInstance().putImageIntoView(imagePath, context, holder.photo);
         holder.user.setText(String.valueOf(current));
     }
 

@@ -8,12 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import pes.twochange.R;
 import pes.twochange.presentation.controller.ProfileActivity;
 import pes.twochange.services.ImageManager;
@@ -92,7 +92,9 @@ public class ChatProductFragment extends ProductFragment implements View.OnClick
                     }
                 }
         );
-        ImageView userImage = (ImageView) chatView.findViewById(R.id.user_image);
+        CircleImageView userImage = (CircleImageView) chatView.findViewById(R.id.user_image);
+        String imagePath = String.format("profiles/%s.jpg", username);
+        ImageManager.getInstance().putImageIntoView(imagePath, getContext(), userImage);
         String path = String.format("profile/%s.jpg", username);
         ImageManager.getInstance().putImageIntoView(path, getContext(), userImage);
         Button chatButton = (Button) chatView.findViewById(R.id.user_action);

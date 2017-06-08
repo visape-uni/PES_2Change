@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,7 +39,7 @@ public class ImageManager {
 
                     @Override
                     public void onFailure(String errorMessage) {
-                        Toast.makeText(context, "Error loading image", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "Error loading image", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
