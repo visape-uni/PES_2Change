@@ -95,7 +95,7 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Ad
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String selectedUsername = usernamesArray.get(position);
-        Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+        Intent profileIntent = new Intent(getApplicationContext(), ProfileNoActivity.class);
         if (!selectedUsername.equals(username)) {
             profileIntent.putExtra("username", selectedUsername);
         }

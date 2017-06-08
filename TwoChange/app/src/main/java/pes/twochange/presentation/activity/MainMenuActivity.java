@@ -129,7 +129,7 @@ public class MainMenuActivity extends AppCompatActivity {
         Button viewProfileBtn = (Button)findViewById(R.id.viewProfileBtn);
         viewProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                startActivity(new Intent(getApplicationContext(), ProfileNoActivity.class));
             }
         });
 

@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -56,7 +55,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
 
     private int currentFragment;
 
-    private static final String TAG = "ProfileActivity";
+    private static final String TAG = "ProfileNoActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import pes.twochange.R;
+import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Match;
 import pes.twochange.domain.model.Product;
 import pes.twochange.domain.themes.AdTheme;
@@ -488,7 +489,10 @@ public class ListsActivity extends BaseActivity implements
 
     @Override
     public void chat(String username) {
-
+        Intent chatIntent = new Intent(this,ChatActivity.class);
+        Chat chat = new Chat(this.username , username);
+        chatIntent.putExtra("chat",chat);
+        startActivity(chatIntent);
     }
 
     // endregion

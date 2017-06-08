@@ -7,7 +7,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -94,7 +93,7 @@ public class SearchProfileActivity extends BaseActivity implements TextWatcher, 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String selectedUsername = profiles.get(position).getUsername();
-        Intent intent = new Intent(getApplicationContext(), pes.twochange.presentation.controller.ProfileActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
         if (!selectedUsername.equals(username)) {
             intent.putExtra("usernameProfile", selectedUsername);
         }

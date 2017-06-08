@@ -22,7 +22,7 @@ import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.controller.ChatActivity;
 
-public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
+public class ProfileNoActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView imageView;
     private TextView fullNameTextView;

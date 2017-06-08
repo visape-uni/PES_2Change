@@ -1,5 +1,6 @@
 package pes.twochange.presentation.controller;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,6 +8,7 @@ import android.support.v4.app.Fragment;
 import java.util.ArrayList;
 
 import pes.twochange.R;
+import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Product;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.Config;
@@ -147,7 +149,10 @@ public class ExploreActivity extends BaseActivity implements
 
     @Override
     public void chat(String username) {
-        // TODO start chat between this.username and username
+        Intent chatIntent = new Intent(this,ChatActivity.class);
+        Chat chat = new Chat(this.username , username);
+        chatIntent.putExtra("chat",chat);
+        startActivity(chatIntent);
     }
 
     @Override
