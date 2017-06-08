@@ -33,19 +33,10 @@
     <group
         android:id="@+id/other_option_group">
         <item
-            android:title="@string/help"
-            android:id="@+id/help"
-            android:icon="@drawable/help_circle_outline"
-            android:name="@string/help" />
-        <item
             android:title="@string/about"
             android:id="@+id/about"
             android:icon="@drawable/numeric_2_box_outline"
             android:name="@string/about" />
-    </group>
-
-    <group
-        android:id="@+id/action_option_group">
         <item
             android:title="@string/logout"
             android:id="@+id/logout"

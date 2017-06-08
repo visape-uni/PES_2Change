@@ -16,21 +16,20 @@ import android.widget.FrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 import pes.twochange.R;
+import pes.twochange.presentation.activity.AboutActivity;
 import pes.twochange.presentation.activity.RecyclerChatActivity;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private final static int[] MENU_IDs = { R.id.explore, R.id.lists, R.id.chat, R.id.profile, R.id.searchProfile,
-            R.id.help, R.id.about, R.id.logout };
+    private final static int[] MENU_IDs = { R.id.explore, R.id.lists, R.id.chat, R.id.profile,
+            R.id.searchProfile, R.id.about, R.id.logout };
 
-//    protected final static String FRAGMENT_EXTRA = "fragment-extra-int";
     protected final static int EXPLORE_ACTIVITY = 0;
-    protected final static int AD_ACTIVITY = 1;
+    protected final static int LISTS_ACTIVITY = 1;
     protected final static int CHAT_ACTIVITY = 2;
     protected final static int PROFILE_ACTIVITY = 3;
     protected final static int SEARCH_PROFILE_ACTIVITY = 4;
-    protected final static int HELP_ACTIVITY = 5;
-    protected final static int ABOUT_ACTIVITY = 6;
+    protected final static int ABOUT_ACTIVITY = 5;
 
     protected Toolbar toolbar;
     protected FragmentManager fragmentManager;
@@ -40,6 +39,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Intent intent;
+            if (MENU_IDs[currentMenuItemIndex()] == item.getItemId()) {
+                return true;
+            }
             switch (item.getItemId()) {
                 case R.id.explore:
                     startActivity(new Intent(getApplicationContext(), ExploreActivity.class));
@@ -54,24 +56,15 @@ public abstract class BaseActivity extends AppCompatActivity {
                     break;
 
                 case R.id.profile:
-                    intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                     break;
 
                 case R.id.searchProfile:
                     startActivity(new Intent(getApplicationContext(), SearchProfileActivity.class));
                     break;
 
-                case R.id.help:
-                    /*intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                    intent.putExtra("item", 5);
-                    startActivity(intent);*/
-                    break;
-
                 case R.id.about:
-                    /*intent = new Intent(getApplicationContext(), OptionsActivity.class);
-                    intent.putExtra("item", 6);
-                    startActivity(intent);*/
+                    startActivity(new Intent(getApplicationContext(), AboutActivity.class));
                     break;
 
                 case R.id.logout:
