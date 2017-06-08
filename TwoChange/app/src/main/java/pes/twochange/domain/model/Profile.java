@@ -14,6 +14,7 @@ public class Profile {
     private Address address;
     private float rate;
     private int numRates;
+    private boolean notifications;
 
 
     public Profile() {
@@ -28,6 +29,7 @@ public class Profile {
         this.address = address;
         this.rate = -1; //user no rated
         this.numRates = 0; //0 users rate this user
+        this.notifications = true;
     }
 
     public String getUsername() {
@@ -97,6 +99,10 @@ public class Profile {
     public void incNumRates () {
         ++this.numRates;
     }
+
+    public boolean getNotifications(){return this.notifications;}
+
+    public void setNotifications(boolean notifications) {this.notifications = notifications;}
 
     public static class Address {
 

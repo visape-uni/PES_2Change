@@ -14,6 +14,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import pes.twochange.R;
 import pes.twochange.presentation.activity.MainMenuActivity;
+import pes.twochange.presentation.activity.RecyclerChatActivity;
 
 /**
  * Created by Victor on 10/04/2017.
@@ -29,7 +30,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void showNotification() {
-        Intent i = new Intent(this, MainMenuActivity.class);
+        Intent i = new Intent(this, RecyclerChatActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);

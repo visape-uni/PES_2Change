@@ -15,9 +15,10 @@ import java.util.ArrayList;
 import pes.twochange.R;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.adapter.RecyclerChatAdapter;
+import pes.twochange.presentation.controller.BaseActivity;
 
 
-public class RecyclerChatActivity extends Activity {
+public class RecyclerChatActivity extends BaseActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -48,6 +49,11 @@ public class RecyclerChatActivity extends Activity {
         mAdapter = new RecyclerChatAdapter(this, users, user);
         mRecyclerView.setAdapter(mAdapter);
 
+    }
+
+    @Override
+    protected int currentMenuItemIndex() {
+        return CHAT_ACTIVITY;
     }
 
 

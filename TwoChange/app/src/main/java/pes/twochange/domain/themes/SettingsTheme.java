@@ -13,30 +13,59 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import pes.twochange.domain.callback.BlockedResponse;
+import pes.twochange.domain.callback.NotificationResponse;
+import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Profile;
 import pes.twochange.presentation.Config;
 import pes.twochange.services.DatabaseResponse;
 import pes.twochange.services.Firebase;
+import pes.twochange.services.NotificationSender;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class SettingsTheme {
     private static SettingsTheme instance = new SettingsTheme();
-    private Profile myProfile;
+    private Profile profile;
     private String myusername;
     private static DatabaseReference db = FirebaseDatabase.getInstance().getReferenceFromUrl("https://change-64bd0.firebaseio.com/").child("users_blocked");
 
     public static SettingsTheme getInstance() {return instance;}
 
-    public static SettingsTheme getInstance(Profile profile, String username) {
-        instance.myProfile = profile;
+    public static SettingsTheme getInstance(String username) {
         instance.myusername = username;
         return instance;
     }
 
-    public static SettingsTheme getInstance(String username) {
-        instance.myusername = username;
-        return instance;
+    public void toggleNotifications(Profile pro){
+        pro.setNotifications(!pro.getNotifications());
+        ProfileTheme.getInstance(pro).updateProfile(new ProfileResponse() {
+            @Override
+            public void success(Profile profile) {
+
+            }
+
+            @Override
+            public void failure(String s) {
+
+            }
+        });
+    }
+
+
+    public void sendNotification(final NotificationResponse callback){
+
+        ProfileTheme.getInstance().get(myusername, new ProfileResponse() {
+            @Override
+            public void success(Profile profile) {
+                callback.sendNotis(profile.getNotifications());
+
+            }
+
+            @Override
+            public void failure(String s) {
+            }
+        });
     }
 
     public void blockUser(final String userblocked){
@@ -62,8 +91,6 @@ public class SettingsTheme {
 
             }
         });
-
-
     }
 
     public void userIsBlocked(final String userblocked, final BlockedResponse callback) {
@@ -83,9 +110,4 @@ public class SettingsTheme {
             }
         });
     }
-
-    public interface BlockedResponse {
-        void isBlocked(boolean blocked, String userblocked);
-    }
-
 }
