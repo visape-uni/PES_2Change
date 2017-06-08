@@ -65,13 +65,16 @@ public class ProductsListFragment extends Fragment {
         activity = null;
     }
 
-    public void display(ArrayList<Product> products) {
+    public boolean display(ArrayList<Product> products) {
         if (recyclerView != null) {
             if (products.size() == 0) {
                 // TODO empty "error"
             }
             productAdapter = new RecyclerViewProductAdapter(getContext(), products, activity);
             recyclerView.setAdapter(productAdapter);
+            return true;
+        } else {
+            return false;
         }
     }
 

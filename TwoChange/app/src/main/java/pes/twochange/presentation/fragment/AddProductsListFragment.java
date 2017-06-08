@@ -43,12 +43,6 @@ public class AddProductsListFragment extends ProductsListFragment implements Vie
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        activity = null;
-    }
-
-    @Override
     public void onClick(View v) {
         activity.addProduct();
     }
