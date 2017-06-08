@@ -13,11 +13,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import pes.twochange.R;
-import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Profile;
-import pes.twochange.domain.themes.ProfileTheme;
 
-import static pes.twochange.R.id.view;
 
 
 public class NewProfileFragment extends Fragment {
