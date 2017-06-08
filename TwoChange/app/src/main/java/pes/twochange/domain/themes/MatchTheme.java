@@ -15,9 +15,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import pes.twochange.domain.model.Match;
+import pes.twochange.domain.model.ModelAdapter;
 import pes.twochange.domain.model.Product;
 import pes.twochange.services.DatabaseResponse;
 import pes.twochange.services.Firebase;
+import pes.twochange.services.ModelAdapterFactory;
 
 public class MatchTheme {
 
@@ -37,21 +39,23 @@ public class MatchTheme {
         return ourInstance;
     }
 
-    public void getMatches(String username, final MatchesFinished response,
+    public void getMatches(String username, final MatchesResponse response,
                            final MatchTheme.ErrorResponse errorResponse) {
+        Log.v("GETMATCHES", username);
         Firebase.getInstance().get(
                 "matches/" + username,
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
+                        Log.v("GETMATCHES", dataSnapshot.toString());
                         GenericTypeIndicator<HashMap<String, Match>> typeIndicator =
                                 new GenericTypeIndicator<HashMap<String, Match>>() {};
-                        response.onFinish(dataSnapshot.getValue(typeIndicator));
+                        response.success(dataSnapshot.getValue(typeIndicator));
                     }
 
                     @Override
                     public void empty() {
-                        response.onFinish(new HashMap<String, Match>());
+                        response.success(new HashMap<String, Match>());
                     }
 
                     @Override
@@ -59,11 +63,27 @@ public class MatchTheme {
                         errorResponse.error(message);
                     }
                 }
-        );
+        ).list();
+    }
+
+    public void getProductsMatch(final Match match, final MatchResponse response, final ErrorResponse errorResponse) {
+        AdTheme.getInstance().getProduct(
+                match.getProductKeyReceiver(),
+                new AdTheme.ProductResponse() {
+                    @Override
+                    public void success(Product product) {
+                        response.success(product, match);
+                    }
+
+                    @Override
+                    public void error(String error) {
+                        errorResponse.error(error);
+                    }
+        });
     }
 
     public void makeMatches(final String currentUsername, final Map<String, Match> matches,
-                            ArrayList<Product> wanted, final MatchesFinished result) {
+                            ArrayList<Product> wanted, final MatchesResponse result) {
 
         username = currentUsername;
         firebaseMatches = firebaseMatches.child(username);
@@ -78,7 +98,6 @@ public class MatchTheme {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     Product product = child.getValue(Product.class);
                     product.setId(child.getKey());
-                    Log.v("MATCH", product.getCategory() + " " + product.getName());
                     if (product.getUsername().equals(username)) {
                         offered.add(product);
                     } else if (isCategoryWanted(product.getCategory())) {
@@ -98,46 +117,14 @@ public class MatchTheme {
                             Match match = new Match(username, possibleMatch.getUsername(),
                                     productKey, possibleMatch.getId(), possibleMatch.getCategory());
                             firebaseMatches.child(match.getProductKeySender()
-                                    .concat(match.getProductKeyReciver())).setValue(match);
+                                    .concat(match.getProductKeyReceiver())).setValue(match);
                             myMatches.put(match.getProductKeySender()
-                                    .concat(match.getProductKeyReciver()),match);
+                                    .concat(match.getProductKeyReceiver()),match);
                         }
                     }
                 }
 
-                result.onFinish(myMatches);
-
-//                for (int i = 0; i < offeredProd.size(); ++i) {
-//                    Iterator it = auxCandidateMatches.entrySet().iterator();
-//
-//                    //RECORRER TODOS LOS MATCHES POSIBLES
-//                    while (it.hasNext()) {
-//                        Map.Entry<String, Ad> pair = (Map.Entry)it.next();
-//
-//                        //Posible match product
-//                        Product posMatch = new Product(pair.getValue().getTitle(), pair.getKey().toString(), pair.getValue().getUserName(), pair.getValue().getCategory(), pair.getValue().getRating());
-//
-//                        //Offered product to compare match
-//                        Ad auxAd = offeredProd.get(i);
-//
-//                        Product auxProduct = new Product(auxAd.getTitle(), auxAd.getId(), auxAd.getUserName(), auxAd.getCategory(), auxAd.getRating());
-//
-//                        //Key del producto del usuario sender con el que se quiere hacer el match
-//                        String productKeySender = auxProduct.getId();
-//
-//                        //SI es match, AÑADIR posMatch A LOS MATCHES DE LA BD
-//                        if (!(isMatched(productKeySender.concat(posMatch.getId()), myMatches))&&(isMatch(auxProduct, posMatch))) {
-//
-//                            //crear match y guardarlo en la BD
-//                            Match match = new Match(username, posMatch.getUsername(), productKeySender, posMatch.getId(), posMatch.getCategory());
-//                            mFirebaseMatches.child(match.getProductKeySender().concat(match.getProductKeyReciver())).setValue(match);
-//                            myMatches.put(match.getProductKeySender().concat(match.getProductKeyReciver()),match);
-//                        }
-//                    }
-//                }
-
-
-
+                result.success(myMatches);
             }
             @Override
             public void empty() {
@@ -188,8 +175,30 @@ public class MatchTheme {
         return this;
     }
 
-    public interface MatchesFinished {
-        void onFinish(Map<String, Match> myMatches);
+    public void decline(Match match) {
+        match.setStatus(Match.Status.DENIED);
+        update(match);
+    }
+
+    public void accept(Match match) {
+        match.setStatus(Match.Status.ACCEPTED);
+        update(match);
+    }
+
+    public void update(Match match) {
+        ModelAdapter<Match> matchModelAdapter = new ModelAdapterFactory<Match>().build(Match.class,
+                match);
+        Firebase.getInstance().update("matches/" + match.getUsernameSender(),
+                match.getProductKeySender() + match.getProductKeyReceiver(),
+                matchModelAdapter);
+    }
+
+    public interface MatchesResponse {
+        void success(Map<String, Match> myMatches);
+    }
+
+    public interface MatchResponse {
+        void success(Product product, Match match);
     }
 
     public interface ErrorResponse {

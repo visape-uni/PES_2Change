@@ -325,6 +325,34 @@ public class AdTheme {
         }
     }
 
+    public void getProduct(String id, final ProductResponse productResponse) {
+        Firebase.getInstance().get(
+                "products",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        Product product = dataSnapshot.getValue(Product.class);
+                        productResponse.success(product);
+                    }
+
+                    @Override
+                    public void empty() {
+                        productResponse.error("No product");
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        productResponse.error("Something went wrong :(");
+                    }
+                }
+        ).byId(id);
+    }
+
+    public interface ProductResponse {
+        void success(Product product);
+        void error(String error);
+    }
+
     public interface ListResponse {
         void listResponse(ArrayList<Ad> productItems);
     }

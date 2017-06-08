@@ -248,8 +248,8 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
 
                             //crear match y guardarlo en la BD
                             Match match = new Match(currentUsername, posMatch.getUsername(), productKeySender, posMatch.getId(), posMatch.getCategory());
-                            mFirebaseMatches.child(match.getProductKeySender().concat(match.getProductKeyReciver())).setValue(match);
-                            myMatches.put(match.getProductKeySender().concat(match.getProductKeyReciver()),match);
+                            mFirebaseMatches.child(match.getProductKeySender().concat(match.getProductKeyReceiver())).setValue(match);
+                            myMatches.put(match.getProductKeySender().concat(match.getProductKeyReceiver()),match);
                         }
                     }
                 }
@@ -291,7 +291,7 @@ public class AdsListsActivity extends AppCompatActivity implements AdapterView.O
             @Override
             public void success(DataSnapshot dataSnapshot) {
                 for (DataSnapshot d: dataSnapshot.getChildren()) {
-                    if (isCategoryWanted(d.getValue(Match.class).getCategoryProductReciver())) {
+                    if (isCategoryWanted(d.getValue(Match.class).getCategoryProductReceiver())) {
                         myMatches.put(d.getKey().toString(), d.getValue(Match.class));
                     }
                 }

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,9 +41,28 @@ public class RecyclerViewMatchAdapter extends RecyclerView.Adapter<RecyclerViewM
 
     @Override
     public void onBindViewHolder(final ProductHolder holder, int position) {
+        final int finalPosition = position;
         Match match = matchMap.get(position);
-        holder.textView.setText("You have a match with " + match.getUsernameReciver() + " for "
-                + match.getCategoryProductReciver());
+        holder.textView.setText("You have a match with " + match.getUsernameReceiver().toUpperCase()
+                + " for " + match.getCategoryProductReceiver().toUpperCase());
+        holder.itemView.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onRecyclerViewItemClickListener(finalPosition);
+                    }
+                }
+        );
+        int color = 0xff0000ff;
+        switch (match.getStatusInt()) {
+            case Match.ACCEPTED_INT:
+                color = 0xff00ff00;
+                break;
+            case Match.DENIED_INT:
+                color = 0xffff0000;
+                break;
+        }
+        holder.divider.setBackgroundColor(color);
     }
 
     @Override
@@ -52,13 +72,15 @@ public class RecyclerViewMatchAdapter extends RecyclerView.Adapter<RecyclerViewM
 
     class ProductHolder extends RecyclerView.ViewHolder {
 
+        LinearLayout divider;
         View itemView;
         TextView textView;
 
         public ProductHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
-            this.textView= (TextView) itemView.findViewById(R.id.text);
+            this.textView = (TextView) itemView.findViewById(R.id.text);
+            this.divider = (LinearLayout) itemView.findViewById(R.id.status_divider);
         }
     }
 }

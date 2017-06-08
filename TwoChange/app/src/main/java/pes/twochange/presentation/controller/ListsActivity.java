@@ -33,7 +33,9 @@ import pes.twochange.domain.themes.MatchTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.activity.ImagePickDialog;
 import pes.twochange.presentation.fragment.AddProductsListFragment;
+import pes.twochange.presentation.fragment.MatchProductFragment;
 import pes.twochange.presentation.fragment.MatchProductsListFragment;
+import pes.twochange.presentation.fragment.MyProductFragment;
 import pes.twochange.presentation.fragment.NewProductFragment;
 import pes.twochange.presentation.fragment.WantedProductsListFragment;
 
@@ -42,8 +44,10 @@ public class ListsActivity extends BaseActivity implements
         AddProductsListFragment.OnFragmentInteractionListener, MatchTheme.ErrorResponse,
         WantedProductsListFragment.OnFragmentInteractionListener,
         NewProductFragment.OnFragmentInteractionListener,
-        ImagePickDialog.ImagePickListener, MatchTheme.MatchesFinished,
-        MatchProductsListFragment.OnFragmentInteractionListener {
+        ImagePickDialog.ImagePickListener, MatchTheme.MatchesResponse,
+        MatchProductsListFragment.OnFragmentInteractionListener,
+        MyProductFragment.OnFragmentInteractionListener,
+        MatchProductFragment.OnFragmentInteractionListener, MatchTheme.MatchResponse {
 
     // region ACTIVITY
 
@@ -57,6 +61,7 @@ public class ListsActivity extends BaseActivity implements
     private static final int MATCHES = R.id.navigation_matches;
 
     private BottomNavigationView navigation;
+    private Match selectedMatch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +114,12 @@ public class ListsActivity extends BaseActivity implements
     public void onBackPressed() {
         if (fragment instanceof NewProductFragment) {
             close();
+        } else if (fragment instanceof MyProductFragment) {
+            fragment = AddProductsListFragment.newInstance();
+            replaceFragment(R.id.content_list, fragment, "offered");
+        } else if (fragment instanceof MatchProductFragment) {
+            fragment = MatchProductsListFragment.newInstance();
+            replaceFragment(R.id.content_list, fragment, "matches");
         } else {
             super.onBackPressed();
         }
@@ -121,13 +132,19 @@ public class ListsActivity extends BaseActivity implements
     @Override
     public void onRecyclerViewItemClickListener(int position) {
         switch (currentList) {
-            case WANTED:
-                break;
-
             case OFFERED:
+                if (offeredProducts != null && position < offeredProducts.size()) {
+                    Product selectedProduct = offeredProducts.get(position);
+                    fragment = MyProductFragment.newInstance(selectedProduct.getName(),
+                            selectedProduct.getDescription(), selectedProduct.getCategory(),
+                            selectedProduct.getRating(), selectedProduct.getUrls());
+                    replaceFragment(R.id.content_list, fragment, "product");
+                }
                 break;
 
             case MATCHES:
+                selectedMatch = new ArrayList<Match>(matchedProducts.values()).get(position);
+                MatchTheme.getInstance().getProductsMatch(selectedMatch, this, this);
                 break;
         }
     }
@@ -267,6 +284,14 @@ public class ListsActivity extends BaseActivity implements
     }
 
     // endregion
+
+    @Override
+    public void success(Product product, Match match) {
+        fragment = MatchProductFragment.newInstance(product.getName(), product.getDescription(),
+                product.getCategory(), product.getRating(), product.getUrls(), product.getUsername(),
+                match.getStatusInt());
+        replaceFragment(R.id.content_list, fragment, "match");
+    }
 
     @Override
     public void error(String error) {
@@ -426,7 +451,7 @@ public class ListsActivity extends BaseActivity implements
     // region Match
 
     @Override
-    public void onFinish(Map<String, Match> myMatches) {
+    public void success(Map<String, Match> myMatches) {
         if (myMatches == null || myMatches.size() == 0) {
             // TODO error
         } else {
@@ -437,8 +462,33 @@ public class ListsActivity extends BaseActivity implements
 
     @Override
     public void match() {
-        Log.v("MATCH", username + " " + wantedProducts.size());
         MatchTheme.getInstance().makeMatches(username, matchedProducts, wantedProducts, this);
+    }
+
+    @Override
+    public void edit() {
+
+    }
+
+    @Override
+    public void accept() {
+        if (selectedMatch != null) {
+            MatchTheme.getInstance().accept(selectedMatch);
+            MatchTheme.getInstance().getProductsMatch(selectedMatch, this, this);
+        }
+    }
+
+    @Override
+    public void decline() {
+        if (selectedMatch != null) {
+            MatchTheme.getInstance().decline(selectedMatch);
+            MatchTheme.getInstance().getProductsMatch(selectedMatch, this, this);
+        }
+    }
+
+    @Override
+    public void chat(String username) {
+
     }
 
     // endregion
