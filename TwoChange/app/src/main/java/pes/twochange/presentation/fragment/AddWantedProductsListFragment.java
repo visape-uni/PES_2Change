@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -13,16 +14,16 @@ import pes.twochange.domain.model.Product;
 import pes.twochange.presentation.adapter.RecyclerViewWantedAdapter;
 import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
-public class WantedProductsListFragment extends ProductsListFragment {
+public class AddWantedProductsListFragment extends AddProductsListFragment {
 
     private OnFragmentInteractionListener activity;
     private RecyclerViewWantedAdapter wantedAdapter;
 
-    public WantedProductsListFragment() {
+    public AddWantedProductsListFragment() {
     }
 
-    public static WantedProductsListFragment newInstance() {
-        return new WantedProductsListFragment();
+    public static AddWantedProductsListFragment newInstance() {
+        return new AddWantedProductsListFragment();
     }
 
     @Override
@@ -38,8 +39,8 @@ public class WantedProductsListFragment extends ProductsListFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof WantedProductsListFragment.OnFragmentInteractionListener) {
-            activity = (WantedProductsListFragment.OnFragmentInteractionListener) context;
+        if (context instanceof AddWantedProductsListFragment.OnFragmentInteractionListener) {
+            activity = (AddWantedProductsListFragment.OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -48,10 +49,8 @@ public class WantedProductsListFragment extends ProductsListFragment {
 
     @Override
     public boolean display(ArrayList<Product> products) {
+        Log.v("WANTED", "null recycler view " + (recyclerView == null));
         if (recyclerView != null) {
-            if (products.size() == 0) {
-                // TODO empty "error"
-            }
             wantedAdapter = new RecyclerViewWantedAdapter(products, activity, activity);
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             recyclerView.setLayoutManager(manager);
@@ -63,7 +62,7 @@ public class WantedProductsListFragment extends ProductsListFragment {
     }
 
     public interface OnFragmentInteractionListener
-            extends ProductsListFragment.OnFragmentInteractionListener,
+            extends AddProductsListFragment.OnFragmentInteractionListener,
             OnRecyclerViewItemLongClickListener {
 
     }

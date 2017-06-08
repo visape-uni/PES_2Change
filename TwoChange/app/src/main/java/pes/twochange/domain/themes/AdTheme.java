@@ -17,6 +17,7 @@ import java.util.List;
 import pes.twochange.domain.callback.AdResponse;
 import pes.twochange.domain.model.Ad;
 import pes.twochange.domain.model.Image;
+import pes.twochange.domain.model.ModelAdapter;
 import pes.twochange.domain.model.Product;
 import pes.twochange.services.DatabaseResponse;
 import pes.twochange.services.Firebase;
@@ -346,6 +347,14 @@ public class AdTheme {
                     }
                 }
         ).byId(id);
+    }
+
+    public void postWanted(String username, String category) {
+        Product product = new Product();
+        product.setCategory(category);
+        String path = "lists/" + username + "/wanted";
+        ModelAdapter<Product> pma = new ModelAdapterFactory<Product>().build(Product.class, product);
+        Firebase.getInstance().insert(path, pma);
     }
 
     public interface ProductResponse {

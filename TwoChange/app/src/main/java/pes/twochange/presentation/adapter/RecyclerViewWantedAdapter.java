@@ -1,6 +1,7 @@
 package pes.twochange.presentation.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +58,8 @@ public class RecyclerViewWantedAdapter extends RecyclerView.Adapter<RecyclerView
                 }
         );
         Product product = products.get(position);
-        holder.title.setText(product.getName());
+        holder.title.setText(product.getCategory());
+        Log.w("WANTED", product.getCategory());
     }
 
     @Override
