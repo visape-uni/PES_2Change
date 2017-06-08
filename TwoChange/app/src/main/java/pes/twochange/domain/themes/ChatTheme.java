@@ -4,6 +4,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import pes.twochange.domain.callback.NotificationResponse;
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Message;
@@ -20,8 +21,6 @@ public class ChatTheme {
     private String userSender;
     private String userReciver;
     private Chat chat;
-    private DatabaseReference mFirebaseChatRefSender;
-    private DatabaseReference mFirebaseChatRefReciver;
 
     public static ChatTheme getInstance() {
         return instance;
@@ -35,17 +34,24 @@ public class ChatTheme {
         return instance;
     }
 
-    public void openChat() {
-
-    }
-
     public void sendChatMessage(String content) {
-        //If the message is not empty send it to the DBs
-        new Message(content, userSender, userReciver).send();
+        if (!content.isEmpty()) {
+            new Message(content, userSender, userReciver).send();
+            SettingsTheme.getInstance(userReciver).sendNotification(new NotificationResponse() {
+                @Override
+                public void sendNotis(boolean notifications) {
+                    if(notifications) {
+                        NotificationSender n = new NotificationSender();
+                        n.sendNotification(userSender);
+                    }
+                }
 
-        //Send notification for the reciver
-        NotificationSender n = new NotificationSender();
-        n.sendNotification(userSender);
+                @Override
+                public void changeNotis(Profile profile) {
+
+                }
+            });
+        }
     }
 
     public void sendContactDetails() {
@@ -61,9 +67,8 @@ public class ChatTheme {
                 if (phonenumber != null) {
                     message += "\n" + "Phone Number: " + phonenumber;
                 }
-                if(address != null || phonenumber != null) {
-                    ChatTheme.getInstance(chat).sendChatMessage(message);
-                }
+                ChatTheme.getInstance(chat).sendChatMessage(message);
+
 
             }
 

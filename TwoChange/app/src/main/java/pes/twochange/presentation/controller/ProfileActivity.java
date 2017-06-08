@@ -158,6 +158,8 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 return true;
             case R.id.action_desactivar:
                 //TODO: desactivar/activar notificaciones
+                SettingsTheme.getInstance(currentUsername).toggleNotifications(profile);
+
                 return true;
             case R.id.action_block:
                 //TODO: unblock user
