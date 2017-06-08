@@ -6,7 +6,7 @@
         <item
             android:title="@string/explore"
             android:id="@+id/explore"
-            android:icon="@drawable/compass_outline"
+            android:icon="@drawable/compass"
             android:name="@string/explore" />
         <item
             android:title="@string/my_lists"
@@ -16,7 +16,7 @@
         <item
             android:title="@string/chat"
             android:id="@+id/chat"
-            android:icon="@drawable/message_reply"
+            android:icon="@drawable/message_reply_text"
             android:name="@string/chat" />
         <item
             android:title="@string/profile"
@@ -35,7 +35,7 @@
         <item
             android:title="@string/about"
             android:id="@+id/about"
-            android:icon="@drawable/numeric_2_box_outline"
+            android:icon="@drawable/numeric_2_box"
             android:name="@string/about" />
         <item
             android:title="@string/logout"

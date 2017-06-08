@@ -204,5 +204,7 @@
 \nProject 2Change:
     </string>
     <string name="about_url"><a>https://github.com/visape-uni/PES_2Change</a></string>
+    <string name="filter_by_category">Filter by category</string>
+    <string name="filter_by_rate">Filter by rate</string>
 
 </resources>

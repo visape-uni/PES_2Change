@@ -15,6 +15,6 @@
         android:orderInCategory="100"
         android:title="Edit Profile"
         app:showAsAction="always"
-        android:icon="@drawable/ic_edit_perfil"/>
+        android:icon="@drawable/ic_settings_white_24dp"/>
 
 </menu>

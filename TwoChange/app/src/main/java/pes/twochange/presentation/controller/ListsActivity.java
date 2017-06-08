@@ -16,7 +16,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -84,6 +86,13 @@ public class ListsActivity extends BaseActivity implements
         navigation.setSelectedItemId(OFFERED);
 
         toolbar.setTitle(R.string.ad_list_title);
+    }
+
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.ad_list_title);
+        return true;
     }
 
     @Override

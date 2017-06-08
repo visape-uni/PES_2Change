@@ -4,7 +4,7 @@
     tools:context="pes.twochange.presentation.controller.ChatActivity">
     <item
         android:id="@+id/action_photo"
-        android:icon="@drawable/ic_action_photo"
+        android:icon="@drawable/ic_camera_enhance_white_24dp"
         android:title="@string/action_photo"
         app:showAsAction="always" />
     <group>

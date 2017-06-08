@@ -1,9 +1,18 @@
 package pes.twochange.presentation.controller;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 
@@ -40,6 +49,82 @@ public class ExploreActivity extends BaseActivity implements
 
         displayFragment(R.id.content_explore, fragment, "main_list");
 
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Explore 2Change");
+        getMenuInflater().inflate(R.menu.menu_filter, menu);
+        return true;
+    }
+
+    private Spinner inputSpinner;
+    private EditText inputText;
+    private String[] categoryArray;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.category_filter:
+                inputSpinner = new Spinner(this);
+                categoryArray = getResources().getStringArray(R.array.ad_category);
+                ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this,
+                        android.R.layout.simple_spinner_item, categoryArray);
+                categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                inputSpinner.setAdapter(categoryAdapter);
+                new AlertDialog.Builder(this)
+                        .setView(inputSpinner)
+                        .setTitle("Select the category you want to filter with")
+                        .setNegativeButton(
+                                "Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                }
+                        )
+                        .setPositiveButton(
+                                "Ok",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String category = categoryArray[inputSpinner.getSelectedItemPosition()];
+                                        categoryFilter(category);
+                                    }
+                                }
+                        ).show();
+                break;
+
+            case R.id.rate_filter:
+                inputText = new EditText(this);
+                inputText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+                new AlertDialog.Builder(this)
+                        .setView(inputSpinner)
+                        .setTitle("Select the approximated rate want to filter with")
+                        .setNegativeButton(
+                                "Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                }
+                        )
+                        .setPositiveButton(
+                                "Ok",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String rateStr = inputText.getText().toString();
+                                        int rate = Integer.valueOf(rateStr);
+                                        rateFilter(rate - 10, rate + 10);
+                                    }
+                                }
+                        ).show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

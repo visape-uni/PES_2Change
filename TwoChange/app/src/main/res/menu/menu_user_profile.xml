@@ -15,6 +15,6 @@
         android:orderInCategory="100"
         android:title="Open chat"
         app:showAsAction="always"
-        android:icon="@drawable/ic_open_chat"/>
+        android:icon="@drawable/ic_message_reply_text_white_24dp"/>
 
 </menu>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".presentation.controller.ExploreActivity">
+
+    <item
+        android:id="@+id/category_filter"
+        android:title="@string/filter_by_category"
+        app:title="@string/filter_by_category"
+        android:icon="@drawable/ic_filter_white_24dp"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/rate_filter"
+        android:title="@string/filter_by_rate"
+        app:title="@string/filter_by_rate"
+        android:icon="@drawable/ic_thumb_up_white_24dp"
+        app:showAsAction="ifRoom"/>
+
+</menu>
