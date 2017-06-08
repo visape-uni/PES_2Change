@@ -11,8 +11,6 @@ import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.w3c.dom.Text;
-
 import pes.twochange.R;
 import pes.twochange.domain.model.Match;
 import pes.twochange.presentation.Config;
@@ -50,9 +48,9 @@ public class MatchesActivity extends AppCompatActivity {
                 status = (TextView) v.findViewById(R.id.statusMatch);
 
                 myProduct.setText(model.getProductKeySender());
-                otherProduct.setText(model.getProductKeyReciver());
-                otherUsername.setText(model.getUsernameReciver());
-                status.setText(model.getState().toString());
+                otherProduct.setText(model.getProductKeyReceiver());
+                otherUsername.setText(model.getUsernameReceiver());
+                status.setText(model.getStatus().toString());
             }
         };
 

@@ -195,5 +195,7 @@
     <string name="description_hint_caps">DESCRIPTION</string>
     <string name="category_hint_caps">CATEGORY</string>
     <string name="chat_button">CHAT</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
 
 </resources>

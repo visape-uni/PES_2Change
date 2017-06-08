@@ -290,35 +290,6 @@ public class AdTheme {
         );
     }
 
-    public void getAllAds(final ListResponse response, final ErrorResponse error) {
-        Firebase.getInstance().get(
-                "ads",
-                new DatabaseResponse() {
-                    @Override
-                    public void success(DataSnapshot dataSnapshot) {
-                        ArrayList<Ad> adArrayList = new ArrayList<>();
-                        GenericTypeIndicator<HashMap<String, Ad>> typeIndicator =
-                                new GenericTypeIndicator<HashMap<String, Ad>>() {};
-                        HashMap<String, Ad> firebase = dataSnapshot.getValue(typeIndicator);
-                        if (firebase != null) {
-                            adArrayList = new ArrayList<>(firebase.values());
-                        }
-                        response.listResponse(adArrayList);
-                    }
-
-                    @Override
-                    public void empty() {
-                        response.listResponse(new ArrayList<Ad>());
-                    }
-
-                    @Override
-                    public void failure(String message) {
-                        error.error(message);
-                    }
-                }
-        ).list();
-    }
-
     public void getAllProducts(final ProductListResponse response, final ErrorResponse error) {
         Firebase.getInstance().get(
                 "products",
@@ -354,16 +325,40 @@ public class AdTheme {
         }
     }
 
+    public void getProduct(String id, final ProductResponse productResponse) {
+        Firebase.getInstance().get(
+                "products",
+                new DatabaseResponse() {
+                    @Override
+                    public void success(DataSnapshot dataSnapshot) {
+                        Product product = dataSnapshot.getValue(Product.class);
+                        productResponse.success(product);
+                    }
+
+                    @Override
+                    public void empty() {
+                        productResponse.error("No product");
+                    }
+
+                    @Override
+                    public void failure(String message) {
+                        productResponse.error("Something went wrong :(");
+                    }
+                }
+        ).byId(id);
+    }
+
+    public interface ProductResponse {
+        void success(Product product);
+        void error(String error);
+    }
+
     public interface ListResponse {
         void listResponse(ArrayList<Ad> productItems);
     }
 
     public interface ProductListResponse {
         void listResponse(ArrayList<Product> productItems);
-    }
-
-    public interface WantedResponse {
-        void wantedListResponse(ArrayList<Product> productItems);
     }
 
     public interface ErrorResponse {

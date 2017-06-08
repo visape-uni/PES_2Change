@@ -10,12 +10,15 @@ import pes.twochange.R;
 import pes.twochange.domain.model.Product;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.Config;
+import pes.twochange.presentation.fragment.ChatProductFragment;
+import pes.twochange.presentation.fragment.MyProductFragment;
 import pes.twochange.presentation.fragment.ProductFragment;
 import pes.twochange.presentation.fragment.SearchProductsListFragment;
 
 public class ExploreActivity extends BaseActivity implements
         SearchProductsListFragment.OnFragmentInteractionListener,
-        ProductFragment.OnFragmentInteractionListener {
+        ChatProductFragment.OnFragmentInteractionListener,
+        MyProductFragment.OnFragmentInteractionListener {
 
     public static final String TAG = "EXPLORE ACTIVITY";
     private Fragment fragment;
@@ -128,13 +131,16 @@ public class ExploreActivity extends BaseActivity implements
     public void onRecyclerViewItemClickListener(int position) {
         if (productsList != null && position < productsList.size()) {
             Product selectedProduct = productsList.get(position);
-            String usersProduct = selectedProduct.getUsername().equals(username) ?
-                    null : selectedProduct.getUsername();
-            fragment = ProductFragment.newInstance(selectedProduct.getName(),
-                    selectedProduct.getDescription(), selectedProduct.getCategory(),
-                    selectedProduct.getRating(), selectedProduct.getUrls(), usersProduct);
-            int contentResId = R.id.content_explore;
-            String tag = "product";
+            String usersProduct = selectedProduct.getUsername();
+            if (usersProduct.equals(username)) {
+                fragment = MyProductFragment.newInstance(selectedProduct.getName(),
+                        selectedProduct.getDescription(), selectedProduct.getCategory(),
+                        selectedProduct.getRating(), selectedProduct.getUrls());
+            } else {
+                fragment = ChatProductFragment.newInstance(selectedProduct.getName(),
+                        selectedProduct.getDescription(), selectedProduct.getCategory(),
+                        selectedProduct.getRating(), selectedProduct.getUrls(), usersProduct);
+            }
             replaceFragment(R.id.content_explore, fragment, "product");
         }
     }
@@ -142,5 +148,10 @@ public class ExploreActivity extends BaseActivity implements
     @Override
     public void chat(String username) {
         // TODO start chat between this.username and username
+    }
+
+    @Override
+    public void edit() {
+
     }
 }

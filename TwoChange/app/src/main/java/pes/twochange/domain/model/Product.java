@@ -142,23 +142,6 @@ public class Product {
         }
     }
 
-    public void rate(Status status, Integer year, Integer price) {
-        int auxRating = 100;
-        auxRating -= status.getPenalty();
-
-        if (year != null) {
-            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-            auxRating -= currentYear - year;
-        }
-
-        if (price != null) {
-            int pricePoints = price / 50;    // 1 point each 50 €/$/?
-            auxRating += pricePoints;
-        }
-
-        setRating(auxRating < 0 ? 0 : auxRating);
-    }
-
     public void rate(Status state, Integer price) {
         int auxRating = 50;
         auxRating -= state.getPenalty();

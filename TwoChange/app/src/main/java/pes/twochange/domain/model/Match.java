@@ -1,39 +1,49 @@
 package pes.twochange.domain.model;
 
-import android.provider.ContactsContract;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-/**
- * Created by Visape on 10/05/2017.
- */
+import com.google.firebase.database.Exclude;
 
 public class Match {
 
-    public enum state {
+    public final static int UNDEFINED_INT = 0;
+    public final static int ACCEPTED_INT = 1;
+    public final static int DENIED_INT = -1;
+
+    @Exclude
+    public int getStatusInt() {
+        switch (status) {
+            case ACCEPTED:
+                return ACCEPTED_INT;
+            case DENIED:
+                return DENIED_INT;
+            default:
+                return UNDEFINED_INT;
+        }
+    }
+
+    public enum Status {
         UNDEFINED,
         ACCEPTED,
         DENIED
     }
 
     private String usernameSender;
-    private String usernameReciver;
+    private String usernameReceiver;
     private String productKeySender;
-    private String productKeyReciver;
-    private String categoryProductReciver;
+    private String productKeyReceiver;
+    private String categoryProductReceiver;
 
-    private state state;
+    private Status status;
 
 
     //CONSTRUCTOR
-    public Match(String usernameSender, String usernameReciver, String productKeySender, String productKeyReciver, String categoryProductReciver) {
+    public Match(String usernameSender, String usernameReceiver, String productKeySender,
+                 String productKeyReceiver, String categoryProductReceiver) {
         this.usernameSender = usernameSender;
-        this.usernameReciver = usernameReciver;
+        this.usernameReceiver = usernameReceiver;
         this.productKeySender = productKeySender;
-        this.productKeyReciver = productKeyReciver;
-        this.categoryProductReciver = categoryProductReciver;
-        this.state = state.UNDEFINED;
+        this.productKeyReceiver = productKeyReceiver;
+        this.categoryProductReceiver = categoryProductReceiver;
+        this.status = Status.UNDEFINED;
     }
 
     public Match() {}
@@ -48,12 +58,12 @@ public class Match {
         this.usernameSender = usernameSender;
     }
 
-    public String getUsernameReciver() {
-        return usernameReciver;
+    public String getUsernameReceiver() {
+        return usernameReceiver;
     }
 
-    public void setUsernameReciver(String usernameReciver) {
-        this.usernameReciver = usernameReciver;
+    public void setUsernameReceiver(String usernameReceiver) {
+        this.usernameReceiver = usernameReceiver;
     }
 
     public String getProductKeySender() {
@@ -64,28 +74,28 @@ public class Match {
         this.productKeySender = productKeySender;
     }
 
-    public String getProductKeyReciver() {
-        return productKeyReciver;
+    public String getProductKeyReceiver() {
+        return productKeyReceiver;
     }
 
-    public void setProductKeyReciver(String productKeyReciver) {
-        this.productKeyReciver = productKeyReciver;
+    public void setProductKeyReceiver(String productKeyReceiver) {
+        this.productKeyReceiver = productKeyReceiver;
     }
 
-    public Match.state getState() {
-        return state;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setState(Match.state state) {
-        this.state = state;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
-    public String getCategoryProductReciver () {
-        return categoryProductReciver;
+    public String getCategoryProductReceiver() {
+        return categoryProductReceiver;
     }
 
-    public void setCategoryProductReciver (String categoryProductReciver) {
-        this.categoryProductReciver = categoryProductReciver;
+    public void setCategoryProductReceiver(String categoryProductReceiver) {
+        this.categoryProductReceiver = categoryProductReceiver;
     }
 
 }

@@ -7,9 +7,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,7 +15,6 @@ import java.util.Locale;
 import pes.twochange.R;
 import pes.twochange.presentation.adapter.ImagePagerAdapter;
 import pes.twochange.presentation.view.ViewPagerIndicator;
-import pes.twochange.services.ImageManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,21 +24,19 @@ import pes.twochange.services.ImageManager;
  * Use the {@link ProductFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProductFragment extends Fragment implements View.OnClickListener {
+public class ProductFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "name";
-    private static final String ARG_PARAM2 = "description";
-    private static final String ARG_PARAM3 = "category";
-    private static final String ARG_PARAM4 = "rating";
-    private static final String ARG_PARAM5 = "images";
-    private static final String ARG_PARAM6 = "username";
+    protected static final String ARG_PARAM1 = "name";
+    protected static final String ARG_PARAM2 = "description";
+    protected static final String ARG_PARAM3 = "category";
+    protected static final String ARG_PARAM4 = "rating";
+    protected static final String ARG_PARAM5 = "images";
 
-    private String name;
-    private String description;
-    private String category;
-    private int rating;
-    private ArrayList<String> images;
-    private String username;
+    protected String name;
+    protected String description;
+    protected String category;
+    protected int rating;
+    protected ArrayList<String> images;
 
     private OnFragmentInteractionListener activity;
 
@@ -59,11 +53,10 @@ public class ProductFragment extends Fragment implements View.OnClickListener {
      * @param category Parameter 3.
      * @param rating Parameter 4.
      * @param images Parameter 5.
-     * @param username Parameter 6.
      * @return A new instance of fragment ProductFragment.
      */
     public static ProductFragment newInstance(String name, String description, String category,
-                                              int rating, ArrayList<String> images, String username) {
+                                              int rating, ArrayList<String> images) {
         ProductFragment fragment = new ProductFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, name);
@@ -71,7 +64,6 @@ public class ProductFragment extends Fragment implements View.OnClickListener {
         args.putString(ARG_PARAM3, category);
         args.putInt(ARG_PARAM4, rating);
         args.putStringArrayList(ARG_PARAM5, images);
-        args.putString(ARG_PARAM6, username);
         fragment.setArguments(args);
         return fragment;
     }
@@ -85,7 +77,6 @@ public class ProductFragment extends Fragment implements View.OnClickListener {
             category = getArguments().getString(ARG_PARAM3);
             rating = getArguments().getInt(ARG_PARAM4);
             images = getArguments().getStringArrayList(ARG_PARAM5);
-            username = getArguments().getString(ARG_PARAM6);
         }
     }
 
@@ -105,18 +96,6 @@ public class ProductFragment extends Fragment implements View.OnClickListener {
         descriptionTextView.setText(description);
         TextView ratingTextView = (TextView) view.findViewById(R.id.product_rating);
         ratingTextView.setText(String.format(Locale.FRANCE, "%d", rating));
-        RelativeLayout userLayout = (RelativeLayout) view.findViewById(R.id.user_layout);
-        if (username != null) {
-            TextView usernameTextView = (TextView) view.findViewById(R.id.user_username);
-            usernameTextView.setText(username);
-            ImageView userImage = (ImageView) view.findViewById(R.id.user_image);
-            String path = String.format("profile/%s.jpg", username);
-            ImageManager.getInstance().putImageIntoView(path, getContext(), userImage);
-            Button chatButton = (Button) view.findViewById(R.id.user_action);
-            chatButton.setOnClickListener(this);
-        } else {
-            userLayout.setVisibility(View.GONE);
-        }
         return view;
     }
 
@@ -137,12 +116,6 @@ public class ProductFragment extends Fragment implements View.OnClickListener {
         activity = null;
     }
 
-    @Override
-    public void onClick(View v) {
-        activity.chat(username);
-    }
-
     public interface OnFragmentInteractionListener {
-        void chat(String username);
     }
 }
