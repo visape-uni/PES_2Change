@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import pes.twochange.R;
+import pes.twochange.domain.callback.BlockedResponse;
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Chat;
 import pes.twochange.domain.model.Product;
@@ -181,12 +182,19 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                 currentFragment = EDIT;
                 return true;
             case R.id.action_desactivar:
-                //TODO: desactivar/activar notificaciones
+                if (profile.getNotifications()) Toast.makeText(this, "Notifications disabled successfully", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(this, "Notifications enabled successfully", Toast.LENGTH_SHORT).show();
                 SettingsTheme.getInstance(currentUsername).toggleNotifications(profile);
-
                 return true;
             case R.id.action_block:
-                //TODO: unblock user
+
+                SettingsTheme.getInstance(currentUsername).userIsBlocked(usernameProfile, new BlockedResponse() {
+                    @Override
+                    public void isBlocked(boolean blocked, String userblocked) {
+                        if (blocked) Toast.makeText(ProfileActivity.this, "User unblocked successfully", Toast.LENGTH_SHORT).show();
+                        else Toast.makeText(ProfileActivity.this, "User blocked successfully", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 SettingsTheme.getInstance(currentUsername).blockUser(profile.getUsername());
                 return true;
             case R.id.action_open_chat:
@@ -379,6 +387,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         @Override
         public void empty() {
             ProfileTheme.getInstance(profile).rate(rate, currentUsername);
+            setUpProfile();
             Toast.makeText(ProfileActivity.this, "User rated successfully", Toast.LENGTH_SHORT).show();
         }
 
