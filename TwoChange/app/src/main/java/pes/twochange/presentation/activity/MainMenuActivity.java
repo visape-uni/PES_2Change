@@ -20,6 +20,7 @@ import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.controller.AuthActivity;
 import pes.twochange.presentation.controller.ChatActivity;
+import pes.twochange.presentation.controller.RecyclerChatActivity;
 
 public class MainMenuActivity extends AppCompatActivity {
 

@@ -1,9 +1,18 @@
 package pes.twochange.presentation.controller;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -14,10 +23,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import pes.twochange.R;
 import pes.twochange.domain.callback.ProfileResponse;
 import pes.twochange.domain.model.Chat;
@@ -27,15 +40,18 @@ import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.Config;
+import pes.twochange.presentation.activity.ImagePickDialog;
 import pes.twochange.presentation.fragment.EditProfileFragment;
 import pes.twochange.presentation.fragment.MyProductFragment;
 import pes.twochange.presentation.fragment.ProductsListFragment;
 import pes.twochange.presentation.fragment.WantedProductsListFragment;
 import pes.twochange.services.DatabaseResponse;
+import pes.twochange.services.ImageManager;
 
 public class ProfileActivity extends BaseActivity implements AdTheme.ErrorResponse,
         WantedProductsListFragment.OnFragmentInteractionListener,
-        MyProductFragment.OnFragmentInteractionListener{
+        MyProductFragment.OnFragmentInteractionListener, View.OnClickListener,
+        ImagePickDialog.ImagePickListener {
 
     private String usernameProfile;
     private String currentUsername;
@@ -60,6 +76,9 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     private int currentFragment;
 
     private static final String TAG = "ProfileNoActivity";
+    private CircleImageView image;
+    private String imageName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +87,13 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         SharedPreferences sharedPreferences = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         currentUsername = sharedPreferences.getString("username", null);
 
-        if (getIntent().getStringExtra("usernameProfile") == null) usernameProfile = currentUsername;
-        else usernameProfile = getIntent().getStringExtra("usernameProfile");
+        if (getIntent().getStringExtra("usernameProfile") == null) {
+            usernameProfile = currentUsername;
+        } else {
+            usernameProfile = getIntent().getStringExtra("usernameProfile");
+        }
+
+        imageName = "profiles/" + usernameProfile + ".jpg";
 
         fragment = ProductsListFragment.newInstance();
         displayFragment(R.id.contentProfile, fragment, "offered");
@@ -210,8 +234,137 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                         }, this
                 );
                 break;
+
+            case R.id.profile_photo:
+                if (android.os.Build.VERSION.SDK_INT >= 23) {
+                    int permissionCheck;
+
+                    permissionCheck = ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.CAMERA);
+                    if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.CAMERA},
+                                REQUEST_CAMERA);
+                    } else {
+                        hasCameraPermission = true;
+                    }
+
+                    permissionCheck = ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                REQUEST_WRITE_EXTERNAL_STORAGE);
+                    } else {
+                        hasExternalStoragePermission = true;
+                    }
+
+                    if (hasCameraPermission && hasExternalStoragePermission) {
+                        showImagePickDialog();
+                    }
+                } else {
+                    showImagePickDialog();
+                }
+                break;
         }
     }
+
+    // region IMAGE
+
+    private Uri imageUri;
+
+    public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 400;
+    public static final int REQUEST_CAMERA = 401;
+    private boolean hasExternalStoragePermission = false;
+    private boolean hasCameraPermission = false;
+
+    private static final File CAMERA_SAVE_LOCATION =
+            new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/2change/images");
+
+    private static final String LOG_TAG = "ListActivity";
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED) {
+            // TODO show error because we do not have permission
+        } else {
+            switch (requestCode) {
+                case REQUEST_WRITE_EXTERNAL_STORAGE:
+                    hasExternalStoragePermission = true;
+                    break;
+                case REQUEST_CAMERA:
+                    hasCameraPermission = true;
+                    break;
+            }
+
+            if (hasExternalStoragePermission && !CAMERA_SAVE_LOCATION.exists()) {
+                if (!CAMERA_SAVE_LOCATION.mkdirs()) {
+                    Log.e(LOG_TAG, "Unable to create directory: " + CAMERA_SAVE_LOCATION.toString());
+                } else {
+                    Log.i(LOG_TAG, "Created directory: " + CAMERA_SAVE_LOCATION.toString());
+                }
+            }
+
+            if (hasCameraPermission && hasExternalStoragePermission) {
+                showImagePickDialog();
+            }
+        }
+    }
+
+    private void showImagePickDialog() {
+        ImagePickDialog dialog = new ImagePickDialog();
+        dialog.setImageButtonTag(-1);
+        dialog.show(getFragmentManager(), "image_pick");
+    }
+
+    private static final int CAMERA_IMAGE_REQUEST = 1110;
+    private static final int GALLERY_IMAGE_REQUEST = 1996;
+
+    @Override
+    public void onImageSourceSelected(ImagePickDialog.ImageSource source, int imageButtonTag) {
+        Intent pickImage = null;
+        String name = Product.generateImageName();
+        int requestCode = -1;
+        switch (source) {
+            case GALLERY:
+                pickImage = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                requestCode = GALLERY_IMAGE_REQUEST;
+                break;
+            case CAMERA:
+                try {
+                    File photo = File.createTempFile(name, ".jpg", CAMERA_SAVE_LOCATION);
+                    Uri photoURI = FileProvider.getUriForFile(this, "com.twochange.fileprovider",
+                            photo);
+                    imageUri = photoURI;
+                    pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    pickImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                    requestCode = CAMERA_IMAGE_REQUEST;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+        startActivityForResult(pickImage, requestCode);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == GALLERY_IMAGE_REQUEST) {
+                imageUri = intent.getData();
+            }
+            Picasso.with(this).load(imageUri).into(image);
+            ImageManager.getInstance().storeImage(imageName, imageUri);
+        }
+    }
+
+    // endregion
+
+    // region the_rest
 
     protected int currentMenuItemIndex() {
         return PROFILE_ACTIVITY;
@@ -248,6 +401,12 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
         if (profile.getNumRates() == 0) rate.setText(String.valueOf(0));
         else rate.setText(new DecimalFormat("##.##").format(profile.getRate()));
         numRates.setText(String.valueOf(profile.getNumRates()));
+
+        image = (CircleImageView) findViewById(R.id.profile_photo);
+        ImageManager.getInstance().putImageIntoView(imageName, this, image);
+        if (usernameProfile.equals(currentUsername)) {
+            image.setOnClickListener(this);
+        }
 
     }
 
@@ -327,4 +486,6 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     public void edit() {
 
     }
+
+    // endregion
 }

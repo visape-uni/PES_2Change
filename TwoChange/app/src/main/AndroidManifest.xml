@@ -42,6 +42,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".presentation.controller.SearchProfileActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".presentation.controller.RecyclerChatActivity"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

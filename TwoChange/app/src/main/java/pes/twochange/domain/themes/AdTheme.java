@@ -1,5 +1,6 @@
 package pes.twochange.domain.themes;
 
+import android.content.Context;
 import android.net.Uri;
 
 import com.google.firebase.database.ChildEventListener;
@@ -46,7 +47,7 @@ public class AdTheme {
     }
 
 
-    public void save(final Ad ad, final AdResponse callback) {
+    public void save(final Ad ad, final AdResponse callback, Context context) {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
 
         DatabaseReference adsRef = db.child(ADS_CHILD);
@@ -66,7 +67,7 @@ public class AdTheme {
                 ad.getImages().add(filename);
 
                 String completePath = ad.getImagesPath() + filename;
-                imageManager.storeImage(completePath, image.getUri());
+                imageManager.storeImage(completePath, image.getUri(), context);
             }
         }
 
@@ -319,10 +320,11 @@ public class AdTheme {
         ).list();
     }
 
-    public void storeImages(String path, ArrayList<String> images, ArrayList<Uri> imageUris) {
+    public void storeImages(String path, ArrayList<String> images, ArrayList<Uri> imageUris,
+                            Context context) {
         int size = images.size() <= imageUris.size() ? images.size() : imageUris.size();
         for (int i = 0; i < size; i++) {
-            ImageManager.getInstance().storeImage(path + images.get(i), imageUris.get(i));
+            ImageManager.getInstance().storeImage(path + images.get(i), imageUris.get(i), context);
         }
     }
 

@@ -1,7 +1,6 @@
-package pes.twochange.presentation.activity;
+package pes.twochange.presentation.controller;
 
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import pes.twochange.R;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.adapter.RecyclerChatAdapter;
-import pes.twochange.presentation.controller.BaseActivity;
 
 
 public class RecyclerChatActivity extends BaseActivity {

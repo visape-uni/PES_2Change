@@ -13,8 +13,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import pes.twochange.R;
-import pes.twochange.presentation.activity.MainMenuActivity;
-import pes.twochange.presentation.activity.RecyclerChatActivity;
+import pes.twochange.presentation.controller.RecyclerChatActivity;
 
 /**
  * Created by Victor on 10/04/2017.

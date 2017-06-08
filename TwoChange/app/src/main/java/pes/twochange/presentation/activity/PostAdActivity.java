@@ -293,7 +293,7 @@ public class PostAdActivity extends AppCompatActivity implements ImagePickDialog
                 public void onFailure(String error) {
                     Snackbar.make(v, "There was an error publishing the ad. Please try again.", Snackbar.LENGTH_LONG).show();
                 }
-            });
+            }, this);
         }
     }
 

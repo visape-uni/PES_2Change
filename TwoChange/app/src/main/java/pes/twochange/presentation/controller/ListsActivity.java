@@ -392,7 +392,7 @@ public class ListsActivity extends BaseActivity implements
         product.setImages(images);
         String id = AdTheme.getInstance().save(product);
         String path = String.format("product/%s/", id);
-        AdTheme.getInstance().storeImages(path, images, imageUris);
+        AdTheme.getInstance().storeImages(path, images, imageUris, this);
         close();
     }
 

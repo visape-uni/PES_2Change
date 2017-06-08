@@ -34,7 +34,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="120dp"
                         android:layout_marginTop="10dp"
-                        android:src="@mipmap/prof_default" />
+                        android:src="@mipmap/prof_default"
+                        android:clickable="true"/>
 
                     <TextView
                         android:id="@+id/usernameTxt"

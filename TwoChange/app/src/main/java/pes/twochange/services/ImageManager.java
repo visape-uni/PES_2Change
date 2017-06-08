@@ -70,12 +70,12 @@ public class ImageManager {
                 );
     }
 
-    public interface UrlResponse {
+    interface UrlResponse {
         void onSuccess(String url);
         void onFailure(String errorMessage);
     }
 
-    public void storeImage(String completePath, Bitmap bitmap) {
+    private void storeImage(String completePath, Bitmap bitmap) {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference imageReference = storageReference.child(completePath);
 
@@ -87,9 +87,47 @@ public class ImageManager {
     }
 
     public void storeImage(String completePath, Uri fileUri) {
+//        Bitmap bitmap = compressBitmap(fileUri, context);
+//        storeImage(completePath, bitmap);
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference imageReference = storageReference.child(completePath);
         imageReference.putFile(fileUri);
     }
+
+    public void storeImage(String completePath, Uri fileUri, Context context) {
+//        Bitmap bitmap = compressBitmap(fileUri, context);
+//        storeImage(completePath, bitmap);
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference imageReference = storageReference.child(completePath);
+        imageReference.putFile(fileUri);
+    }
+
+//    private Bitmap compressBitmap(Uri fileUri, Context context) {
+//        Bitmap bitmapImage = BitmapFactory.decodeFile(fileUri.getPath());
+//        InputStream imageStream = null;
+//        try {
+//            imageStream = context.getContentResolver().openInputStream(
+//                    fileUri);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        Bitmap bmp = BitmapFactory.decodeStream(imageStream);
+//
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//        byte[] byteArray = stream.toByteArray();
+//        try {
+//            stream.close();
+//            stream = null;
+//        } catch (IOException e) {
+//
+//            e.printStackTrace();
+//        }
+//        return bmp;
+//        Bitmap bitmapImage = BitmapFactory.decodeFile(fileUri.getPath());
+//        int nh = (int) (bitmapImage.getHeight() * (512.0 / bitmapImage.getWidth()));
+//        return Bitmap.createScaledBitmap(bitmapImage, 512, nh, true);
+//    }
 
 }
