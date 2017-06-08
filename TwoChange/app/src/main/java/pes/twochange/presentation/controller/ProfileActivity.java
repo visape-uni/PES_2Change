@@ -195,7 +195,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
                         else Toast.makeText(ProfileActivity.this, "User blocked successfully", Toast.LENGTH_SHORT).show();
                     }
                 });
-                SettingsTheme.getInstance(currentUsername).blockUser(profile.getUsername());
+                SettingsTheme.getInstance(currentUsername).blockUser(usernameProfile);
                 return true;
             case R.id.action_open_chat:
                 Intent chatIntent = new Intent(this,ChatActivity.class);
