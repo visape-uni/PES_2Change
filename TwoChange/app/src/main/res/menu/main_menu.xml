@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/main_option_group">
+        <item
+            android:title="@string/explore"
+            android:id="@+id/explore"
+            android:icon="@drawable/compass"
+            android:name="@string/explore" />
+        <item
+            android:title="@string/my_lists"
+            android:id="@+id/lists"
+            android:icon="@drawable/format_list_bulleted"
+            android:name="@string/my_lists" />
+        <item
+            android:title="@string/chat"
+            android:id="@+id/chat"
+            android:icon="@drawable/message_reply_text"
+            android:name="@string/chat" />
+        <item
+            android:title="@string/profile"
+            android:id="@+id/profile"
+            android:icon="@drawable/account"
+            android:name="@string/profile" />
+        <item
+            android:title="@string/searchProfile"
+            android:id="@+id/searchProfile"
+            android:icon="@drawable/account_search"
+            android:name="@string/searchProfile" />
+    </group>
+
+    <group
+        android:id="@+id/other_option_group">
+        <item
+            android:title="@string/about"
+            android:id="@+id/about"
+            android:icon="@drawable/numeric_2_box"
+            android:name="@string/about" />
+        <item
+            android:title="@string/logout"
+            android:id="@+id/logout"
+            android:icon="@drawable/logout_variant"
+            android:name="@string/logout" />
+    </group>
+
+</menu>

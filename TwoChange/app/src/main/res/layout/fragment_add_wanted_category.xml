@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp"
+        android:text="Select the category that you want:"/>
+
+    <Spinner
+        android:id="@+id/Category_Spn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:entries="@array/ad_category" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_wanted_product"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="end"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/ic_send"
+        android:tint="@android:color/white"/>
+
+
+</LinearLayout>

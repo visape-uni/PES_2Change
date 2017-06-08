@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="pes.twochange.presentation.activity.AdActivity">
+
+    <TextView
+        android:id="@+id/ad_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:text="TextView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/ad_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:text="TextView"
+        android:layout_below="@+id/ad_title"
+        android:layout_alignStart="@+id/ad_title"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/ad_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/ad_user"
+        android:layout_below="@+id/ad_user"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
+
+    <RatingBar
+        android:id="@+id/ad_rating"
+        style="@android:style/Widget.Holo.RatingBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/ad_description"
+        android:layout_below="@+id/ad_description"
+        android:layout_marginTop="17dp"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/ad_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/ad_rating"
+        android:layout_below="@+id/ad_rating"
+        android:layout_marginTop="13dp"
+        android:text="TextView"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
+
+    <ViewFlipper
+        android:id="@+id/ad_photos"
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true" />
+
+</RelativeLayout>
