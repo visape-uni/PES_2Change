@@ -19,6 +19,8 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,11 +36,11 @@ import pes.twochange.domain.themes.MatchTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.activity.ImagePickDialog;
 import pes.twochange.presentation.fragment.AddProductsListFragment;
+import pes.twochange.presentation.fragment.AddWantedProductsListFragment;
 import pes.twochange.presentation.fragment.MatchProductFragment;
 import pes.twochange.presentation.fragment.MatchProductsListFragment;
 import pes.twochange.presentation.fragment.MyProductFragment;
 import pes.twochange.presentation.fragment.NewProductFragment;
-import pes.twochange.presentation.fragment.AddWantedProductsListFragment;
 
 public class ListsActivity extends BaseActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener, AdTheme.ErrorResponse,
@@ -189,11 +191,55 @@ public class ListsActivity extends BaseActivity implements
 
     // region Products
 
+    private Spinner input;
+    private String[] categoryArray;
+
     @Override
     public void addProduct() {
         switch (currentList) {
             case WANTED:
-
+                input = new Spinner(this);
+                categoryArray = getResources().getStringArray(R.array.ad_category);
+                ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this,
+                        android.R.layout.simple_spinner_item, categoryArray);
+                categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                input.setAdapter(categoryAdapter);
+//                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+//                        LinearLayout.LayoutParams.MATCH_PARENT,
+//                        LinearLayout.LayoutParams.MATCH_PARENT);
+//                int dpValue = 100; // margin in dips
+//                float d = getResources().getDisplayMetrics().density;
+//                int margin = (int)(dpValue * d);
+//                layoutParams.setMargins(margin, margin, margin, margin);
+//                layoutParams.setMarginEnd(margin);
+//                input.setLayoutParams(layoutParams);
+                new AlertDialog.Builder(this)
+                        .setView(input)
+                        .setTitle("Select the category you want.")
+                        .setNegativeButton(
+                                "Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                }
+                        )
+                        .setPositiveButton(
+                                "Ok",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String category = categoryArray[input.getSelectedItemPosition()];
+                                        if (notWanted(category)) {
+                                            AdTheme.getInstance().postWanted(username, category);
+                                            dialog.dismiss();
+                                            wantedProducts = null;
+                                            loadProductList();
+                                        }
+                                    }
+                                }
+                        ).show();
                 break;
 
             case OFFERED:
@@ -213,6 +259,15 @@ public class ListsActivity extends BaseActivity implements
                 MatchTheme.getInstance().makeMatches(username, matchedProducts, wantedProducts, this);
                 break;
         }
+    }
+
+    private boolean notWanted(String category) {
+        for (Product product : wantedProducts) {
+            if (product.getCategory().equals(category)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private ArrayList<Product> wantedProducts;
