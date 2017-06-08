@@ -112,6 +112,10 @@ public class AdTheme {
                 .removeValue(listener);
     }
 
+    public void delete(Product product) {
+        Firebase.getInstance().delete("products", product.getId());
+    }
+
     public void findById(String id, final AdResponse callback) {
         ValueEventListener listener = new ValueEventListener() {
             @Override

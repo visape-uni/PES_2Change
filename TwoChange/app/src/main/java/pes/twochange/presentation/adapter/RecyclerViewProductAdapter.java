@@ -14,6 +14,7 @@ import java.util.Locale;
 import pes.twochange.R;
 import pes.twochange.domain.model.Product;
 import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
+import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 import pes.twochange.services.ImageManager;
 
 public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerViewProductAdapter.ProductHolder> {
@@ -21,12 +22,22 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
     private Context context;
     private ArrayList<Product> productArrayList;
     private OnRecyclerViewItemClickListener listener;
+    private OnRecyclerViewItemLongClickListener longListener;
 
     public RecyclerViewProductAdapter(Context context, ArrayList<Product> productArrayList,
                                       OnRecyclerViewItemClickListener listener) {
         this.context = context;
         this.productArrayList = productArrayList;
         this.listener = listener;
+    }
+
+    public RecyclerViewProductAdapter(Context context, ArrayList<Product> productArrayList,
+                                      OnRecyclerViewItemClickListener listener1,
+                                      OnRecyclerViewItemLongClickListener listener2) {
+        this.context = context;
+        this.productArrayList = productArrayList;
+        this.listener = listener1;
+        this.longListener = listener2;
     }
 
     public void setProductArrayList(ArrayList<Product> productArrayList) {
@@ -60,6 +71,17 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
                     @Override
                     public void onClick(View v) {
                         listener.onRecyclerViewItemClickListener(finalPosition);
+                    }
+                }
+        );
+        holder.itemView.setOnLongClickListener(
+                new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        if (longListener != null) {
+                            longListener.onRecyclerViewItemLongClickListener(finalPosition);
+                        }
+                        return false;
                     }
                 }
         );

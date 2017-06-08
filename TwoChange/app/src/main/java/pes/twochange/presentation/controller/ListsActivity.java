@@ -192,6 +192,32 @@ public class ListsActivity extends BaseActivity implements
                             }
                     )
                     .show();
+        } else if (currentList == OFFERED) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.remove_wanted_title)
+                    .setMessage("Do you really want to remove \"" +
+                            offeredProducts.get(position).getName() + "\" from your offered products?")
+                    .setPositiveButton(
+                            R.string.yes,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    AdTheme.getInstance().delete(offeredProducts.get(position));
+                                    offeredProducts = null;
+                                    loadProductList();
+                                }
+                            }
+                    )
+                    .setNegativeButton(
+                            R.string.no,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            }
+                    )
+                    .show();
         }
         return true;
     }
@@ -402,6 +428,7 @@ public class ListsActivity extends BaseActivity implements
         String id = AdTheme.getInstance().save(product);
         String path = String.format("product/%s/", id);
         AdTheme.getInstance().storeImages(path, images, imageUris, this);
+        offeredProducts = null;
         close();
     }
 

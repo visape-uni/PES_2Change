@@ -16,6 +16,7 @@ import pes.twochange.R;
 import pes.twochange.domain.model.Product;
 import pes.twochange.presentation.adapter.RecyclerViewProductAdapter;
 import pes.twochange.presentation.view.OnRecyclerViewItemClickListener;
+import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
 
 public class ProductsListFragment extends Fragment {
 
@@ -41,7 +42,7 @@ public class ProductsListFragment extends Fragment {
     public void buildRecyclerView(@NonNull View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
         productAdapter = new RecyclerViewProductAdapter(getContext(), new ArrayList<Product>(),
-                activity);
+                activity, activity);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(productAdapter);
@@ -70,7 +71,7 @@ public class ProductsListFragment extends Fragment {
             if (products.size() == 0) {
                 // TODO empty "error"
             }
-            productAdapter = new RecyclerViewProductAdapter(getContext(), products, activity);
+            productAdapter = new RecyclerViewProductAdapter(getContext(), products, activity, activity);
             recyclerView.setAdapter(productAdapter);
             return true;
         } else {
@@ -78,7 +79,8 @@ public class ProductsListFragment extends Fragment {
         }
     }
 
-    public interface OnFragmentInteractionListener  extends OnRecyclerViewItemClickListener {
+    public interface OnFragmentInteractionListener extends OnRecyclerViewItemClickListener,
+            OnRecyclerViewItemLongClickListener {
         void loadProductList();
     }
 

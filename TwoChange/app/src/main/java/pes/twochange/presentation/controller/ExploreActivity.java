@@ -244,4 +244,9 @@ public class ExploreActivity extends BaseActivity implements
     public void edit() {
 
     }
+
+    @Override
+    public boolean onRecyclerViewItemLongClickListener(int position) {
+        return false;
+    }
 }
