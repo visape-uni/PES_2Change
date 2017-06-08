@@ -6,4 +6,18 @@
     android:layout_height="match_parent"
     tools:context="pes.twochange.presentation.activity.AboutActivity">
 
+    <TextView
+        android:id="@+id/aboutField"
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="9dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="9dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+
 </android.support.constraint.ConstraintLayout>
