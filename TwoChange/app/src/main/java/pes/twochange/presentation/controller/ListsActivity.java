@@ -133,6 +133,9 @@ public class ListsActivity extends BaseActivity implements
     @Override
     public void onRecyclerViewItemClickListener(int position) {
         switch (currentList) {
+            case WANTED:
+                //TODO
+                break;
             case OFFERED:
                 if (offeredProducts != null && position < offeredProducts.size()) {
                     Product selectedProduct = offeredProducts.get(position);
@@ -182,6 +185,7 @@ public class ListsActivity extends BaseActivity implements
                 break;
 
             case OFFERED:
+                //TODO
                 break;
 
             case MATCHES:
@@ -201,6 +205,7 @@ public class ListsActivity extends BaseActivity implements
     public void addProduct() {
         switch (currentList) {
             case WANTED:
+
 
                 break;
 

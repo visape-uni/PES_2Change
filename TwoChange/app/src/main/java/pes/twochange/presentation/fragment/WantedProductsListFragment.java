@@ -1,10 +1,14 @@
 package pes.twochange.presentation.fragment;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
@@ -23,6 +27,15 @@ public class WantedProductsListFragment extends ProductsListFragment {
 
     public static WantedProductsListFragment newInstance() {
         return new WantedProductsListFragment();
+    }
+
+    @Override
+    public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstnceState) {
+        View view = inflater.inflate(R.layout.fragment_wanted_list, container, false);
+        buildRecyclerView(view);
+        FloatingActionButton addWantedbtn = (FloatingActionButton) view.findViewById(R.id.add_wanted_product);
+        addWantedbtn.setOnClickListener(this);
+        return view;
     }
 
     @Override
