@@ -204,15 +204,6 @@ public class ListsActivity extends BaseActivity implements
                         android.R.layout.simple_spinner_item, categoryArray);
                 categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 input.setAdapter(categoryAdapter);
-//                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-//                        LinearLayout.LayoutParams.MATCH_PARENT,
-//                        LinearLayout.LayoutParams.MATCH_PARENT);
-//                int dpValue = 100; // margin in dips
-//                float d = getResources().getDisplayMetrics().density;
-//                int margin = (int)(dpValue * d);
-//                layoutParams.setMargins(margin, margin, margin, margin);
-//                layoutParams.setMarginEnd(margin);
-//                input.setLayoutParams(layoutParams);
                 new AlertDialog.Builder(this)
                         .setView(input)
                         .setTitle("Select the category you want.")

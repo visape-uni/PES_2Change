@@ -28,11 +28,14 @@ import pes.twochange.domain.themes.ProfileTheme;
 import pes.twochange.domain.themes.SettingsTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.fragment.EditProfileFragment;
+import pes.twochange.presentation.fragment.MyProductFragment;
 import pes.twochange.presentation.fragment.ProductsListFragment;
 import pes.twochange.presentation.fragment.WantedProductsListFragment;
 import pes.twochange.services.DatabaseResponse;
 
-public class ProfileActivity extends BaseActivity implements AdTheme.ErrorResponse, WantedProductsListFragment.OnFragmentInteractionListener{
+public class ProfileActivity extends BaseActivity implements AdTheme.ErrorResponse,
+        WantedProductsListFragment.OnFragmentInteractionListener,
+        MyProductFragment.OnFragmentInteractionListener{
 
     private String usernameProfile;
     private String currentUsername;
@@ -49,6 +52,7 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     private static final int WANTED = 1;
     private static final int OFFERED = 2;
     private static final int EDIT = 3;
+    private static final int PRODUCT = 4;
 
     private float rate;
     RatingBar ratingBar;
@@ -269,9 +273,19 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
     public void error(String error) {
     }
 
+    private Product selectedProduct;
+
     @Override
     public void onRecyclerViewItemClickListener(int position) {
-
+        if (currentFragment == OFFERED) {
+            findViewById(R.id.margin_layout).setVisibility(View.VISIBLE);
+            selectedProduct = offeredList.get(position);
+            fragment = MyProductFragment.newInstance(selectedProduct.getName(),
+                    selectedProduct.getDescription(), selectedProduct.getCategory(),
+                    selectedProduct.getRating(), selectedProduct.getUrls());
+            currentFragment = PRODUCT;
+            replaceFragment(R.id.contentProfile, fragment, "product");
+        }
     }
 
     @Override
@@ -281,6 +295,34 @@ public class ProfileActivity extends BaseActivity implements AdTheme.ErrorRespon
 
     @Override
     public void loadProductList() {
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (currentFragment == PRODUCT || currentFragment == EDIT) {
+            findViewById(R.id.margin_layout).setVisibility(View.GONE);
+            fragment = ProductsListFragment.newInstance();
+            replaceFragment(R.id.contentProfile, fragment, "offered");
+            currentFragment = OFFERED;
+            AdTheme.getInstance().getOfferedList(
+                    usernameProfile,
+                    new AdTheme.ProductListResponse() {
+                        @Override
+                        public void listResponse(ArrayList<Product> offeredItems) {
+                            offeredList = offeredItems;
+                            numOffered = offeredList.size();
+                            setUpOffered();
+                        }
+                    }, this
+            );
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void edit() {
 
     }
 }
