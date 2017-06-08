@@ -1,6 +1,7 @@
 package pes.twochange.presentation.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import pes.twochange.R;
+import pes.twochange.presentation.controller.ProfileActivity;
 import pes.twochange.services.ImageManager;
 
 /**
@@ -77,8 +79,19 @@ public class ChatProductFragment extends ProductFragment implements View.OnClick
         assert view != null;
         LinearLayout content = (LinearLayout) view.findViewById(R.id.content_layout);
         View chatView = inflater.inflate(R.layout.chat_product_layout, null);
-        TextView usernameTextView = (TextView) chatView.findViewById(R.id.user_username);
+        final TextView usernameTextView = (TextView) chatView.findViewById(R.id.user_username);
         usernameTextView.setText(username);
+        usernameTextView.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), ProfileActivity.class);
+                        intent.putExtra("usernameProfile", username);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+                }
+        );
         ImageView userImage = (ImageView) chatView.findViewById(R.id.user_image);
         String path = String.format("profile/%s.jpg", username);
         ImageManager.getInstance().putImageIntoView(path, getContext(), userImage);
