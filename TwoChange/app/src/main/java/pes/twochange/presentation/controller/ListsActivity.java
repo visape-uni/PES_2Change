@@ -14,7 +14,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,7 +24,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -498,18 +496,15 @@ public class ListsActivity extends BaseActivity implements
                 requestCode = GALLERY_IMAGE_REQUEST;
                 break;
             case CAMERA:
-                try {
-                    File photo = File.createTempFile(name, ".jpg", CAMERA_SAVE_LOCATION);
-                    Uri photoURI = FileProvider.getUriForFile(this, "com.twochange.fileprovider",
-                            photo);
-                    images.add(name + ".jpg");
-                    imageUris.add(photoURI);
-                    pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    pickImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    requestCode = CAMERA_IMAGE_REQUEST;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                File photo = new File(CAMERA_SAVE_LOCATION, name + ".jpg");
+                Uri photoURI = Uri.fromFile(photo);
+
+                images.add(name + ".jpg");
+                imageUris.add(photoURI);
+
+                pickImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                pickImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                requestCode = CAMERA_IMAGE_REQUEST;
                 break;
         }
         startActivityForResult(pickImage, requestCode);
