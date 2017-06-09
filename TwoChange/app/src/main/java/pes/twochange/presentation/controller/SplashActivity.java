@@ -3,13 +3,13 @@ package pes.twochange.presentation.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+
 import pes.twochange.R;
 import pes.twochange.domain.themes.AuthTheme;
 import pes.twochange.presentation.Config;
@@ -17,10 +17,7 @@ import pes.twochange.presentation.Config;
 public class SplashActivity extends AppCompatActivity implements Animation.AnimationListener, AuthTheme.Response {
 
     private TranslateAnimation translateAnimation;
-
-    private TextView name;
-    private TextView slogan;
-    private ProgressBar progressBar;
+    private CardView cardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +25,7 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
         setContentView(R.layout.activity_splash);
 
         ImageView logo = (ImageView) findViewById(R.id.logo_image);
-        name = (TextView) findViewById(R.id.name);
-        slogan = (TextView) findViewById(R.id.slogan);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        cardView = (CardView) findViewById(R.id.card_splash);
 
         translateAnimation = new TranslateAnimation(0.0f, 0.0f, 1000.0f, 0.0f);
         translateAnimation.setDuration(2000);
@@ -74,12 +69,8 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
                     }
                 }
         );
-        name.startAnimation(alphaAnimation);
-        slogan.startAnimation(alphaAnimation);
-        progressBar.startAnimation(alphaAnimation);
-        name.setVisibility(View.VISIBLE);
-        slogan.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.VISIBLE);
+        cardView.startAnimation(alphaAnimation);
+        cardView.setVisibility(View.VISIBLE);
     }
 
     @Override
