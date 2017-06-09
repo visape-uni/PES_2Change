@@ -178,6 +178,7 @@ public class ListsActivity extends BaseActivity implements
                                 public void onClick(DialogInterface dialog, int which) {
                                     AdTheme.getInstance().remove(username,
                                             wantedProducts.get(position).getId());
+                                    wantedProducts = null;
                                     loadProductList();
                                 }
                             }
