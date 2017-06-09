@@ -112,6 +112,7 @@ public class AdTheme {
 
     public void delete(Product product) {
         Firebase.getInstance().delete("products", product.getId());
+        MatchTheme.getInstance().deleteMatchesWith(product.getId());
     }
 
     public void findById(String id, final AdResponse callback) {
@@ -198,9 +199,21 @@ public class AdTheme {
                 });
     }
 
+
+
     public String save(final Product product) {
         return Firebase.getInstance().insert(PRODUCTS_REFERENCE_NAME,
                 new ModelAdapterFactory<Product>().build(Product.class, product));
+    }
+
+    public void update(final Product product) {
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("products")
+                .child(product.getId());
+        ref.child("name").setValue(product.getName());
+        ref.child("description").setValue(product.getDescription());
+        ref.child("category").setValue(product.getCategory());
     }
 
     /* ------------------
@@ -329,13 +342,14 @@ public class AdTheme {
         }
     }
 
-    public void getProduct(String id, final ProductResponse productResponse) {
+    public void getProduct(final String id, final ProductResponse productResponse) {
         Firebase.getInstance().get(
                 "products",
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
                         Product product = dataSnapshot.getValue(Product.class);
+                        product.setId(id);
                         productResponse.success(product);
                     }
 

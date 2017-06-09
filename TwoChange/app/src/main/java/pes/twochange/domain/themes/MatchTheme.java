@@ -72,7 +72,21 @@ public class MatchTheme {
                 new AdTheme.ProductResponse() {
                     @Override
                     public void success(Product product) {
-                        response.success(product, match);
+                        final Product wantedProduct = product;
+                        AdTheme.getInstance().getProduct(
+                                match.getProductKeySender(),
+                                new AdTheme.ProductResponse() {
+                                    @Override
+                                    public void success(Product offeredProduct) {
+                                        response.success(wantedProduct, offeredProduct, match);
+                                    }
+
+                                    @Override
+                                    public void error(String error) {
+                                        errorResponse.error(error);
+                                    }
+                                }
+                        );
                     }
 
                     @Override
@@ -86,7 +100,7 @@ public class MatchTheme {
                             ArrayList<Product> wanted, final MatchesResponse result) {
 
         username = currentUsername;
-        firebaseMatches = firebaseMatches.child(username);
+        firebaseMatches = mainRef.child("matches").child(username);
         this.myMatches = matches == null ? new HashMap<String, Match>() : matches;
         this.wanted = wanted == null ? new ArrayList<Product>() : wanted;
 
@@ -193,12 +207,34 @@ public class MatchTheme {
                 matchModelAdapter);
     }
 
+    public void deleteMatchesWith(final String id) {
+        FirebaseDatabase.getInstance().getReference().child("matches").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds0 : dataSnapshot.getChildren()) {
+                            for (DataSnapshot ds1 : ds0.getChildren()) {
+                                if (ds1.getKey().contains(id)) {
+                                    ds1.getRef().removeValue();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                }
+        );
+    }
+
     public interface MatchesResponse {
         void success(Map<String, Match> myMatches);
     }
 
     public interface MatchResponse {
-        void success(Product product, Match match);
+        void success(Product wantedProduct, Product offeredProduct, Match match);
     }
 
     public interface ErrorResponse {

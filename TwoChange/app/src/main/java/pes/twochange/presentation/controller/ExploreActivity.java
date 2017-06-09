@@ -22,6 +22,7 @@ import pes.twochange.domain.model.Product;
 import pes.twochange.domain.themes.AdTheme;
 import pes.twochange.presentation.Config;
 import pes.twochange.presentation.fragment.ChatProductFragment;
+import pes.twochange.presentation.fragment.EditProductFragment;
 import pes.twochange.presentation.fragment.MyProductFragment;
 import pes.twochange.presentation.fragment.ProductFragment;
 import pes.twochange.presentation.fragment.SearchProductsListFragment;
@@ -29,11 +30,13 @@ import pes.twochange.presentation.fragment.SearchProductsListFragment;
 public class ExploreActivity extends BaseActivity implements
         SearchProductsListFragment.OnFragmentInteractionListener,
         ChatProductFragment.OnFragmentInteractionListener,
-        MyProductFragment.OnFragmentInteractionListener {
+        MyProductFragment.OnFragmentInteractionListener,
+        EditProductFragment.OnFragmentInteractionListener {
 
     public static final String TAG = "EXPLORE ACTIVITY";
     private Fragment fragment;
     private String username;
+    private Product selectedProduct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,7 +226,7 @@ public class ExploreActivity extends BaseActivity implements
     @Override
     public void onRecyclerViewItemClickListener(int position) {
         if (productsList != null && position < productsList.size()) {
-            Product selectedProduct = productsList.get(position);
+            selectedProduct = productsList.get(position);
             String usersProduct = selectedProduct.getUsername();
             if (usersProduct.equals(username)) {
                 fragment = MyProductFragment.newInstance(selectedProduct.getName(),
@@ -247,8 +250,26 @@ public class ExploreActivity extends BaseActivity implements
     }
 
     @Override
-    public void edit() {
+    public void edit(Product product) {
+        AdTheme.getInstance().update(product);
+        close();
+    }
 
+    @Override
+    public void close() {
+        productsList = null;
+        fragment = SearchProductsListFragment.newInstance();
+        displayFragment(R.id.content_explore, fragment, "main_list");
+    }
+
+    @Override
+    public void edit() {
+        if (selectedProduct != null) {
+            fragment = EditProductFragment.newInstance(selectedProduct.getId(),
+                    selectedProduct.getName(), selectedProduct.getDescription(),
+                    selectedProduct.getCategory());
+            displayFragment(R.id.content_explore, fragment, "edit");
+        }
     }
 
     @Override

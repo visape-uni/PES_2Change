@@ -24,12 +24,12 @@ public class RecyclerViewMatchAdapter extends RecyclerView.Adapter<RecyclerViewM
     public RecyclerViewMatchAdapter(Context context, Map<String, Match> matchMap,
                                     OnRecyclerViewItemClickListener listener) {
         this.context = context;
-        this.matchMap = new ArrayList<Match>(matchMap.values());
+        this.matchMap = new ArrayList<>(matchMap.values());
         this.listener = listener;
     }
 
     public void setMatchMap(Map<String, Match> matchMap) {
-        this.matchMap = new ArrayList<Match>(matchMap.values());
+        this.matchMap = new ArrayList<>(matchMap.values());
     }
 
     @Override
