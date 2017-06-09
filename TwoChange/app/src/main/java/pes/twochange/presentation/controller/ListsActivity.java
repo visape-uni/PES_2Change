@@ -69,6 +69,7 @@ public class ListsActivity extends BaseActivity implements
 
     private BottomNavigationView navigation;
     private Match selectedMatch;
+    private Product selectedProduct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +152,7 @@ public class ListsActivity extends BaseActivity implements
         switch (currentList) {
             case OFFERED:
                 if (offeredProducts != null && position < offeredProducts.size()) {
-                    Product selectedProduct = offeredProducts.get(position);
+                    selectedProduct = offeredProducts.get(position);
 
                     fragment = MyProductFragment.newInstance(selectedProduct.getName(),
                             selectedProduct.getDescription(), selectedProduct.getCategory(),
@@ -547,11 +548,21 @@ public class ListsActivity extends BaseActivity implements
     @Override
     public void edit(Product product) {
         AdTheme.getInstance().update(product);
-        close();
+        offeredProducts = null;
+        currentList = R.id.navigation_offered;
+        fragment = AddProductsListFragment.newInstance();
+        displayFragment(R.id.content_list, fragment, "offered");
     }
 
     @Override
-    public void edit() {}
+    public void edit() {
+        if (selectedProduct != null) {
+            fragment = EditProductFragment.newInstance(selectedProduct.getId(),
+                    selectedProduct.getName(), selectedProduct.getDescription(),
+                    selectedProduct.getCategory());
+            addFragment(R.id.content_list, fragment, "edit");
+        }
+    }
 
     @Override
     public void accept() {

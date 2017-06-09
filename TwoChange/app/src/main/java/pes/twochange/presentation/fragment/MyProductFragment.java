@@ -6,8 +6,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+
+import pes.twochange.R;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,7 +21,7 @@ import java.util.ArrayList;
  * Use the {@link MyProductFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MyProductFragment extends ProductFragment implements View.OnClickListener {
+public class MyProductFragment extends ProductFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
     private OnFragmentInteractionListener activity;
@@ -53,7 +57,22 @@ public class MyProductFragment extends ProductFragment implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        assert view != null;
+        LinearLayout content = (LinearLayout) view.findViewById(R.id.content_layout);
+        View editButtonView = inflater.inflate(R.layout.edit_buttond, null);
+        Button editButton = (Button) editButtonView.findViewById(R.id.edit_button);
+        editButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        activity.edit();
+                    }
+                }
+        );
+        content.addView(editButtonView);
+        return view;
     }
 
     @Override
@@ -71,11 +90,6 @@ public class MyProductFragment extends ProductFragment implements View.OnClickLi
     public void onDetach() {
         super.onDetach();
         activity = null;
-    }
-
-    @Override
-    public void onClick(View v) {
-
     }
 
     public interface OnFragmentInteractionListener extends ProductFragment.OnFragmentInteractionListener {
