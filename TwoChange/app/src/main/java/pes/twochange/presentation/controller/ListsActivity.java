@@ -162,7 +162,7 @@ public class ListsActivity extends BaseActivity implements
                 break;
 
             case MATCHES:
-                selectedMatch = new ArrayList<Match>(matchedProducts.values()).get(position);
+                selectedMatch = new ArrayList<>(matchedProducts.values()).get(position);
                 MatchTheme.getInstance().getProductsMatch(selectedMatch, this, this);
                 break;
         }
@@ -366,10 +366,11 @@ public class ListsActivity extends BaseActivity implements
     // endregion
 
     @Override
-    public void success(Product product, Match match) {
-        fragment = MatchProductFragment.newInstance(product.getName(), product.getDescription(),
-                product.getCategory(), product.getRating(), product.getUrls(), product.getUsername(),
-                match.getStatusInt());
+    public void success(Product wantedProduct, Product offeredProduct, Match match) {
+        fragment = MatchProductFragment.newInstance(wantedProduct.getName(),
+                wantedProduct.getDescription(), wantedProduct.getCategory(), wantedProduct.getRating(),
+                wantedProduct.getUrls(), wantedProduct.getUsername(), match.getStatusInt(),
+                offeredProduct.getName());
         replaceFragment(R.id.content_list, fragment, "match");
     }
 

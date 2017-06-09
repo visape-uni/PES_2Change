@@ -112,6 +112,7 @@ public class AdTheme {
 
     public void delete(Product product) {
         Firebase.getInstance().delete("products", product.getId());
+        MatchTheme.getInstance().deleteMatchesWith(product.getId());
     }
 
     public void findById(String id, final AdResponse callback) {
