@@ -39,6 +39,7 @@ import pes.twochange.presentation.Config;
 import pes.twochange.presentation.activity.ImagePickDialog;
 import pes.twochange.presentation.fragment.AddProductsListFragment;
 import pes.twochange.presentation.fragment.AddWantedProductsListFragment;
+import pes.twochange.presentation.fragment.EditProductFragment;
 import pes.twochange.presentation.fragment.MatchProductFragment;
 import pes.twochange.presentation.fragment.MatchProductsListFragment;
 import pes.twochange.presentation.fragment.MyProductFragment;
@@ -49,6 +50,7 @@ public class ListsActivity extends BaseActivity implements
         AddProductsListFragment.OnFragmentInteractionListener, MatchTheme.ErrorResponse,
         AddWantedProductsListFragment.OnFragmentInteractionListener,
         NewProductFragment.OnFragmentInteractionListener,
+        EditProductFragment.OnFragmentInteractionListener,
         ImagePickDialog.ImagePickListener, MatchTheme.MatchesResponse,
         MatchProductsListFragment.OnFragmentInteractionListener,
         MyProductFragment.OnFragmentInteractionListener,
@@ -67,6 +69,7 @@ public class ListsActivity extends BaseActivity implements
 
     private BottomNavigationView navigation;
     private Match selectedMatch;
+    private Product selectedProduct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +152,8 @@ public class ListsActivity extends BaseActivity implements
         switch (currentList) {
             case OFFERED:
                 if (offeredProducts != null && position < offeredProducts.size()) {
-                    Product selectedProduct = offeredProducts.get(position);
+                    selectedProduct = offeredProducts.get(position);
+
                     fragment = MyProductFragment.newInstance(selectedProduct.getName(),
                             selectedProduct.getDescription(), selectedProduct.getCategory(),
                             selectedProduct.getRating(), selectedProduct.getUrls());
@@ -543,8 +547,22 @@ public class ListsActivity extends BaseActivity implements
     }
 
     @Override
-    public void edit() {
+    public void edit(Product product) {
+        AdTheme.getInstance().update(product);
+        offeredProducts = null;
+        currentList = R.id.navigation_offered;
+        fragment = AddProductsListFragment.newInstance();
+        displayFragment(R.id.content_list, fragment, "offered");
+    }
 
+    @Override
+    public void edit() {
+        if (selectedProduct != null) {
+            fragment = EditProductFragment.newInstance(selectedProduct.getId(),
+                    selectedProduct.getName(), selectedProduct.getDescription(),
+                    selectedProduct.getCategory());
+            addFragment(R.id.content_list, fragment, "edit");
+        }
     }
 
     @Override

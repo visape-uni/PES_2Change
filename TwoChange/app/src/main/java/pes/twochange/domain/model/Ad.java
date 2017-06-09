@@ -183,11 +183,14 @@ public class Ad extends Model {
         auxRating -= state.getPenalty();
 
         if (price != null) {
-            int pricePoints = price / 100;    // 1 point each 500 €/$/?
+            int pricePoints = price / 100;
             auxRating += pricePoints;
         }
 
-        setRating(auxRating < 0 ? 0 : auxRating);
+        if (auxRating < 0) auxRating = 0;
+        else if (auxRating > 100) auxRating = 100;
+
+        setRating(auxRating);
     }
 
 
