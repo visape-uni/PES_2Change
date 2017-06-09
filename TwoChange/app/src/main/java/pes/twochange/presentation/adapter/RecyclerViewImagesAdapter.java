@@ -1,19 +1,22 @@
 package pes.twochange.presentation.adapter;
 
+import android.content.ContentUris;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 
 import pes.twochange.R;
 import pes.twochange.presentation.view.OnRecyclerViewItemLongClickListener;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class RecyclerViewImagesAdapter extends
         RecyclerView.Adapter<RecyclerViewImagesAdapter.ViewHolder> {
@@ -41,6 +44,15 @@ public class RecyclerViewImagesAdapter extends
 
     @Override
     public void onBindViewHolder(final RecyclerViewImagesAdapter.ViewHolder holder, int position) {
+        Bitmap thumbnail =
+                MediaStore.Images.Thumbnails.getThumbnail(
+                                getApplicationContext().getContentResolver(),
+                                ContentUris.parseId(uris.get(position)),
+                                MediaStore.Images.Thumbnails.MICRO_KIND, null);
+
+        holder.imageView.setImageBitmap(thumbnail);
+
+        /*
         Picasso.with(activity).load(uris.get(position)).into(holder.imageView);
         holder.imageView.setOnLongClickListener(
                 new View.OnLongClickListener() {
@@ -51,6 +63,7 @@ public class RecyclerViewImagesAdapter extends
                     }
                 }
         );
+        */
     }
 
     @Override
