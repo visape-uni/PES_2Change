@@ -3,6 +3,7 @@ package pes.twochange.services;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
@@ -13,12 +14,14 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import pes.twochange.R;
 
 public class ImageManager {
 
     private static final ImageManager ourInstance = new ImageManager();
+    private static final String IMAGE_DEBUG_TAG = "COMPRESS BITMAP DEBUG";
 
     public static ImageManager getInstance() {
         return ourInstance;
@@ -85,48 +88,22 @@ public class ImageManager {
         imageReference.putBytes(data);
     }
 
-    public void storeImage(String completePath, Uri fileUri) {
-//        Bitmap bitmap = compressBitmap(fileUri, context);
-//        storeImage(completePath, bitmap);
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference imageReference = storageReference.child(completePath);
-        imageReference.putFile(fileUri);
-    }
-
     public void storeImage(String completePath, Uri fileUri, Context context) {
-//        Bitmap bitmap = compressBitmap(fileUri, context);
-//        storeImage(completePath, bitmap);
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference imageReference = storageReference.child(completePath);
-        imageReference.putFile(fileUri);
+        Bitmap bitmap = compressBitmap(fileUri, context);
+        storeImage(completePath, bitmap);
     }
 
-//    private Bitmap compressBitmap(Uri fileUri, Context context) {
-//        Bitmap bitmapImage = BitmapFactory.decodeFile(fileUri.getPath());
-//        InputStream imageStream = null;
-//        try {
-//            imageStream = context.getContentResolver().openInputStream(
-//                    fileUri);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        Bitmap bmp = BitmapFactory.decodeStream(imageStream);
-//
-//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//        byte[] byteArray = stream.toByteArray();
-//        try {
-//            stream.close();
-//            stream = null;
-//        } catch (IOException e) {
-//
-//            e.printStackTrace();
-//        }
-//        return bmp;
-//        Bitmap bitmapImage = BitmapFactory.decodeFile(fileUri.getPath());
-//        int nh = (int) (bitmapImage.getHeight() * (512.0 / bitmapImage.getWidth()));
-//        return Bitmap.createScaledBitmap(bitmapImage, 512, nh, true);
-//    }
+    private Bitmap compressBitmap(Uri fileUri, Context context) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(),fileUri);
+            int height = bitmap.getHeight();
+            int width = bitmap.getWidth();
+            int nh = (int) (height * (400.0 / width));
+            return Bitmap.createScaledBitmap(bitmap, 400, nh, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }

@@ -8,7 +8,7 @@
     <item
         android:id="@+id/action_block"
         android:orderInCategory="100"
-        android:title="Block user"
+        android:title="Block/Unblock user"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_open_chat"
