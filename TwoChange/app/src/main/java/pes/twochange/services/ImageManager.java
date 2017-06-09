@@ -88,9 +88,19 @@ public class ImageManager {
         imageReference.putBytes(data);
     }
 
+    private void storeImage(String completePath, Uri fileUri) {
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference imageReference = storageReference.child(completePath);
+        imageReference.putFile(fileUri);
+    }
+
     public void storeImage(String completePath, Uri fileUri, Context context) {
         Bitmap bitmap = compressBitmap(fileUri, context);
-        storeImage(completePath, bitmap);
+        if (bitmap != null) {
+            storeImage(completePath, bitmap);
+        } else {
+            storeImage(completePath, fileUri);
+        }
     }
 
     private Bitmap compressBitmap(Uri fileUri, Context context) {

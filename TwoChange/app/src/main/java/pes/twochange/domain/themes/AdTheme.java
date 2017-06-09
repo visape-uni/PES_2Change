@@ -8,11 +8,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import pes.twochange.domain.callback.AdResponse;
@@ -268,14 +266,13 @@ public class AdTheme {
                 new DatabaseResponse() {
                     @Override
                     public void success(DataSnapshot dataSnapshot) {
-                        ArrayList<Product> productArrayList = new ArrayList<>();
-                        GenericTypeIndicator<HashMap<String, Product>> typeIndicator =
-                                new GenericTypeIndicator<HashMap<String, Product>>() {};
-                        HashMap<String, Product> firebase = dataSnapshot.getValue(typeIndicator);
-                        if (firebase != null) {
-                            productArrayList = new ArrayList<>(firebase.values());
+                        ArrayList<Product> res = new ArrayList<>();
+                        for (DataSnapshot productData: dataSnapshot.getChildren()) {
+                            Product product = productData.getValue(Product.class);
+                            product.setId(productData.getKey());
+                            res.add(product);
                         }
-                        response.listResponse(productArrayList);
+                        response.listResponse(res);
                     }
 
                     @Override
