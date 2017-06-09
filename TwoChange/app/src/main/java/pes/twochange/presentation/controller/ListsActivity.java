@@ -39,6 +39,7 @@ import pes.twochange.presentation.Config;
 import pes.twochange.presentation.activity.ImagePickDialog;
 import pes.twochange.presentation.fragment.AddProductsListFragment;
 import pes.twochange.presentation.fragment.AddWantedProductsListFragment;
+import pes.twochange.presentation.fragment.EditProductFragment;
 import pes.twochange.presentation.fragment.MatchProductFragment;
 import pes.twochange.presentation.fragment.MatchProductsListFragment;
 import pes.twochange.presentation.fragment.MyProductFragment;
@@ -49,6 +50,7 @@ public class ListsActivity extends BaseActivity implements
         AddProductsListFragment.OnFragmentInteractionListener, MatchTheme.ErrorResponse,
         AddWantedProductsListFragment.OnFragmentInteractionListener,
         NewProductFragment.OnFragmentInteractionListener,
+        EditProductFragment.OnFragmentInteractionListener,
         ImagePickDialog.ImagePickListener, MatchTheme.MatchesResponse,
         MatchProductsListFragment.OnFragmentInteractionListener,
         MyProductFragment.OnFragmentInteractionListener,
@@ -150,6 +152,7 @@ public class ListsActivity extends BaseActivity implements
             case OFFERED:
                 if (offeredProducts != null && position < offeredProducts.size()) {
                     Product selectedProduct = offeredProducts.get(position);
+
                     fragment = MyProductFragment.newInstance(selectedProduct.getName(),
                             selectedProduct.getDescription(), selectedProduct.getCategory(),
                             selectedProduct.getRating(), selectedProduct.getUrls());
@@ -542,9 +545,13 @@ public class ListsActivity extends BaseActivity implements
     }
 
     @Override
-    public void edit() {
-
+    public void edit(Product product) {
+        AdTheme.getInstance().update(product);
+        close();
     }
+
+    @Override
+    public void edit() {}
 
     @Override
     public void accept() {

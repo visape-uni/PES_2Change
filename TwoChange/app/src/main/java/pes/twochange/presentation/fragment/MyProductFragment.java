@@ -75,7 +75,7 @@ public class MyProductFragment extends ProductFragment implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        activity.edit();
+
     }
 
     public interface OnFragmentInteractionListener extends ProductFragment.OnFragmentInteractionListener {
